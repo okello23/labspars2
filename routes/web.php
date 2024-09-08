@@ -2,9 +2,16 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
+use App\Http\Livewire\Settings\RegionsComponent;
+use App\Http\Livewire\Settings\CountiesComponent;
+use App\Http\Livewire\Settings\DistrictsComponent;
+use App\Http\Livewire\Settings\SubCountiesComponent;
 use App\Http\Livewire\Dashboard\MainDashboardComponent;
 use App\Http\Livewire\UserManagement\UserProfileComponent;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Livewire\Facility\FacilityComponent;
+use App\Http\Livewire\Facility\Visits\FacilityVisitDetailsComponent;
+use App\Http\Livewire\Facility\Visits\FacilityVisitsComponent;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,7 +47,17 @@ Route::group(['middleware' => ['auth', 'password_expired', 'suspended_user']], f
       Route::get('/manage', function () {
         return view('admin.dashboard');
       })->middleware(['auth', 'verified'])->name('admin-dashboard');
-
+      Route::group(['prefix' => 'manage'], function () {
+      Route::get('regions', RegionsComponent::class)->name('regions');
+      Route::get('districts', DistrictsComponent::class)->name('districts');
+      Route::get('counties', CountiesComponent::class)->name('county');
+      Route::get('sub-counties', SubCountiesComponent::class)->name('sub-county');
+      });
+      Route::group(['prefix' => 'facility'], function () {
+        Route::get('list', FacilityComponent::class)->name('facility');
+        Route::get('visits', FacilityVisitsComponent::class)->name('facility-visits');
+        Route::get('details/{code}', FacilityVisitDetailsComponent::class)->name('facility-visit_details');
+      });
       require __DIR__.'/user_mgt.php';
     });
   });

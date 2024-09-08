@@ -23,7 +23,7 @@
 <body>
 
 <div id="body" class="theme-green">
-    <div class="auth-main" style="background-image: url('{{ asset('images/snail_loading.gif') }}'); background-repeat:no-repeat; background-size:100% 100%;">
+    <div class="auth-main">
         <div class="auth_div vivify fadeIn">
             <div class="auth_brand">
             </div>

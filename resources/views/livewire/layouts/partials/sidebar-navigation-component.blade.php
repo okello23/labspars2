@@ -44,9 +44,10 @@
 
               <li>
                 <a href="#Payments" class="has-arrow"><i class="fa fa-dot-circle-o"></i>
-                  <span>Data Entry</span></a>
+                  <span>Facility Entry</span></a>
                   <ul>
-                    <li><a href="#">New Entry</a></li>
+                    <li><a href="{{ route('facility') }}">Facilities</a></li>
+                    <li><a href="{{ route('facility-visits') }}">Facility Visits</a></li>
                     <li><a href="#">Submitted Forms</a></li>
               </ul>
             </li>
@@ -68,6 +69,18 @@
                     <li><a href="#">League Table</a></li>
                     <li><a href="#">Facility Performance</a></li>
                   </ul>
+                  <li>
+                    <a href="#Room" class="has-arrow"><i class="fa fa-cog"></i><span>System Settings</span></a>
+                    <ul>
+                      {{-- <li><a href="room-allotment.html">Diseases</a></li> --}}
+                      {{-- <li><a href="{{ route('facilities') }}">Facilities</a></li> --}}
+                      {{-- <li><a href="{{ route('village') }}">Villages</a></li> --}}
+                      {{-- <li><a href="{{ route('parish') }}">Parishes</a></li> --}}
+                      <li><a href="{{ route('sub-county') }}">Sub Counties</a></li>
+                      <li><a href="{{ route('county') }}">Counties</a></li>
+                      <li><a href="{{ route('districts') }}">Districts</a></li>
+                    </ul>
+                  </li>
                 </li>
 
                         @if (Auth::user()->hasPermission(['access_user_management']))

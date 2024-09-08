@@ -1,23 +1,25 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Settings;
 
+use App\Models\District;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class District extends Model
+class County extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory;
+    use HasFactory,LogsActivity;
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
             ->logOnly(['*'])
             ->logFillable()
-            ->useLogName('Districts')
+            ->useLogName('Counties')
             ->dontLogIfAttributesChangedOnly(['updated_at'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
@@ -25,8 +27,10 @@ class District extends Model
     }
     protected $fillable = [
         'name',
-        'dhis2_code',
-        'code',
+        'description',
+        'type_id',
+        'created_by',
+       'is_active',
     ];
 
     public static function boot()
@@ -43,7 +47,11 @@ class District extends Model
     {
         return empty($search) ? static::query()
         : static::query()
-            ->where('name', 'like', '%' . $search . '%');
+            ->where('name', 'like', '%'.$search.'%');
     }
-    protected $table = 'districts';
+    public function district()
+    {
+        return $this->belongsTo(District::class, 'district_id', 'id');
+    }
+
 }

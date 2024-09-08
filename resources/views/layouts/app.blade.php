@@ -34,8 +34,7 @@
         <!-- Page Loader -->
         <div class="page-loader-wrapper">
             <div class="loader">
-                <!-- <div class="mt-3"><img src="{{ asset('/images/moh.png') }}" width="100" height="100" alt=""> -->
-                <div class="mt-3"><img src="{{ asset('/images/dna-hd.png') }}" width="80" height="100" alt="">
+                <div  class="mt-3"><img src="{{ asset('images/loader') }}" width="80" height="100" alt="">
                 </div>
                 <p>Please wait...</p>
             </div>
