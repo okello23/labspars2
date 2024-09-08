@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Settings\Region;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +30,10 @@ class District extends Model
         'code',
     ];
 
+    public function region()
+    {
+        return $this->belongsTo(Region::class, 'region_id', 'id');
+    }
     public static function boot()
     {
         parent::boot();

@@ -25,6 +25,7 @@ return new class extends Migration
             $table->boolean('use_stock_cards')->default(false);
             $table->date('date_of_visit');
             $table->date('date_of_next_visit');
+            $table->text('consumption_reconciliation')->nullable();
             $table->timestamps();
         });
     }

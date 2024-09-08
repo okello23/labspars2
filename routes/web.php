@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Livewire\Facility\FacilityComponent;
 use App\Http\Livewire\Facility\Visits\FacilityVisitDetailsComponent;
 use App\Http\Livewire\Facility\Visits\FacilityVisitsComponent;
+use App\Http\Livewire\Facility\Visits\FacilityVisitViewComponent;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,7 +57,8 @@ Route::group(['middleware' => ['auth', 'password_expired', 'suspended_user']], f
       Route::group(['prefix' => 'facility'], function () {
         Route::get('list', FacilityComponent::class)->name('facility');
         Route::get('visits', FacilityVisitsComponent::class)->name('facility-visits');
-        Route::get('details/{code}', FacilityVisitDetailsComponent::class)->name('facility-visit_details');
+        Route::get('visit/{code}/details', FacilityVisitDetailsComponent::class)->name('facility-visit_details');
+        Route::get('visit/{code}/view', FacilityVisitViewComponent::class)->name('facility-visit_view');
       });
       require __DIR__.'/user_mgt.php';
     });

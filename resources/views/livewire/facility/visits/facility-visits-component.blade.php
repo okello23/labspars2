@@ -121,6 +121,14 @@
                                                     data-target="#addUpdateRecord">
                                                     <i class="fa fa-edit"></i>
                                                 </button>
+                                                <a href="{{ URL::signedRoute('facility-visit_view', $facilityvisit->visit_code) }}" 
+                                                    class="action-ico btn btn-sm btn-success mx-1" >
+                                                    <i class="fa fa-eye"></i>
+                                                </a>
+                                                <a href="{{ URL::signedRoute('facility-visit_details', $facilityvisit->visit_code) }}" 
+                                                    class="action-ico btn btn-sm btn-success mx-1" >
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
                                             </td>
                                         </tr>
                                     @endforeach
