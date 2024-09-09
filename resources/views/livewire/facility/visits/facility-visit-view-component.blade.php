@@ -6,8 +6,8 @@
         <!-- Persons Supervised -->
         <div class="card-body">
             <div>
-                <h2>Persons Supervised</h2>
-                <table>
+                <h4>Persons Supervised</h4>
+                <table class="table" style="width: 100%">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -19,148 +19,157 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td><input type="text" name="supervised_name_1"></td>
-                            <td><input type="text" name="supervised_sex_1"></td>
-                            <td><input type="text" name="supervised_profession_1"></td>
-                            <td><input type="text" name="supervised_phone_1"></td>
-                            <td><input type="email" name="supervised_email_1"></td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td><input type="text" name="supervised_name_2"></td>
-                            <td><input type="text" name="supervised_sex_2"></td>
-                            <td><input type="text" name="supervised_profession_2"></td>
-                            <td><input type="text" name="supervised_phone_2"></td>
-                            <td><input type="email" name="supervised_email_2"></td>
-                        </tr>
+        
+                        @forelse ($supervised_persons as $key => $supervised_person)
+                            <tr>
+                                <td>{{ $key + 1 }}</td>
+                                <td>{{ $supervised_person->name }}</td>
+                                <td>{{ $supervised_person->sex ?? 'N/A' }}</td>
+                                <td>{{ $supervised_person->profession ?? 'N/A' }}</td>
+                                <td>{{ $supervised_person->contact }}</td>
+                                <td>{{ $supervised_person->email }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td class="text-center" colspan="5">No Persons Supervised Records</td>
+                            </tr>
+                        @endforelse
                         <!-- Add more rows as needed -->
                     </tbody>
                 </table>
             </div>
-
+        
             <!-- Supervisors -->
             <div>
-                <h2>Supervisors</h2>
-                <table>
+                <h4>Supervisors</h4>
+                <table class="table" style="width: 100%">
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Name</th>
-                            <th>Contact/Phone No.</th>
                             <th>Title</th>
+                            <th>Name</th>
+                            <th>Phone No.</th>
+                            <th>Email</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td><input type="text" name="supervisor_name_1"></td>
-                            <td><input type="text" name="supervisor_phone_1"></td>
-                            <td><input type="text" name="supervisor_title_1"></td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td><input type="text" name="supervisor_name_2"></td>
-                            <td><input type="text" name="supervisor_phone_2"></td>
-                            <td><input type="text" name="supervisor_title_2"></td>
-                        </tr>
+                        @forelse ($supervisors as $key => $supervisor)
+                            <tr>
+                                <td>{{ $key + 1 }}</td>
+                                <td>{{ $supervisor->title ?? 'N/A' }}</td>
+                                <td>{{ $supervisor->name }}</td>
+                                <td>{{ $supervisor->contact }}</td>
+                                <td>{{ $supervisor->email }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td class="text-center" colspan="5">No Supervisor Records</td>
+                            </tr>
+                        @endforelse
                         <!-- Add more rows as needed -->
                     </tbody>
-                </table>
+                </table>          
             </div>
-
+            <hr>
             <!-- Storage Details -->
             <div>
-                <h2>Laboratory Supply Storage</h2>
-                <h3>D1: Where are Laboratory supplies MAINLY stored in the facility?</h3>
-                <table>
+                <h4>Laboratory Supply Storage</h4>
+                <h5>D1: Where are Laboratory supplies MAINLY stored in the facility?</h5>
+                <table class="table" style="width: 100%">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th>Store</th>
-                            <th>Tick (✔)</th>
                             <th>Comment</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Main store</td>
-                            <td><input type="checkbox" name="main_store"></td>
-                            <td><input type="text" name="main_store_comment"></td>
-                        </tr>
-                        <tr>
-                            <td>Laboratory store</td>
-                            <td><input type="checkbox" name="lab_store"></td>
-                            <td><input type="text" name="lab_store_comment"></td>
-                        </tr>
-                        <tr>
-                            <td>Pharmacy store</td>
-                            <td><input type="checkbox" name="pharmacy_store"></td>
-                            <td><input type="text" name="pharmacy_store_comment"></td>
-                        </tr>
+                        @forelse ($supply_storages->where('entry_type', 'Main Store') as $key=>$mainStorage)
+                            <tr>
+                                <td>{{ $key + 1 }}</td>
+                                <td>{{ $mainStorage->storageType?->name }}</td>
+                                <td title="{{ $mainStorage->comment }}">{{ Str::words($mainStorage->comment, 30, '...') }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3">No Laboratory supplies MAINLY stored in the facility</td>
+        
+                            </tr>
+                        @endforelse
+        
                         <!-- Add more rows as needed -->
                     </tbody>
                 </table>
-
-                <h3>D2: Where ELSE are Laboratory supplies stored in the facility?</h3>
-                <table>
+        
+                <h5>D2: Where ELSE are Laboratory supplies stored in the facility?</h5>
+                <table class="table" style="width: 100%">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th>Store</th>
-                            <th>Tick (✔)</th>
                             <th>Comment</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Main store</td>
-                            <td><input type="checkbox" name="else_main_store"></td>
-                            <td><input type="text" name="else_main_store_comment"></td>
-                        </tr>
-                        <tr>
-                            <td>Laboratory store</td>
-                            <td><input type="checkbox" name="else_lab_store"></td>
-                            <td><input type="text" name="else_lab_store_comment"></td>
-                        </tr>
+                        @forelse ($supply_storages->where('entry_type', 'Other Store') as $key=>$otherStorage)
+                            <tr>
+                                <td>{{ $key + 1 }}</td>
+                                <td>{{ $otherStorage->storageType?->name }}</td>
+                                <td title="{{ $otherStorage->comment }}">{{ Str::words($otherStorage->comment, 30, '...') }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center">No Laboratory supplies ELSE stored in the facility</td>
+        
+                            </tr>
+                        @endforelse
+        
                         <!-- Add more rows as needed -->
                     </tbody>
                 </table>
             </div>
-
             <!-- Stock Cards -->
+            <hr>
             <div>
-                <h2>Stock Cards</h2>
-                <h3>D3: Does the facility use stock cards to track the use of laboratory supplies?</h3>
-                <label>Yes <input type="radio" name="uses_stock_cards" value="yes"></label>
-                <label>No <input type="radio" name="uses_stock_cards" value="no"></label>
-
-                <h3>D4: Where are stock cards kept in the facility?</h3>
-                <table>
+                <h4>Stock Cards</h4>
+                <h5>D3: Does the facility use stock cards to track the use of laboratory supplies?</h5>
+                <label>Yes <input type="radio" class="form-control" wire:model='use_stock_cards' name="uses_stock_cards"
+                        value="1"></label>
+                <label>No <input type="radio" class="form-control" wire:model='use_stock_cards' name="uses_stock_cards"
+                        value="0"></label>
+        
+                <h5>D4: Where are stock cards kept in the facility?</h5>
+                <table class="table" style="width: 100%">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th>Store</th>
-                            <th>Tick (✔)</th>
                             <th>Comment</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Main store</td>
-                            <td><input type="checkbox" name="stock_main_store"></td>
-                            <td><input type="text" name="stock_main_store_comment"></td>
-                        </tr>
-                        <tr>
-                            <td>Laboratory store</td>
-                            <td><input type="checkbox" name="stock_lab_store"></td>
-                            <td><input type="text" name="stock_lab_store_comment"></td>
-                        </tr>
+                        @forelse ($supply_storages->where('entry_type', 'Card Store') as $key=>$cardStorage)
+                            <tr>
+                                <td>{{ $key + 1 }}</td>
+                                <td>{{ $cardStorage->storageType?->name }}</td>
+                                <td title="{{ $cardStorage->comment }}">{{ Str::words($cardStorage->comment, 30, '...') }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center">No stock cards kept in the facility </td>
+        
+                            </tr>
+                        @endforelse
+        
                         <!-- Add more rows as needed -->
                     </tbody>
-                </table>
-
-                <h3>D5: If stock cards are kept in multiple places, how is the consumption reconciled with the main
-                    store/stock card?</h3>
-                <textarea name="reconciliation_comments" rows="3" cols="80"></textarea>
+                </table>        
+                <h5>D5: If stock cards are kept in multiple places, how is the consumption reconciled with the main
+                    store/stock card?</h5>
+                <textarea name="reconciliation_comments" wire:model.lazy='consumption_reconciliation' class="form-control"></textarea>
             </div>
         </div>
     </div>

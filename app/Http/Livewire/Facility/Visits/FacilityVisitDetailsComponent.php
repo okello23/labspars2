@@ -26,8 +26,8 @@ class FacilityVisitDetailsComponent extends Component
     {
         $this->code = $code;
         $this->active_visit = FacilityVisit::where('visit_code', $code)->with(['facility', 'facility.district', 'facility.subcounty'])->first();
-        $this->consumption_reconciliation = $this->active_visit->consumption_reconciliation??null;
-        $this->use_stock_cards = $this->active_visit->use_stock_cards??0;
+        $this->consumption_reconciliation = $this->active_visit->consumption_reconciliation ?? null;
+        $this->use_stock_cards = $this->active_visit->use_stock_cards ?? 0;
         if (!$this->step) {
             $this->step = 1;
         }
@@ -40,7 +40,7 @@ class FacilityVisitDetailsComponent extends Component
             'contact' => 'required|numeric',
             'sex' => 'required|string',
             'email' => 'required|email',
-            'profession'=> 'required|string',
+            'profession' => 'required|string',
 
         ]);
 
@@ -62,7 +62,7 @@ class FacilityVisitDetailsComponent extends Component
             'name' => 'required|string',
             'contact' => 'required|numeric',
             'email' => 'required|email',
-            'title'=> 'required|string',
+            'title' => 'required|string',
 
         ]);
 
@@ -83,7 +83,7 @@ class FacilityVisitDetailsComponent extends Component
             'name' => 'nullable|string',
             'comment' => 'required|string',
             'storage_type' => 'required|string',
-            'storage_type_id'=> 'required|integer',
+            'storage_type_id' => 'required|integer',
 
         ]);
 
@@ -103,7 +103,7 @@ class FacilityVisitDetailsComponent extends Component
         // Check if $value is not empty and if the relationship is valid
         if ($value && $this->active_visit && $this->active_visit->consumption_reconciliation) {
             $this->active_visit->update([
-                'consumption_reconciliation' => $value
+                'consumption_reconciliation' => $value,
             ]);
             $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Comment successfully updated!']);
         }
@@ -113,13 +113,14 @@ class FacilityVisitDetailsComponent extends Component
         // Check if $value is not empty and if the relationship is valid
         if ($this->active_visit && $this->active_visit->use_stock_cards) {
             $this->active_visit->update([
-                'use_stock_cards' => $value
+                'use_stock_cards' => $value,
             ]);
             $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Stock card successfully updated!']);
         }
     }
 
-    public function resetInputs(){
+    public function resetInputs()
+    {
         $this->reset([
             'name',
             'contact',
@@ -135,13 +136,7 @@ class FacilityVisitDetailsComponent extends Component
     {
         $this->resetInputs();
     }
-    public function stepOne()
-    {
-      
-      
-        $data['supply_storages'] = collect([]);
-        $data['stock_card_storages'] = collect([]);
-    }
+
     public function render()
     {
         $data['supervised_persons'] = collect([]);
@@ -152,7 +147,7 @@ class FacilityVisitDetailsComponent extends Component
             $data['supervised_persons'] = FvPersonsSupervised::where('visit_id', $this->active_visit->id)->get();
             $data['supervisors'] = FvSupervisor::where('visit_id', $this->active_visit->id)->get();
             $data['supply_storages'] = FvStorageManagement::where('visit_id', $this->active_visit->id)->with('storageType')->get();
-    }
+        }
         $data['storageTypes'] = FvStorageType::where('is_active', true)->get();
         return view('livewire.facility.visits.facility-visit-details-component', $data);
     }
