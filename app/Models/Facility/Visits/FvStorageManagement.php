@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Models\Facility;
+namespace App\Models\Facility\Visits;
 
+use App\Models\Facility\FvStorageType;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class FvStorageType extends Model
+class FvStorageManagement extends Model
 {
     use HasFactory, LogsActivity;
 
@@ -17,19 +18,22 @@ class FvStorageType extends Model
         return LogOptions::defaults()
             ->logOnly(['*'])
             ->logFillable()
-            ->useLogName('Storage Types')
+            ->useLogName('Storage management')
             ->dontLogIfAttributesChangedOnly(['updated_at'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
         // Chain fluent methods for configuration options
     }
     protected $fillable = [
-        'name',
-        'description',
-        'is_active',
+        'other',
+        'comment',
+        'storage_type_id',
     ];
 
-  
+    public function storageType()
+    {
+      return $this->belongsTo(FvStorageType::class, 'storage_type_id', 'id');
+    }
     public static function boot()
     {
         parent::boot();
@@ -44,10 +48,5 @@ class FvStorageType extends Model
         }
     }
 
-    public static function search($search)
-    {
-        return empty($search) ? static::query()
-        : static::query()
-            ->where('name', 'like', '%' . $search . '%');
-    }
+
 }

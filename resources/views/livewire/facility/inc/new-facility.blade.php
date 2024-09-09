@@ -93,7 +93,7 @@
                                     <option value='1'>Active</option>
                                     <option value='0'>Inactive</option>
                                 </select>
-                                @error('status')
+                                @error('is_active')
                                     <div class="text-danger text-small">{{ $message }}</div>
                                 @enderror
                             </div>

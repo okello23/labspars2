@@ -36,7 +36,7 @@
                             </div>
                         </div>
                     </div>
-
+                    @if($step == 1)
                     <div class="row setup-content {{ $step != 1 ? 'display-none' : '' }}" id="step-1">
 
                         <div class="col-md-12">
@@ -59,7 +59,8 @@
                             </div>
                         </div>
                     </div>
-                    @if($step == 1)
+                    @endif
+                    @if($step == 2)
                     <div class="row setup-content {{ $step != 2 ? 'display-none' : '' }}" id="step-2">
                         <div class="col-md-12">
                             <div class="border border-success rounded">
@@ -78,7 +79,7 @@
                         </div>
                     </div>
                     @endif
-                    @if($step == 2)
+                    @if($step == 3)
                     <div class="row setup-content {{ $step != 3 ? 'display-none' : '' }}" id="step-3">
                         <div class="col-md-12">
                             <div class="border border-success rounded">
@@ -99,7 +100,7 @@
                         </div>
                     </div>
                     @endif
-                    @if($step == 3)
+                    @if($step == 4)
                     <div class="row setup-content {{ $step != 4 ? 'display-none' : '' }} overflow-auto"
                         id="step-4">
                         <div class="col-md-12">
@@ -122,7 +123,7 @@
                         </div>
                     </div>
                     @endif
-                    @if($step == 4)
+                    @if($step == 5)
                     <div class="row setup-content {{ $step != 5 ? 'display-none' : '' }} overflow-auto"
                         id="step-5">
                         <div class="col-md-12">
