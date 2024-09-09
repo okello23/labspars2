@@ -72,7 +72,7 @@
                   <li>
                     <a href="#Room" class="has-arrow"><i class="fa fa-cog"></i><span>System Settings</span></a>
                     <ul>
-                      {{-- <li><a href="room-allotment.html">Diseases</a></li> --}}
+                      <li><a href="{{ route('store-types')}}">Storage Types</a></li>
                       {{-- <li><a href="{{ route('facilities') }}">Facilities</a></li> --}}
                       {{-- <li><a href="{{ route('village') }}">Villages</a></li> --}}
                       {{-- <li><a href="{{ route('parish') }}">Parishes</a></li> --}}

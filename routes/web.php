@@ -13,6 +13,7 @@ use App\Http\Livewire\Facility\FacilityComponent;
 use App\Http\Livewire\Facility\Visits\FacilityVisitDetailsComponent;
 use App\Http\Livewire\Facility\Visits\FacilityVisitsComponent;
 use App\Http\Livewire\Facility\Visits\FacilityVisitViewComponent;
+use App\Http\Livewire\Settings\StoreTypeComponent;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +54,7 @@ Route::group(['middleware' => ['auth', 'password_expired', 'suspended_user']], f
       Route::get('districts', DistrictsComponent::class)->name('districts');
       Route::get('counties', CountiesComponent::class)->name('county');
       Route::get('sub-counties', SubCountiesComponent::class)->name('sub-county');
+      Route::get('store/types', StoreTypeComponent::class)->name('store-types');
       });
       Route::group(['prefix' => 'facility'], function () {
         Route::get('list', FacilityComponent::class)->name('facility');

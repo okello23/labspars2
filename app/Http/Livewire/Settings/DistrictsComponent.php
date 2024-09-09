@@ -7,7 +7,8 @@ use App\Models\District;
 use Livewire\WithPagination;
 
 class DistrictsComponent extends Component
-{ use WithPagination;
+{ 
+    use WithPagination;
     //Filters
     public $from_date;
 
