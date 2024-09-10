@@ -3,9 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use App\Http\Livewire\Settings\RegionsComponent;
-use App\Http\Livewire\Settings\CountiesComponent;
 use App\Http\Livewire\Settings\DistrictsComponent;
-use App\Http\Livewire\Settings\SubCountiesComponent;
+use App\Http\Livewire\Settings\HealthFacilitiesComponent;
+use App\Http\Livewire\Settings\HealthSubDistrictsComponent;
 use App\Http\Livewire\Dashboard\MainDashboardComponent;
 use App\Http\Livewire\UserManagement\UserProfileComponent;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -52,8 +52,8 @@ Route::group(['middleware' => ['auth', 'password_expired', 'suspended_user']], f
       Route::group(['prefix' => 'manage'], function () {
       Route::get('regions', RegionsComponent::class)->name('regions');
       Route::get('districts', DistrictsComponent::class)->name('districts');
-      Route::get('counties', CountiesComponent::class)->name('county');
-      Route::get('sub-counties', SubCountiesComponent::class)->name('sub-county');
+      Route::get('health-sub-districts', HealthSubDistrictsComponent::class)->name('health-sub-districts');
+      Route::get('health-facilities', HealthFacilitiesComponent::class)->name('health-facilities');
       Route::get('store/types', StoreTypeComponent::class)->name('store-types');
       });
       Route::group(['prefix' => 'facility'], function () {
