@@ -20,15 +20,15 @@ class FacilityVisitViewComponent extends Component
     public function mount($code)
     {
         $this->code = $code;
-        $this->active_visit = FacilityVisit::where('visit_code', $code)->with(['facility', 'facility.district', 'facility.subcounty'])->first();
+        $this->active_visit = FacilityVisit::where('visit_code', $code)->with(['facility', 'facility.district'])->first();
         $this->consumption_reconciliation = $this->active_visit->consumption_reconciliation ?? null;
         $this->use_stock_cards = $this->active_visit->use_stock_cards ?? 0;
         if(!$this->step){
             $this->step = 1;
         }
 
-    } 
-   
+    }
+
     public function close()
     {
         // $this->resetInputs();

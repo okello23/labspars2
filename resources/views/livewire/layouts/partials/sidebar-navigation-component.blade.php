@@ -3,7 +3,7 @@
   <a href="javascript:void(0);" class="menu_toggle"><i class="fa fa-angle-left"></i></a>
   <div class="navbar-brand" style="text-align: center;">
     <a href="{{ route('home') }}"><img src="{{ asset('/images/moh.png') }}" width="100px" alt="Genomics"></a>
-    <h6 style="text-align:center" title="CPHL Genomics Laboratory Information Management System">Ministry Of Health<br>Lab Spars</h6><hr>
+    <h6 style="text-align:center" title="CPHL Genomics Laboratory Information Management System">Ministry Of Health<br>Lab SPARS</h6><hr>
     <button type="button" class="btn-toggle-offcanvas btn btn-sm float-right"><i class="fa fa-close"></i></button>
   </div>
   <div class="sidebar-scroll" style="overflow-y: auto;">
@@ -73,12 +73,10 @@
                     <a href="#Room" class="has-arrow"><i class="fa fa-cog"></i><span>System Settings</span></a>
                     <ul>
                       <li><a href="{{ route('store-types')}}">Storage Types</a></li>
-                      {{-- <li><a href="{{ route('facilities') }}">Facilities</a></li> --}}
-                      {{-- <li><a href="{{ route('village') }}">Villages</a></li> --}}
-                      {{-- <li><a href="{{ route('parish') }}">Parishes</a></li> --}}
-                      <li><a href="{{ route('sub-county') }}">Sub Counties</a></li>
-                      <li><a href="{{ route('county') }}">Counties</a></li>
                       <li><a href="{{ route('districts') }}">Districts</a></li>
+                      <li><a href="{{ route('sub-county') }}">Health Facilities</a></li>
+                      <li><a href="{{ route('store-types')}}">Facility Ownership</a></li>
+                      <li><a href="{{ route('sub-county') }}">Health Sub Districts</a></li>
                     </ul>
                   </li>
                 </li>

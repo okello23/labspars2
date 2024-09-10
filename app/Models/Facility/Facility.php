@@ -35,7 +35,7 @@ class Facility extends Model
         if (Auth::check()) {
             self::creating(function ($model) {
                 $model->created_by = auth()->id();
-            });  
+            });
             self::updating(function ($model) {
                 $model->updated_by = auth()->id();
             });
@@ -45,44 +45,16 @@ class Facility extends Model
     protected $fillable = [
             'name',
             'level',
-            'ip',
-            'parent_id',
-            'dhis2_facility_name',
-            'dhis2_facility_code',
             'ownership',
-            'clinician_contact',
-            'email',
-            'is_hub',
-            'is_training_partner',
-            'details_sent',
-            'district_id',
             'sub_district_id',
     ];
-
-    public function subcounty()
-    {
-      return $this->belongsTo(SubCounty::class, 'sub_district_id', 'id');
-    }
 
     public function district()
     {
       return $this->belongsTo(District::class, 'district_id', 'id');
     }
 
-    // public function district()
-    // {
-    //     return $this->belongsTo(District::class, 'district_id', 'id');
-    // }
 
-    public function county()
-    {
-        return $this->belongsTo(County::class, 'county_id', 'id');
-    }
-
-    // public function subcounty()
-    // {
-    //     return $this->belongsTo(SubCounty::class, 'sub_county_id', 'id');
-    // }
 
     public function parish()
     {

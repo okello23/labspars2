@@ -3,7 +3,7 @@
 
 <head>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'Lab Spars') }}|@yield('title')</title>
+    <title>{{ config('app.name', 'Lab SPARS') }}|@yield('title')</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
@@ -34,7 +34,7 @@
         <!-- Page Loader -->
         <div class="page-loader-wrapper">
             <div class="loader">
-                <div  class="mt-3"><img src="{{ asset('images/loader') }}" width="80" height="100" alt="">
+                <div  class="mt-3"><img src="{{ asset('images/snail_loading.gif') }}" width="100" height="100" alt="">
                 </div>
                 <p>Please wait...</p>
             </div>

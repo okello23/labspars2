@@ -7,7 +7,7 @@ use App\Models\District;
 use Livewire\WithPagination;
 
 class DistrictsComponent extends Component
-{ 
+{
     use WithPagination;
     //Filters
     public $from_date;
@@ -20,9 +20,9 @@ class DistrictsComponent extends Component
 
     public $search = '';
 
-    public $orderBy = 'id';
+    public $orderBy = 'name';
 
-    public $orderAsc = 0;
+    public $orderAsc = 1;
 
     public $name;
 
@@ -161,6 +161,7 @@ class DistrictsComponent extends Component
 
     public function render()
     {
+
         $data['districts'] = District::search($this->search)
         ->orderBy($this->orderBy, $this->orderAsc ? 'asc' : 'desc')
         ->paginate($this->perPage);

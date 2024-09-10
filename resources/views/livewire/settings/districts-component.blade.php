@@ -1,197 +1,98 @@
-<div>
+{{-- If you look to others for fulfillment, you will never truly be fulfilled. --}}
+@section('title', 'Districts')
+<div class="row">
 
-    @section('title', 'Districts')
-    @include('livewire.layouts.partials.inc.create-resource')
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header pt-0">
-                    <div class="row mb-2">
-                        <div class="col-sm-12 mt-3">
-                            <div class="d-sm-flex align-items-center">
-                                <h5 class="mb-2 mb-sm-0">
-                                    @if (!$toggleForm)
-                                        Districts (<span class="text-danger fw-bold">{{ $districts->total() }}</span>)
-                                        @include('livewire.layouts.partials.inc.filter-toggle')
-                                    @else
-                                        Edit value
-                                    @endif
+  <div class="info-box" style="float:left; width: 100%; overflow-x: auto;  overflow-y: auto;">
+    <div class="info-box-content">
+      <h4>Districts (<span class="text-danger fw-bold">{{ $districts->total() }}</span>)</h4>
+      <div class="progress">
+        <div class="progress-bar bg-info" style="width: 100%; height: 25%; "></div>
+      </div>
+      <span class="progress-description">
+        <div class="table-responsive">
 
-                                </h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="tab-content">
-                        <div class="row mb-0" @if (!$filter) hidden @endif>
-                            <h6>Filter Users</h6>
-
-                            <div class="mb-3 col-md-3">
-                                <label for="user_status" class="form-label">Status</label>
-                                <select wire:model="user_status" class="form-control select2" id="user_status">
-                                    <option value="">Select</option>
-                                    <option value="1">Active</option>
-                                    <option value="0">Suspended</option>
-                                </select>
-                            </div>
-
-                        </div>
-                        <div class="row mb-0">
-
-
-                            <div class="mb-3 col-md-2">
-                                <label for="from_date" class="form-label">From Date</label>
-                                <input id="from_date" type="date" class="form-control"
-                                    wire:model.lazy="from_date">
-                            </div>
-
-                            <div class="mb-3 col-md-2">
-                                <label for="to_date" class="form-label">To Date</label>
-                                <input id="to_date" type="date" class="form-control" wire:model.lazy="to_date">
-                            </div>
-
-                            <div class="mb-3 col-md-2">
-                                <label for="perPage" class="form-label">Per Page</label>
-                                <select wire:model="perPage" class="form-control" id="perPage">
-                                    <option value="10">10</option>
-                                    <option value="20">20</option>
-                                    <option value="30">30</option>
-                                    <option value="50">50</option>
-                                    <option value="100">100</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3 col-md-2">
-                                <label for="orderBy" class="form-label">OrderBy</label>
-                                <select wire:model="orderBy" class="form-control">
-                                    <option value="name">Name</option>
-                                    <option value="id">Latest</option>
-                                    <option value="is_active">Status</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3 col-md-1">
-                                <label for="orderAsc" class="form-label">Order</label>
-                                <select wire:model="orderAsc" class="form-control" id="orderAsc">
-                                    <option value="1">Asc</option>
-                                    <option value="0">Desc</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3 col-md-3">
-                                <label for="search" class="form-label">Search</label>
-                                <input id="search" type="text" class="form-control"
-                                    wire:model.debounce.300ms="search" placeholder="search">
-                            </div>
-                            <hr>
-                        </div>
-
-                        <div class="table-responsive">
-                            <table id="datableButton" class="table table-striped table-bordered mb-0 w-100 sortable">
-                                <thead>
-                                    <tr>
-                                        <th>No.</th>
-                                        <th>Name</th>
-                                        <th>DHIS2 Code</th>
-                                        <th>Created at</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($districts as $key => $value)
-                                        <tr>
-                                            <td>{{ $key + 1 }}</td>
-                                            <td>{{ $value->name }}</td>
-                                            <td>{{ $value->code }}</td>
-
-                                            <td>{{ date('d-m-Y', strtotime($value->created_at)) }}</td>
-                                            <td>
-                                                <button wire:click="editData({{ $value->id }})" class="action-ico btn btn-sm btn-success mx-1" data-toggle="modal" data-target="#addUpdateRecord">
-                                                    <i class="fa fa-edit"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div> <!-- end preview-->
-                        <div class="row mt-4">
-                            <div class="col-md-12">
-                                <div class="btn-group float-right">
-                                    {{ $districts->links('vendor.livewire.bootstrap') }}
-                                </div>
-                            </div>
-                        </div>
-                    </div> <!-- end tab-content-->
-                </div> <!-- end card body-->
-            </div> <!-- end card -->
-        </div><!-- end col-->
-    </div>
-    <div wire:ignore.self  class="modal fade" id="addUpdateRecord" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="defaultModalLabel">
-                      @if (!$toggleForm)
-                      Add District
-                      @else
-                      Update District
-                      @endif
-                      </h5>
-                </div>
-                <form  @if ($toggleForm) wire:submit.prevent="updatevalue" @else wire:submit.prevent="storevalue" @endif >
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="mb-3 col-md-12">
-                                <label for="name" class="form-label required">Name</label>
-                                <input type="text" id="name" class="form-control" name="name" required
-                                    wire:model.defer="name">
-                                @error('name')
-                                    <div class="text-danger text-small">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="mb-3 col-md-6">
-                                <label for="code" class="form-label required">Code</label>
-                                <input type="text" id="name" class="form-control" name="code" required
-                                    wire:model.defer="code">
-                                @error('code')
-                                    <div class="text-danger text-small">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="mb-3 col-md-6">
-                                <label for="dhis2_code" class="form-label required">DHIS2 Code</label>
-                                <input type="text" id="dhis2_code" class="form-control" name="dhis2_code" required
-                                    wire:model.defer="dhis2_code">
-                                @error('dhis2_code')
-                                    <div class="text-danger text-small">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal" wire:click="close()" >{{ __('close') }}</button>
-                        @if($toggleForm)
-                        <x-button type="submit"  class="btn-success btn-sm">{{ __('Update') }}</x-button>
-                         @else
-                         <x-button type="submit"  class="btn-success btn-sm">{{ __('Save') }}</x-button>
-                         @endif
-                    </div><!--end modal-footer-->
-                </form>
-
+          <x-table-utilities>
+            <div class="md-3">
+              <div class="mb-1  col-md-12">
+                <label for="result_type" class="form-label">Health Sub Region</label>
+                <select class="form-control" wire:model="result_type">
+                  <option value="">View all results</option>
+                  <option value="0">Pending release</option>
+                  <option value="1">Released results</option>
+                  <option value="2">Recalled results</option>
+                  <option value="3">Reviewed results</option>
+                  <option value="4">Retained results</option>
+                </select>
+              </div>
             </div>
+
+          </x-table-utilities>
+
+          <div class="table-responsive">
+            <table class="table table-sm table-striped table-bordered mb-0 w-100 sortable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Created at</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                @foreach ($districts as $key => $value)
+                <tr>
+                  <td>{{ $key + 1 }}</td>
+                  <td>{{ $value->name }}</td>
+
+                  <td>{{ date('d-m-Y', strtotime($value->created_at)) }}</td>
+                  <td>
+                    <button wire:click="editData({{ $value->id }})" class="action-ico btn btn-sm btn-success mx-1" data-toggle="modal" data-target="#addUpdateRecord">
+                      <i class="fa fa-edit"></i>
+                    </button>
+                  </td>
+                </tr>
+                @endforeach
+              </tbody>
+            </table>
+          </div>
+          <div class="row mt-4">
+            <div class="col-md-12">
+              <div class="btn-group float-end">
+              {{ $districts->links('vendor.livewire.bootstrap') }}
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+
     @push('scripts')
-            <script>
-                window.addEventListener('close-modal', event => {
-                    $('#addUpdateRecord').modal('hide');
-                    $('#delete_modal').modal('hide');
-                    $('#show-delete-confirmation-modal').modal('hide');
-                });
-                window.addEventListener('delete-modal', event => {
-                    $('#delete_modal').modal('show');
-                });
-            </script>
+
+    <script>
+      window.addEventListener('close-modal', event => {
+        $('#resultsDetailModal').modal('hide');
+        $('#recallResultModal').modal('hide');
+        $('#confirmResultRelease').modal('hide');
+        $('#viewResultsOption').modal('hide');
+      });
+
+      window.addEventListener('recall-result-modal', event => {
+        $('#recallResultModal').modal('show');
+      });
+
+      window.addEventListener('view-result-modal', event => {
+        $('#resultsDetailModal').modal('show');
+      });
+
+      window.addEventListener('confirm-result-release', event => {
+        $('#confirmResultRelease').modal('show');
+      });
+
+      window.addEventListener('view-result-options', event => {
+        $('#viewResultsOption').modal('show');
+      });
+
+    </script>
     @endpush
-</div>
+  </div>

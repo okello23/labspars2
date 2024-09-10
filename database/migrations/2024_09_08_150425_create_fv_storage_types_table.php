@@ -26,12 +26,12 @@ return new class extends Migration
         });
         DB::statement("
         INSERT INTO `fv_storage_types` (`id`, `name`, `is_active`, `created_at`, `updated_at`, `description`, `updated_by`, `created_by`) VALUES
-        (1, 'Main store', 1, '2024-09-08 18:49:42', '2024-09-08 18:49:42', 'jwqnsq  snqs q', NULL, NULL),
-        (2, 'Laboratory store', 1, '2024-09-08 18:57:52', '2024-09-08 18:57:52', 'Laboratory store', NULL, null),
-        (3, 'Pharmacy store', 1, '2024-09-08 18:58:08', '2024-09-08 18:58:08', 'Pharmacy store', NULL, null),
-        (4, 'Wards', 1, '2024-09-08 19:00:39', '2024-09-08 19:00:39', 'Wards', NULL, 1),
-        (5, 'Cabinets in the laboratory', 1, '2024-09-08 19:01:05', '2024-09-08 19:01:05', 'Cabinets in the laboratory', NULL, null),
-        (6, 'Other stores', 1, '2024-09-08 19:17:11', '2024-09-08 19:17:11', 'Other stores, please specify ', NULL, null);
+        (1, 'Main store', 1, '2024-09-08 18:49:42', '2024-09-08 18:49:42', 'Main Store', null, null),
+        (2, 'Laboratory store', 1, '2024-09-08 18:57:52', '2024-09-08 18:57:52', 'Laboratory store', null, null),
+        (3, 'Pharmacy store', 1, '2024-09-08 18:58:08', '2024-09-08 18:58:08', 'Pharmacy store', null, null),
+        (4, 'Wards', 1, '2024-09-08 19:00:39', '2024-09-08 19:00:39', 'Wards', null, null),
+        (5, 'Cabinets in the laboratory', 1, '2024-09-08 19:01:05', '2024-09-08 19:01:05', 'Cabinets in the laboratory', null, null),
+        (6, 'Other stores', 1, '2024-09-08 19:17:11', '2024-09-08 19:17:11', 'Other stores, please specify ', null, null);
         ");
     }
 
