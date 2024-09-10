@@ -45,85 +45,29 @@ return [
         'generate_user_management_reports',
       ],
 
-      'Result Management' => [
-        'access_results',
-        'review_results',
-        'retain_results',
-        'release_results',
-        'recall_results',
-        'revoke_results',
-        'export_results_csv',
-      ],
-
-      'Sample Management' => [
-        'access_samples',
-        'receive_samples',
-        'reject_samples',
-        'accession_samples',
-        'archive_samples',
-        'export_samples_csv',
-      ],
-
-      'BioRepository' => [
-        'access_biorepository',
-        'export_bio_repository_csv',
+      'Data Management' => [
+        'enter_lss_data',
+        'edit_lss_data',
+        'delete_lss_data',
+        'view_lss_report',
+        'export_lss_csv',
         ],
 
-        'Manage Utilities' => [
-        'access_utilities',
-        'export_utilities_csv',
-      ],
+        'System Settings' => [
+        'access_system_settings',
+        ],
 
-      'Dashboard & Reports' => [
+        'Dashboard & Reports' => [
         'access_general_dashboard',
-        'generate_genral_reports',
+        'generate_general_reports',
         ],
-      ],
-    //
-    //   'Results QC' => [
-    //
-    //     'Manage Results' => [
-    //     'access_results',
-    //     'review_results',
-    //     'retain_results',
-    //     'release_results',
-    //     'recall_results',
-    //     'revoke_results',
-    //   ],
-    //   'Dashboard & Reports' => [
-    //     'access_general_dashboard',
-    //     'generate_genral_reports',
-    //   ],
-    // ],
-    //
-    //   'Sample Reception' => [
-    //
-    //   'Manage Samples' => [
-    //     'access_samples',
-    //     'receive_samples',
-    //     'reject_samples',
-    //     'accession_samples',
-    //     'archive_samples',
-    //   ],
-    //
-    //   'Manage Bio Repository' => [
-    //     'access_biorepository',
-    //   ],
-    // ],
-    //
-    //   'Bio Repository' => [
-    //
-    //   'Manage Bio Repository' => [
-    //     'access_biorepository',
-    //   ],
-    // ],
-
-      ],
+        ],
+        ],
 
         //Configure Default Roles and Permissions
         'default_roles' => [
         'Default User' => [
         'access_samples'
-      ],
-    ],
-  ];
+        ],
+        ],
+        ];

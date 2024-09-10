@@ -72,7 +72,7 @@ class FacilityComponent extends Component
             'is_training_partner'=>'nullable|integer',
             'details_sent'=>'nullable|integer',
             'district_id'=>'required|integer',
-            'sub_district_id'=>'required|integer',
+            // 'sub_district_id'=>'required|integer',
             // ... other validation rules ...
         ]);
 

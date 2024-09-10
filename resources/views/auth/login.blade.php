@@ -6,9 +6,9 @@
   <div class="card-body shadow p-3 mb-5">
     <div class="header">
       <a class="navbar-brand"><img src="{{ asset('/images/moh.png') }}" width="250px"
-    
+
         class="d-inline-block align-bottom" alt="Lab Spars"></a>
-      <h2>Lab Spars</h2>
+      <h2>Lab SPARS</h2>
       <p>Log in to continue</p>
     </div>
 
