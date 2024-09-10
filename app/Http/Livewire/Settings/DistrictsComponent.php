@@ -26,9 +26,7 @@ class DistrictsComponent extends Component
 
     public $name;
 
-    public $dhis2_code =1;
-
-    public $code;
+    public $region_id;
 
     public $totalMembers;
 
@@ -59,8 +57,7 @@ class DistrictsComponent extends Component
     {
         $this->validateOnly($fields, [
             'name' => 'required|string',
-            'dhis2_code' => 'required|string',
-            'code' => 'nullable|string',
+            'region_id' => 'required',
         ]);
     }
 
@@ -68,15 +65,13 @@ class DistrictsComponent extends Component
     {
         $this->validate([
             'name' => 'required|string|unique:districts',
-            'dhis2_code' => 'required|numeric',
-            'code' => 'nullable|string',
+            'region_id' => 'required',
 
         ]);
 
         $District = new District();
         $District->name = $this->name;
-        $District->dhis2_code = $this->dhis2_code;
-        $District->code = $this->code;
+        $District->region_id = $this->region_id;
         $District->save();
         $this->dispatchBrowserEvent('close-modal');
         $this->resetInputs();
@@ -87,8 +82,7 @@ class DistrictsComponent extends Component
     {
         $this->edit_id = $District->id;
         $this->name = $District->name;
-        $this->dhis2_code = $District->dhis2_code;
-        $this->code = $District->code;
+        $this->region_id = $District->region_id;
         $this->createNew = true;
         $this->toggleForm = true;
     }
@@ -102,21 +96,19 @@ class DistrictsComponent extends Component
 
     public function resetInputs()
     {
-        $this->reset(['name', 'dhis2_code', 'code']);
+        $this->reset(['name', 'region_id']);
     }
 
     public function updateDistrict()
     {
         $this->validate([
             'name' => 'required|unique:districts,name,'.$this->edit_id.'',
-            'dhis2_code' => 'required|numeric',
-            'code' => 'nullable|string',
+            'region_id' => 'required',
         ]);
 
         $District = District::find($this->edit_id);
         $District->name = $this->name;
-        $District->dhis2_code = $this->dhis2_code;
-        $District->code = $this->code;
+        $District->region_id = $this->region_id;
         $District->update();
 
         $this->resetInputs();
@@ -163,6 +155,9 @@ class DistrictsComponent extends Component
     {
 
         $data['districts'] = District::search($this->search)
+        ->when($this->region_id, function ($query) {
+          $query->where('region_id',$this->region_id);
+        })
         ->orderBy($this->orderBy, $this->orderAsc ? 'asc' : 'desc')
         ->paginate($this->perPage);
         return view('livewire.settings.districts-component',$data);

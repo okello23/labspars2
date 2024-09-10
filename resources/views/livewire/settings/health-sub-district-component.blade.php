@@ -4,7 +4,7 @@
 
   <div class="info-box" style="float:left; width: 100%; overflow-x: auto;  overflow-y: auto;">
     <div class="info-box-content">
-      <h4>Districts (<span class="text-danger fw-bold">{{ $districts->total() }}</span>)</h4>
+      <h4>Health Sub Districts (<span class="text-danger fw-bold">{{ $sub_districts->total() }}</span>)</h4>
       <div class="progress">
         <div class="progress-bar bg-info" style="width: 100%; height: 25%; "></div>
       </div>
@@ -33,19 +33,19 @@
                 <tr>
                   <th>#</th>
                   <th>Name</th>
+                  <th>District</th>
                   <th>Region</th>
-                  <!-- <th>Created at</th> -->
                   <th>Action</th>
                 </tr>
               </thead>
 
               <tbody>
-                @foreach ($districts as $key => $value)
+                @foreach ($sub_districts as $key => $value)
                 <tr>
                   <td>{{ $key + 1 }}</td>
                   <td>{{ $value->name }}</td>
-                  <td>{{ $value->region?->name }}</td>
-                  <!-- <td>{{ date('d-m-Y', strtotime($value->created_at)) }}</td> -->
+                  <td>{{ $value?->district->name }}</td>
+                  <td>{{ $value?->district?->region?->name }}</td>
                   <td>
                     <button wire:click="editData({{ $value->id }})" class="action-ico btn btn-sm btn-success mx-1" data-toggle="modal" data-target="#addUpdateRecord">
                       <i class="fa fa-edit"></i>
@@ -59,7 +59,7 @@
           <div class="row mt-4">
             <div class="col-md-12">
               <div class="btn-group float-end">
-              {{ $districts->links('vendor.livewire.bootstrap') }}
+              {{ $sub_districts->links('vendor.livewire.bootstrap') }}
               </div>
             </div>
           </div>

@@ -2,11 +2,12 @@
 
 namespace App\Models\Facility;
 
+use App\Models\User;
 use App\Models\District;
 use App\Models\Settings\County;
 use App\Models\Settings\Parish;
 use App\Models\Settings\Village;
-use App\Models\Settings\SubCounty;
+use App\Models\Settings\HealthSubDistrict;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
@@ -15,63 +16,68 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Facility extends Model
 {
-    use HasFactory ,LogsActivity;
+  use HasFactory ,LogsActivity;
 
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logOnly(['*'])
-            ->logFillable()
-            ->useLogName('Facilities')
-            ->dontLogIfAttributesChangedOnly(['updated_at'])
-            ->logOnlyDirty()
-            ->dontSubmitEmptyLogs();
-        // Chain fluent methods for configuration options
+  public function getActivitylogOptions(): LogOptions
+  {
+    return LogOptions::defaults()
+    ->logOnly(['*'])
+    ->logFillable()
+    ->useLogName('Facilities')
+    ->dontLogIfAttributesChangedOnly(['updated_at'])
+    ->logOnlyDirty()
+    ->dontSubmitEmptyLogs();
+    // Chain fluent methods for configuration options
+  }
+
+  public static function boot()
+  {
+    parent::boot();
+    if (Auth::check()) {
+      self::creating(function ($model) {
+        $model->created_by = auth()->id();
+      });
+      self::updating(function ($model) {
+        $model->updated_by = auth()->id();
+      });
+
     }
-
-    public static function boot()
-    {
-        parent::boot();
-        if (Auth::check()) {
-            self::creating(function ($model) {
-                $model->created_by = auth()->id();
-            });
-            self::updating(function ($model) {
-                $model->updated_by = auth()->id();
-            });
-
-        }
-    }
-    protected $fillable = [
-            'name',
-            'level',
-            'ownership',
-            'sub_district_id',
+  }
+  protected $fillable = [
+    'name',
+    'level',
+    'ownership',
+    'sub_district_id',
     ];
 
-    public function district()
+    public function healthSubDistrict()
     {
-      return $this->belongsTo(District::class, 'district_id', 'id');
+      return $this->belongsTo(HealthSubDistrict::class, 'sub_district_id', 'id');
     }
 
-
-
-    public function parish()
+    public function user()
     {
-        return $this->belongsTo(Parish::class, 'parish_id', 'id');
+      return $this->belongsTo(User::class, 'created_by', 'id');
     }
 
-    public function village()
+    public function updatedBy()
     {
-        return $this->belongsTo(Village::class, 'village_id', 'id');
+      return $this->belongsTo(User::class, 'updated_by', 'id');
     }
-
-
 
     public static function search($search)
     {
-        return empty($search) ? static::query()
-        : static::query()
-            ->where('name', 'like', '%'.$search.'%');
+      return empty($search) ? static::query()
+      : static::query()
+      ->where('name', 'like', '%'.$search.'%')
+      ->orWhereHas('healthSubDistrict', function ($query) use ($search) {
+        $query->where('name', 'like', '%'.$search.'%');
+      })
+      ->orWhereHas('user', function ($query) use ($search) {
+        $query->where('name', 'like', '%'.$search.'%');
+      })
+      ->orWhereHas('updatedBy', function ($query) use ($search) {
+        $query->where('name', 'like', '%'.$search.'%');
+      });
     }
-}
+  }

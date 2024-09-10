@@ -74,9 +74,8 @@
                     <ul>
                       <li><a href="{{ route('store-types')}}">Storage Types</a></li>
                       <li><a href="{{ route('districts') }}">Districts</a></li>
-                      <li><a href="{{ route('sub-county') }}">Health Facilities</a></li>
-                      <li><a href="{{ route('store-types')}}">Facility Ownership</a></li>
-                      <li><a href="{{ route('sub-county') }}">Health Sub Districts</a></li>
+                      <li><a href="{{ route('health-facilities') }}">Health Facilities</a></li>
+                      <li><a href="{{ route('health-sub-districts') }}">Health Sub Districts</a></li>
                     </ul>
                   </li>
                 </li>
