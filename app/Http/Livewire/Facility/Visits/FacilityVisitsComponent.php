@@ -111,7 +111,7 @@ class FacilityVisitsComponent extends Component
             'use_stock_cards'=>'nullable',
             'date_of_visit'=>'required',
             'date_of_next_visit'=>'required',
-            
+
         ]);
 
         $visit = FacilityVisit::where('id', $this->edit_id)->first();
@@ -124,7 +124,7 @@ class FacilityVisitsComponent extends Component
         $visit->date_of_visit = $this->date_of_visit;
         $visit->date_of_next_visit = $this->date_of_next_visit;
         $visit->update();
-        
+
         $this->dispatchBrowserEvent('close-modal');
         $this->resetInputs();
         $this->close();
@@ -169,7 +169,9 @@ class FacilityVisitsComponent extends Component
 
     public function render()
     {
-        $data['visits'] = $this->filterFacilities()->with(['facility', 'facility.district', 'facility.subcounty'])->orderBy($this->orderBy, $this->orderAsc ? 'asc' : 'desc')
+        $data['visits'] = $this->filterFacilities()
+        ->with(['facility', 'facility.healthSubDistrict', 'facility.healthSubDistrict.district','facility.healthSubDistrict.district.region'])
+        ->orderBy($this->orderBy, $this->orderAsc ? 'asc' : 'desc')
             ->paginate($this->perPage);
         $data['facilities'] = Facility::all();
         return view('livewire.facility.visits.facility-visits-component', $data);

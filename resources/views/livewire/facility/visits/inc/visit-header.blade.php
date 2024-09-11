@@ -27,7 +27,7 @@
         }
     </style>
 
-    <h1>Lab Stars Data Collection Tool & Support Supervision Visit</h1>
+    <h1>Lab SPARS Data Collection & Support Supervision Visit Tool</h1>
 
     <!-- Basic Information -->
     @if (isset($active_visit) && $active_visit)
@@ -36,13 +36,13 @@
             <table>
                 <tr>
                     <th>Health Region</th>
-                    <td>{{ $active_visit->facility->district->region->name ?? 'N/A' }}</td>
+                    <td>{{ $active_visit->facility->healthSubDistrict?->district->region?->name ?? 'N/A' }}</td>
                     <th>District</th>
-                    <td>{{ $active_visit->facility->district->name ?? 'N/A' }}</td>
+                    <td>{{ $active_visit->facility?->healthSubDistrict->district->name ?? 'N/A' }}</td>
                 </tr>
                 <tr>
                     <th>Health Sub District</th>
-                    <td>{{ $active_visit->facility->subcounty->name ?? 'N/A' }}</td>
+                    <td>{{ $active_visit->facility->healthSubDistrict->name ?? 'N/A' }}</td>
                     <th>Health Facility</th>
                     <td>{{ $active_visit->facility->name }}</td>
                 </tr>
@@ -50,7 +50,8 @@
                     <th>Ownership</th>
                     <td>{{ $active_visit->facility->ownership ?? 'N/A' }}</td>
                     <th>Level</th>
-                    <td>{{ $active_visit->visit_number ?? 'N/A' }}</td>
+                    <td>{{ $active_visit->facility->level ?? 'N/A' }}</td>
+                    <!-- <td>{{ $active_visit->visit_number ?? 'N/A' }}</td> -->
                 </tr>
                 <tr>
                     <th>Name of Laboratory In-charge</th>

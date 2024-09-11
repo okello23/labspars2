@@ -97,7 +97,8 @@
                                         <th>Date Of Visit</th>
                                         <th>Date Of Next Visit</th>
                                         <th>District</th>
-                                        <th>County</th>
+                                        <th>Health Sub District</th>
+                                        <th>Region</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
@@ -106,14 +107,15 @@
                                     @foreach ($visits as $key => $facilityvisit)
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
-                                            <td>{{ $facilityvisit->facility->name }}</td>
+                                            <td>{{ $facilityvisit->facility->name }} {{ $facilityvisit->facility?->level}}</td>
                                             <td>{{ $facilityvisit->visit_number ?? 'N/A' }}</td>
                                             <td>{{ $facilityvisit->in_charge_name ?? 'N/A' }}</td>
                                             <td>{{ $facilityvisit->in_charge_contact }}</td>
                                             <td>{{ $facilityvisit->date_of_visit }}</td>
                                             <td>{{ $facilityvisit->date_of_next_visit }}</td>
-                                            <td>{{ $facilityvisit->facility->district->name ?? 'N/A' }}</td>
-                                            <td>{{ $facilityvisit->facility->subcounty->name ?? 'N/A' }}</td>
+                                            <td>{{ $facilityvisit->facility?->healthSubDistrict->district->name ?? 'N/A' }}</td>
+                                            <td>{{ $facilityvisit->facility->healthSubDistrict->name ?? 'N/A' }}</td>
+                                            <td>{{ $facilityvisit->facility->healthSubDistrict?->district->region?->name}}</td>
                                             <td>{{ $facilityvisit->responsible_lss_name }}</td>
                                             <td>
                                                 <button wire:click="editData({{ $facilityvisit->id }})"
@@ -121,11 +123,11 @@
                                                     data-target="#addUpdateRecord">
                                                     <i class="fa fa-edit"></i>
                                                 </button>
-                                                <a href="{{ URL::signedRoute('facility-visit_view', $facilityvisit->visit_code) }}" 
+                                                <a href="{{ URL::signedRoute('facility-visit_view', $facilityvisit->visit_code) }}"
                                                     class="action-ico btn btn-sm btn-success mx-1" >
                                                     <i class="fa fa-eye"></i>
                                                 </a>
-                                                <a href="{{ URL::signedRoute('facility-visit_details', $facilityvisit->visit_code) }}" 
+                                                <a href="{{ URL::signedRoute('facility-visit_details', $facilityvisit->visit_code) }}"
                                                     class="action-ico btn btn-sm btn-success mx-1" >
                                                     <i class="fa fa-edit"></i>
                                                 </a>
