@@ -134,10 +134,10 @@
           <div class="mb-3 col-md-6">
 
             @if($category == 'Institution')
-            <label for="institution_id" class="form-label">Institution<small class="text-danger">*</small></label>
-            <select class="form-control" id="institution_id" wire:model.lazy="institution_id">
+            <label for="facility_id" class="form-label">Institution<small class="text-danger">*</small></label>
+            <select class="form-control" id="facility_id" wire:model.lazy="facility_id">
               <option selected value="">Select...</option>
-              @foreach ($institutions as $value)
+              @foreach ($facilities as $value)
               <option value="{{$value->id}}">{{$value->name}}</option>
               @endforeach
             </select>
@@ -266,7 +266,7 @@
                 <td>{{ $user->email ?? 'N/A' }}</td>
                 <td>{{ $user->contact ?? 'N/A' }}</td>
                 <td>{{ $user->category ?? 'N/A' }}</td>
-                <td>{{ $user->institution?->name ?? 'CPHL' }}</td>
+                <td>{{ $user->facility?->name ?? 'CPHL' }} {{$user->facility?->level ?? ''}} </td>
                 <!-- <td>{{ $user->department?->name ?? '-' }}</td> -->
                 @if ($user->is_active == 0)
                 <td><span class="badge bg-danger">Suspended</span></td>

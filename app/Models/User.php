@@ -4,10 +4,11 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use Carbon\Carbon;
 use App\Models\Institution;
+use App\Models\Facility\Facility;
 use App\Models\TrainingManagement\Nominee;
 use App\Models\TrainingManagement\Trainer;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -82,9 +83,9 @@ class User extends Authenticatable
     'email_verified_at' => 'datetime',
     ];
 
-    protected function institution()
+    protected function facility()
     {
-      return $this->belongsTo(Institution::class,'institution_id','id');
+      return $this->belongsTo(Facility::class,'facility_id','id');
     }
 
     protected function fullName(): Attribute
