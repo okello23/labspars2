@@ -54,6 +54,14 @@ return [
         ],
 
         'System Settings' => [
+        'add new facility',
+        'edit facility',
+        'add health sub district',
+        'edit health sub district',
+        'add district',
+        'edit district',
+        'add storage types',
+        'edit storage types',
         'access_system_settings',
         ],
 
@@ -66,8 +74,21 @@ return [
 
         //Configure Default Roles and Permissions
         'default_roles' => [
-        'Default User' => [
-        'access_samples'
+        'Lab SPARS Supervisor' => [
+
+        'enter_lss_data',
+        'edit_lss_data',
+        'delete_lss_data',
+        'view_lss_report',
+        'export_lss_csv',
+        
+        'access_system_settings',
+        'add new facility',
+        'edit facility',
+        'add health sub district',
+        'edit health sub district',
+        'add district',
+        'edit district',
         ],
         ],
         ];
