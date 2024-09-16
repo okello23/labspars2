@@ -44,7 +44,7 @@
 
               <li>
                 <a href="#Payments" class="has-arrow"><i class="fa fa-dot-circle-o"></i>
-                  <span>Facility Entry</span></a>
+                  <span>LSS Data Entry</span></a>
                   <ul>
                     <!-- <li><a href="{{ route('facility') }}">Facilities</a></li> -->
                     <li><a href="{{ route('facility-visits') }}">Facility Visits</a></li>
