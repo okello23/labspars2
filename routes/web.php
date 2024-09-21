@@ -2,7 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
+use App\Http\Livewire\Settings\ProductComponent;
 use App\Http\Livewire\Settings\RegionsComponent;
+use App\Http\Livewire\Settings\StoreTypeComponent;
 use App\Http\Livewire\Settings\DistrictsComponent;
 use App\Http\Livewire\Settings\HealthFacilitiesComponent;
 use App\Http\Livewire\Settings\HealthSubDistrictsComponent;
@@ -13,7 +15,6 @@ use App\Http\Livewire\Facility\FacilityComponent;
 use App\Http\Livewire\Facility\Visits\FacilityVisitDetailsComponent;
 use App\Http\Livewire\Facility\Visits\FacilityVisitsComponent;
 use App\Http\Livewire\Facility\Visits\FacilityVisitViewComponent;
-use App\Http\Livewire\Settings\StoreTypeComponent;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +55,7 @@ Route::group(['middleware' => ['auth', 'password_expired', 'suspended_user']], f
       Route::get('districts', DistrictsComponent::class)->name('districts');
       Route::get('health-sub-districts', HealthSubDistrictsComponent::class)->name('health-sub-districts');
       Route::get('health-facilities', HealthFacilitiesComponent::class)->name('health-facilities');
+      Route::get('product/types', ProductComponent::class)->name('product-types');
       Route::get('store/types', StoreTypeComponent::class)->name('store-types');
       });
       Route::group(['prefix' => 'facility'], function () {
