@@ -68,7 +68,7 @@ class LaratrustSeeder extends Seeder
                     'signature' => null,
                     'created_by' => 1,
                     'password_updated_at' => now(),
-                    'email' => Str::lower($user_role).'@genomics.com',
+                    'email' => Str::lower($user_role).'@lss.org',
                     'email_verified_at' => now(),
                     'password' => bcrypt('password'),
                     'remember_token' => Str::random(10),

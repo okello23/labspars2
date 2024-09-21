@@ -13,9 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('regions', function (Blueprint $table) {
-            $table->bigIncrements('id');
+        Schema::create('products', function (Blueprint $table) {
+            $table->id();
             $table->string('name');
+            $table->string('type');
+            $table->unsignedBigInteger('created_by');
+            $table->integer('is_active')->default(1);
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('RESTRICT')->onUpdate('CASCADE');
             $table->timestamps();
         });
     }
@@ -27,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('regions');
+        Schema::dropIfExists('products');
     }
 };

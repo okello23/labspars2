@@ -13,10 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('hubs', function (Blueprint $table) {
-              $table->dropColumn('districtId');
-              $table->unsignedBigInteger('regionId');
-              $table->foreign('regionId')->references('id')->on('regions')->onUpdate('CASCADE')->onDelete('RESTRICT');
+        Schema::table('activity_log', function (Blueprint $table) {
+            $table->string('batch_uuid')->nullable()->change();
         });
     }
 
@@ -27,7 +25,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('hubs', function (Blueprint $table) {
+        Schema::table('activity_log', function (Blueprint $table) {
             //
         });
     }

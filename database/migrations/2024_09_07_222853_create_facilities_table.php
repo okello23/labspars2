@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-       
+
         Schema::create('facilities', function (Blueprint $table) {
             $table->id();
             $table->string('name', 200);
@@ -30,9 +30,8 @@ return new class extends Migration
             $table->boolean('details_sent')->default(false);
             $table->boolean('is_active')->default(true);
             $table->foreignId('district_id')->references('id')->on('districts')->onDelete('RESTRICT')->onUpdate('CASCADE');
-            $table->foreignId('sub_district_id')->references('id')->on('counties')->onDelete('RESTRICT')->onUpdate('CASCADE');
-            $table->foreignId('created_by')->nullable()->references('id')->on('users')->constrained()->onUpdate('cascade')->onDelete('restrict');   
-            $table->foreignId('updated_by')->nullable()->references('id')->on('users')->constrained()->onUpdate('cascade')->onDelete('restrict');  
+            $table->foreignId('created_by')->nullable()->references('id')->on('users')->constrained()->onUpdate('cascade')->onDelete('restrict');
+            $table->foreignId('updated_by')->nullable()->references('id')->on('users')->constrained()->onUpdate('cascade')->onDelete('restrict');
             $table->timestamps();
         });
     }

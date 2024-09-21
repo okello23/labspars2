@@ -13,9 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('institutions', function (Blueprint $table) {
-          $table->foreign('district_id')->references('id')->on('districts')->ondDelete('RESTRICT')->onUpdate('CASCADE');
-          // $table->foreign('hub_id')->references('id')->on('hubs')->ondDelete('RESTRICT')->onUpdate('CASCADE');
+        Schema::table('districts', function (Blueprint $table) {
+            //
+            $table->dropColumn('code');
+            $table->dropColumn('is_urban');
+            $table->dropColumn('is_municipality');
+            $table->dropColumn('ip');
+            $table->dropColumn('email');
+            $table->dropColumn('districtAccountDetailsSent');
         });
     }
 
@@ -26,7 +31,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('institutions', function (Blueprint $table) {
+        Schema::table('districts', function (Blueprint $table) {
             //
         });
     }

@@ -13,7 +13,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'Africa-PGI NIMS') }}</title>
+    <title>{{ config('app.name', 'Lab SPARS') }}</title>
     <link rel="icon" href="{{ asset('assets/images/favicon.png') }}" type="image/png" />
 
     {{-- <link href="{{ asset('assets/plugins/vectormap/jquery-jvectormap-2.0.2.css') }}" rel="stylesheet" /> --}}
@@ -62,19 +62,19 @@
 
             /* Track */
             ::-webkit-scrollbar-track {
-            box-shadow: inset 0 0 5px grey; 
+            box-shadow: inset 0 0 5px grey;
             border-radius: 10px;
             }
-            
+
             /* Handle */
             ::-webkit-scrollbar-thumb {
-            background: #9F2242; 
+            background: #9F2242;
             border-radius: 13px;
             }
 
             /* Handle on hover */
             ::-webkit-scrollbar-thumb:hover {
-            background: #c5113e; 
+            background: #c5113e;
             }
         .view-wrapper {
             width: 70%;
@@ -180,7 +180,7 @@
         {{-- <script src="{{ asset('assets/plugins/jquery-knob/excanvas.js') }}"></script>
     <script src="{{ asset('assets/plugins/jquery-knob/jquery.knob.js') }}"></script> --}}
 
-        <script src="{{ asset('assets/plugins/izitoast/js/iziToast.min.js') }}"></script>           
+        <script src="{{ asset('assets/plugins/izitoast/js/iziToast.min.js') }}"></script>
         <script src="{{ asset('assets/plugins/select2/js/select2.min.js') }}"></script>
         <script src="{{ asset('assets/plugins/sweetalert/sweetalert.min.js') }}"></script>
         <script src="{{ asset('assets/js/sort.js') }}"></script>

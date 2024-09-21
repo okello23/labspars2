@@ -2,24 +2,22 @@
 
 namespace App\Models\Settings;
 
-use App\Models\District;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class County extends Model
+class Product extends Model
 {
-    use HasFactory;
-    use HasFactory,LogsActivity;
+    use HasFactory, LogsActivity;
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
             ->logOnly(['*'])
             ->logFillable()
-            ->useLogName('Counties')
+            ->useLogName('Districts')
             ->dontLogIfAttributesChangedOnly(['updated_at'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
@@ -27,12 +25,14 @@ class County extends Model
     }
     protected $fillable = [
         'name',
-        'description',
-        'type_id',
-        'created_by',
-       'is_active',
+        'type',
+        'is_active',
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(Region::class, 'created_at', 'id');
+    }
     public static function boot()
     {
         parent::boot();
@@ -47,11 +47,7 @@ class County extends Model
     {
         return empty($search) ? static::query()
         : static::query()
-            ->where('name', 'like', '%'.$search.'%');
+            ->where('name', 'like', '%' . $search . '%')
+            ->orWhere('type', 'like', '%' . $search . '%');
     }
-    public function district()
-    {
-        return $this->belongsTo(District::class, 'district_id', 'id');
-    }
-
 }
