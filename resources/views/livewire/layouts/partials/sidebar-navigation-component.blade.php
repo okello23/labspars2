@@ -46,7 +46,6 @@
                 <a href="#Payments" class="has-arrow"><i class="fa fa-dot-circle-o"></i>
                   <span>LSS Data Entry</span></a>
                   <ul>
-                    <!-- <li><a href="{{ route('facility') }}">Facilities</a></li> -->
                     <li><a href="{{ route('facility-visits') }}">Facility Visits</a></li>
                     <li><a href="#">Submitted Forms</a></li>
               </ul>
@@ -73,6 +72,7 @@
                     <a href="#Room" class="has-arrow"><i class="fa fa-cog"></i><span>System Settings</span></a>
                     <ul>
                       <li><a href="{{ route('store-types')}}">Storage Types</a></li>
+                      <li><a href="{{ route('store-types')}}">Product Types</a></li>
                       <li><a href="{{ route('districts') }}">Districts</a></li>
                       <li><a href="{{ route('health-facilities') }}">Health Facilities</a></li>
                       <li><a href="{{ route('health-sub-districts') }}">Health Sub Districts</a></li>

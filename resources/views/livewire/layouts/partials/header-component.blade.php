@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="navbar-left">
             <div class="navbar-btn">
-                <a href="index.html"><img src="{{ asset('/images/dna-hd.png') }}" alt="Genomics"
+                <a href="index.html"><img src="{{ asset('/images/moh.png') }}" alt="Lab SPARS"
                         class="img-fluid logo"></a>
                 <button type="button" class="btn-toggle-offcanvas"><i
                         class="fa fa-align-left"></i></button>

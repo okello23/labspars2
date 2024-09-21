@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Settings;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\District;
 use App\Models\Facility\Facility;
 use App\Models\Settings\HealthSubDistrict;
 
@@ -27,9 +28,21 @@ class HealthFacilitiesComponent extends Component
 
   public $name;
 
+  public $level;
+
+  public $district_id;
+
+  public $sub_district_id;
+
+  public $regions =[];
+
   public $region_id;
 
-  public $ownership_type;
+  public $region_name;
+
+  public $ownership;
+
+  public $sub_districts = [];
 
   public $totalMembers;
 
@@ -45,15 +58,23 @@ class HealthFacilitiesComponent extends Component
 
   public $filter = false;
 
-  public function updatedCreateNew()
+  public function updatedDistrictId($id)
   {
-    $this->resetInputs();
-    $this->toggleForm = false;
+    // code...
+    $this->sub_districts = HealthSubDistrict::where('district_id',$id)->get();
+    $district = District::with('region')->where('id',$id)->first();
+    $this->region_name = $district->region->name;
   }
 
   public function updatingSearch()
   {
     $this->resetPage();
+  }
+
+  public function addEntry()
+  {
+    $this->createNew = true;
+    $this->dispatchBrowserEvent('show-modal');
   }
 
   public function updated($fields)
@@ -64,31 +85,38 @@ class HealthFacilitiesComponent extends Component
     ]);
   }
 
-  public function storevalue()
+  public function store()
   {
     $this->validate([
-    'name' => 'required|string|unique:sub_counties',
-    'region_id' => 'required',
+    'name' => 'required|string|unique:facilities',
+    'level' => 'required',
+    'ownership' => 'required',
+    'sub_district_id' => 'required'
 
     ]);
 
-    $SubCounty = new SubCounty();
-    $SubCounty->name = $this->name;
-    $SubCounty->region_id = $this->region_id;
-    $SubCounty->save();
+    $facility = new Facility();
+    $facility->name = $this->name;
+    $facility->level = $this->level;
+    $facility->ownership  = $this->ownership;
+    $facility->sub_district_id = $this->sub_district_id;
+    $facility->created_by = \Auth::user()->id;
+    $facility->save();
     $this->dispatchBrowserEvent('close-modal');
     $this->resetInputs();
-    $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Health Facility created successfully!']);
+    $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Health Facility added successfully!']);
   }
 
-  public function editData(SubCounty $SubCounty)
+  public function editData(Facility $facility)
   {
-    $this->edit_id = $SubCounty->id;
-    $this->name = $SubCounty->name;
-    $this->county_id = $SubCounty->county_id;
-    $this->code = $SubCounty->code;
-    $this->createNew = true;
-    $this->toggleForm = true;
+    $this->edit_id = $facility->id;
+    $this->name = $facility->name;
+    $this->level = $facility->level;
+    $this->sub_district_id = $facility->sub_district_id;
+    $this->ownership = $facility->ownership;
+    $this->code = $facility->code;
+    $this->createNew = false;
+    $this->dispatchBrowserEvent('show-modal');
   }
 
   public function close()
@@ -96,33 +124,36 @@ class HealthFacilitiesComponent extends Component
     $this->createNew = false;
     $this->toggleForm = false;
     $this->resetInputs();
+    $this->dispatchBrowserEvent('close-modal');
   }
 
   public function resetInputs()
   {
-    $this->reset(['name', 'county_id', 'code']);
+    $this->reset(['name', 'district_id', 'level','ownership','sub_district_id']);
   }
 
-  public function updatevalue()
+  public function update()
   {
     $this->validate([
-    'name' => 'required|unique:sub_counties,name,' . $this->edit_id . '',
-    'county_id' => 'required|numeric',
-    'code' => 'nullable|string',
+    'name' => 'required|unique:facilities,name,' . $this->edit_id . '',
+    'level' => 'required',
+    'ownership' => 'required',
+    'sub_district_id' => 'required'
     ]);
 
-    $SubCounty = SubCounty::find($this->edit_id);
-    $SubCounty->name = $this->name;
-    $SubCounty->county_id = $this->county_id;
-    $SubCounty->code = $this->code;
-    $SubCounty->update();
+    $facility = Facility::find($this->edit_id);
+    $facility->name = $this->name;
+    $facility->level = $this->level;
+    $facility->ownership  = $this->ownership;
+    $facility->sub_district_id = $this->sub_district_id;
+    $facility->update();
 
     $this->resetInputs();
     $this->createNew = false;
     $this->toggleForm = false;
     $this->dispatchBrowserEvent('close-modal');
     $this->resetInputs();
-    $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'SubCounty updated successfully!']);
+    $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Health facility details updated successfully!']);
   }
 
   public function refresh()
@@ -166,12 +197,14 @@ class HealthFacilitiesComponent extends Component
       ->Leftjoin('regions as r','d.region_id','=','r.id')
       ->where('d.region_id',$this->region_id)->get(['r.name as region_name','facilities.name as facility']);
     })
-    ->when($this->ownership_type, function ($query) {
-      $query->where('ownership',$this->ownership_type);
+    ->when($this->ownership, function ($query) {
+      $query->where('ownership',$this->ownership);
     })
     ->with('healthSubDistrict','healthSubDistrict.district','healthSubDistrict.district.region')
     ->orderBy($this->orderBy, $this->orderAsc ? 'asc' : 'desc')
     ->paginate($this->perPage);
+
+    $data['districts'] = District::get();
 
     return view('livewire.settings.health-facilities-component', $data);
   }

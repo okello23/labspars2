@@ -34,7 +34,6 @@
                   <th>#</th>
                   <th>Name</th>
                   <th>Region</th>
-                  <!-- <th>Created at</th> -->
                   <th>Action</th>
                 </tr>
               </thead>
@@ -45,7 +44,6 @@
                   <td>{{ $key + 1 }}</td>
                   <td>{{ $value->name }}</td>
                   <td>{{ $value->region?->name }}</td>
-                  <!-- <td>{{ date('d-m-Y', strtotime($value->created_at)) }}</td> -->
                   <td>
                     <button wire:click="editData({{ $value->id }})" class="action-ico btn btn-sm btn-success mx-1" data-toggle="modal" data-target="#addUpdateRecord">
                       <i class="fa fa-edit"></i>
@@ -59,7 +57,7 @@
           <div class="row mt-4">
             <div class="col-md-12">
               <div class="btn-group float-end">
-              {{ $districts->links('vendor.livewire.bootstrap') }}
+                {{ $districts->links('vendor.livewire.bootstrap') }}
               </div>
             </div>
           </div>
@@ -67,32 +65,16 @@
       </div>
     </div>
 
+    @include('livewire.settings.inc.add-district-modal')
     @push('scripts')
 
     <script>
+      window.addEventListener('show-modal', event => {
+        $('#addEntry').modal('show');
+      });
       window.addEventListener('close-modal', event => {
-        $('#resultsDetailModal').modal('hide');
-        $('#recallResultModal').modal('hide');
-        $('#confirmResultRelease').modal('hide');
-        $('#viewResultsOption').modal('hide');
+        $('#addEntry').modal('hide');
       });
-
-      window.addEventListener('recall-result-modal', event => {
-        $('#recallResultModal').modal('show');
-      });
-
-      window.addEventListener('view-result-modal', event => {
-        $('#resultsDetailModal').modal('show');
-      });
-
-      window.addEventListener('confirm-result-release', event => {
-        $('#confirmResultRelease').modal('show');
-      });
-
-      window.addEventListener('view-result-options', event => {
-        $('#viewResultsOption').modal('show');
-      });
-
     </script>
     @endpush
   </div>

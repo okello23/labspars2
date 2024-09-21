@@ -26,8 +26,8 @@
             </div>
             <div class="md-3">
               <div class="mb-1  col-md-12">
-                <label for="ownership_type" class="form-label">Ownership</label>
-                <select class="form-control" wire:model="ownership_type">
+                <label for="ownership" class="form-label">Ownership</label>
+                <select class="form-control" wire:model="ownership">
                   <option value="">All</option>
                   <option value="Govt">Government</option>
                   <option value="PFP">PFP</option>
@@ -79,40 +79,52 @@
           <div class="row mt-4">
             <div class="col-md-12">
               <div class="btn-group float-end">
-              {{ $facilities->links('vendor.livewire.bootstrap') }}
+                {{ $facilities->links('vendor.livewire.bootstrap') }}
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
+    @include('livewire.settings.inc.add-health-facility-modal')
     @push('scripts')
-
+    <script src="{{ asset('assets/plugins/select2/js/select2.min.js') }}"></script>
     <script>
       window.addEventListener('close-modal', event => {
-        $('#resultsDetailModal').modal('hide');
-        $('#recallResultModal').modal('hide');
-        $('#confirmResultRelease').modal('hide');
-        $('#viewResultsOption').modal('hide');
+        $('#addEntry').modal('hide');
       });
 
-      window.addEventListener('recall-result-modal', event => {
-        $('#recallResultModal').modal('show');
+      window.addEventListener('show-modal', event => {
+        $('#addEntry').modal('show');
       });
 
-      window.addEventListener('view-result-modal', event => {
-        $('#resultsDetailModal').modal('show');
+      window.addEventListener('livewire:load', () => {
+        initializeSelect2();
       });
 
-      window.addEventListener('confirm-result-release', event => {
-        $('#confirmResultRelease').modal('show');
+      $('#district_id').on('select2:select', function(e) {
+        var data = e.params.data;
+        @this.set('district_id', data.id);
       });
 
-      window.addEventListener('view-result-options', event => {
-        $('#viewResultsOption').modal('show');
+      window.addEventListener('livewire:update', () => {
+        $('.select2').select2('destroy'); //destroy the previous instances of select2
+        initializeSelect2();
       });
 
+      function initializeSelect2() {
+
+        $('.select2').each(function() {
+          $(this).select2({
+            theme: 'bootstrap4',
+            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ?
+            '100%' : 'style',
+            placeholder: $(this).data('placeholder') ? $(this).data('placeholder') : 'Select',
+            allowClear: Boolean($(this).data('allow-clear')),
+          });
+        });
+      }
     </script>
     @endpush
+
   </div>
