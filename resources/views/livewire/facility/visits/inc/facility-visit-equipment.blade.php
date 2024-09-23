@@ -1,4 +1,4 @@
-    <h2>Laboratory Equipment Form</h2>
+    <h4>Laboratory Equipment Form</h4>
 
     <!-- Section 16: Developing and Maintaining Facility Equipment Inventory -->
     <div class="section-title">16. Developing and Maintaining Facility Equipment Inventory</div>
@@ -15,7 +15,7 @@
         <option value="no">No</option>
     </select>
 
-    <h3>Score: <span>(Sum of 1 & 2) / 2</span></h3>
+    <h4>Score: <span>(Sum of 1 & 2) / 2</span></h4>
 
     <!-- Section 17: Equipment Management Plan -->
     <div class="section-title">17. Equipment Management Plan to Ensure Functionality</div>
@@ -56,7 +56,7 @@
         </tbody>
     </table>
 
-    <h3>Score: Sum (1 to 4)</h3>
+    <h4>Score: Sum (1 to 4)</h4>
 
     <!-- Section 18: Equipment Functionality -->
     <div class="section-title">18. Equipment Functionality</div>
@@ -68,7 +68,7 @@
         <option value="na">N/A</option>
     </select>
 
-    <h3>Equipment Downtime</h3>
+    <h4>Equipment Downtime</h4>
     <table>
         <thead>
             <tr>

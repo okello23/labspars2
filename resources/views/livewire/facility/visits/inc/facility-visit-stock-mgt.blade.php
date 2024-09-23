@@ -73,7 +73,7 @@
     </table>
 
     <!-- Score Summary Section -->
-    <h2>Score Summary</h2>
+    <h3>Score Summary</h3>
     <table>
         <thead>
             <tr>
@@ -103,5 +103,5 @@
     </table>
 
     <!-- Comments Section -->
-    <h2>Comments</h2>
+    <h3>Comments</h3>
     <textarea name="comments" placeholder="Add comments here..."></textarea>

@@ -1,4 +1,4 @@
-<h2>Ordering Form</h2>
+<h3>Ordering Form</h3>
 
 <!-- Section 13: Reorder Level Calculation -->
 <div class="section-title">13. Reorder Level Calculation</div>
@@ -34,7 +34,7 @@
 </select>
 
 <!-- Section 13c: Order Review -->
-<h3>Review of Recent Order Form</h3>
+<h4>Review of Recent Order Form</h4>
 <label>Is there a standard test menu at the laboratory facility?</label>
 <select name="test_menu">
     <option value="yes">Yes</option>
@@ -42,7 +42,7 @@
 </select>
 
 <!-- Order Fulfillment Table -->
-<h3>Order Fulfillment Review</h3>
+<h4>Order Fulfillment Review</h4>
 <table>
     <thead>
         <tr>

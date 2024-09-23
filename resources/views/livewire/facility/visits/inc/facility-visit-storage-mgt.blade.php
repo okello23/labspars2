@@ -3,7 +3,7 @@
     <h1>Storage & Lab Facilities Management Form</h1>
 
     <!-- Cleanliness Section -->
-    <h2>8. Cleanliness of the Laboratory and Storage Facilities</h2>
+    <h3>8. Cleanliness of the Laboratory and Storage Facilities</h3>
     <table>
         <thead>
             <tr>
@@ -37,7 +37,7 @@
     </p>
 
     <!-- Hygiene Section -->
-    <h2>9. Hygiene of the Laboratory</h2>
+    <h3>9. Hygiene of the Laboratory</h3>
     <table>
         <thead>
             <tr>
@@ -81,7 +81,7 @@
     </p>
 
     <!-- Storage System Section -->
-    <h2>10. System for Storage of Laboratory Reagents and Supplies</h2>
+    <h3>10. System for Storage of Laboratory Reagents and Supplies</h3>
     <table>
         <thead>
             <tr>
@@ -131,7 +131,7 @@
     </p>
 
     <!-- Storage Conditions Section -->
-    <h2>11. Storage Conditions for Laboratory Supplies/Reagents</h2>
+    <h3>11. Storage Conditions for Laboratory Supplies/Reagents</h3>
     <table>
         <thead>
             <tr>
@@ -176,7 +176,7 @@
     </p>
 
     <!-- Storage Practices Section -->
-    <h2>12. Storage Practices of Laboratory Reagents</h2>
+    <h3>12. Storage Practices of Laboratory Reagents</h3>
     <table>
         <thead>
             <tr>
