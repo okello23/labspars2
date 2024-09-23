@@ -64,7 +64,7 @@
                     <div class="row setup-content {{ $step != 2 ? 'display-none' : '' }}" id="step-2">
                         <div class="col-md-12">
                             <div class="border border-success rounded">
-                                {{-- @include('livewire.chw.inc.section-b-component') --}}
+                                @include('livewire.facility.visits.inc.facility-visit-stock-mgt')
                                 <hr>
                                 <div class="container">
                                     <div class="btn-group float-right" role="group">
@@ -83,7 +83,7 @@
                     <div class="row setup-content {{ $step != 3 ? 'display-none' : '' }}" id="step-3">
                         <div class="col-md-12">
                             <div class="border border-success rounded">
-                                {{-- @include('livewire.chw.inc.section-c-component') --}}
+                                @include('livewire.facility.visits.inc.facility-visit-storage-mgt')
                                 <hr>
                                 <div class="container">
                                     <div class="btn-group float-right" role="group">
@@ -106,7 +106,7 @@
                         <div class="col-md-12">
 
                             <div class="border border-success rounded overflow-auto">
-                                {{-- @include('livewire.chw.inc.section-d-component') --}}
+                                @include('livewire.facility.visits.inc.facility-visit-ordering')
                                 <hr>
                                 <div class="container">
                                     <div class="btn-group float-right" role="group">
@@ -129,7 +129,30 @@
                         <div class="col-md-12">
 
                             <div class="border border-success rounded overflow-auto">
-                                {{-- @include('livewire.chw.inc.language-incentives-and-functions') --}}
+                                @include('livewire.facility.visits.inc.facility-visit-equipment')
+                                <hr>
+                                <div class="container">
+                                    <div class="btn-group float-right" role="group">
+                                        <x-button class="btn-success  nextBtn btn-lg fa fa-arrow-circle-right"
+                                            wire:click="fifthStepSubmit">Next</x-button>
+                                    </div>
+                                    <div class="btn-group" role="group">
+                                        <x-button class="btn-danger float-right nextBtn btn-lg fa fa-arrow-circle-left"
+                                            wire:click="back(4)">Back</x-button>
+                                    </div>
+                                    <br><br>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                    @if($step == 6)
+                    <div class="row setup-content {{ $step != 6 ? 'display-none' : '' }} overflow-auto"
+                        id="step-5">
+                        <div class="col-md-12">
+
+                            <div class="border border-success rounded overflow-auto">
+                                @include('livewire.facility.visits.inc.facility-visit-lims')
                                 <hr>
                                 <div class="container">
                                     <div class="btn-group float-right" role="group">

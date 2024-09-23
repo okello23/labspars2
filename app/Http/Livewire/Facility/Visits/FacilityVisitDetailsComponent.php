@@ -120,6 +120,22 @@ class FacilityVisitDetailsComponent extends Component
     }
   }
 
+  public function firstStepSubmit(){
+    $this->step =2;
+  }
+  public function secondStepSubmit(){
+    $this->step =3;
+  }
+  public function thirdStepSubmit(){
+    $this->step =4;
+  }
+  public function fourthStepSubmit(){
+    $this->step =5;
+  }
+  public function fifthStepSubmit(){
+    $this->step =6;
+  }
+
   public function resetInputs()
   {
     $this->reset([
