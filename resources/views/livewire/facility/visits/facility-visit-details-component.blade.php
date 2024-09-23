@@ -31,8 +31,8 @@
                                     class="btn {{ $step != 5 ? 'btn-default' : 'btn-success' }}">LABORATORY EQUIPMENT </a>
                             </div>
                             <div class="multi-wizard-step overflow-auto">
-                                <a href="#step-5" type="button"
-                                    class="btn {{ $step != 5 ? 'btn-default' : 'btn-success' }}">LABORATORY INFORMATION SYSTEM</a>
+                                <a href="#step-6" type="button"
+                                    class="btn {{ $step != 6 ? 'btn-default' : 'btn-success' }}">LABORATORY INFORMATION SYSTEM</a>
                             </div>
                         </div>
                     </div>
@@ -72,7 +72,10 @@
                                             class="btn btn-success nextBtn btn-lg float-right fa fa-arrow-circle-right"
                                             wire:click="secondStepSubmit">Next</x-button>
                                     </div>
-                                    
+                                    <div class="btn-group" role="group">
+                                        <x-button class="btn-danger float-right nextBtn btn-lg fa fa-arrow-circle-left"
+                                            wire:click="back(1)">Back</x-button>
+                                    </div>
                                     <br><br>
                                 </div>
                             </div>
@@ -148,7 +151,7 @@
                     @endif
                     @if($step == 6)
                     <div class="row setup-content {{ $step != 6 ? 'display-none' : '' }} overflow-auto"
-                        id="step-5">
+                        id="step-6">
                         <div class="col-md-12">
 
                             <div class="border border-success rounded overflow-auto">
@@ -161,7 +164,7 @@
                                     </div>
                                     <div class="btn-group" role="group">
                                         <x-button class="btn-danger float-right nextBtn btn-lg fa fa-arrow-circle-left"
-                                            wire:click="back(4)">Back</x-button>
+                                            wire:click="back(5)">Back</x-button>
                                     </div>
                                     <br><br>
                                 </div>
