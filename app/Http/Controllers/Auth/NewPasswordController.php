@@ -35,10 +35,10 @@ class NewPasswordController extends Controller
             'token' => ['required'],
             'email' => ['required', 'email'],
             'password' => ['required', 'confirmed', Rules\Password::min(8)
-            ->mixedCase()
-            ->numbers()
-            ->symbols()
-            ->uncompromised()],
+                ->mixedCase()
+                ->numbers()
+                ->symbols()
+                ->uncompromised()],
         ]);
 
         // Here we will attempt to reset the user's password. If it is successful we
@@ -62,6 +62,6 @@ class NewPasswordController extends Controller
         return $status == Password::PASSWORD_RESET
                     ? redirect()->route('login')->with('status', __($status))
                     : back()->withInput($request->only('email'))
-                            ->withErrors(['email' => __($status)]);
+                        ->withErrors(['email' => __($status)]);
     }
 }

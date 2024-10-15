@@ -11,6 +11,7 @@ use Livewire\WithPagination;
 class FacilityComponent extends Component
 {
     use WithPagination;
+
     //Filters
     public $from_date;
 
@@ -39,39 +40,53 @@ class FacilityComponent extends Component
     public $filter = false;
 
     public $name;
+
     public $level;
+
     public $ip;
+
     public $parent_id;
+
     public $dhis2_facility_name;
+
     public $dhis2_facility_code;
+
     public $ownership;
+
     public $clinician_contact;
+
     public $email;
+
     public $is_hub;
+
     public $is_training_partner;
+
     public $details_sent;
+
     public $district_id;
+
     public $sub_district_id;
+
     public $is_active;
 
     public function storevalue()
     {
         // Validate the input
         $this->validate([
-            'name'=>'nullable|string',
-            'level'=>'nullable|integer',
-            'ip'=>'nullable',
-            'parent_id'=>'nullable|integer',
-            'dhis2_facility_name'=>'nullable|string',
-            'dhis2_facility_code'=>'nullable',
-            'ownership'=>'required|string',
-            'clinician_contact'=>'required',
-            'email'=>'required|email',
-            'is_active'=>'required|integer',
-            'is_hub'=>'nullable|integer',
-            'is_training_partner'=>'nullable|integer',
-            'details_sent'=>'nullable|integer',
-            'district_id'=>'required|integer',
+            'name' => 'nullable|string',
+            'level' => 'nullable|integer',
+            'ip' => 'nullable',
+            'parent_id' => 'nullable|integer',
+            'dhis2_facility_name' => 'nullable|string',
+            'dhis2_facility_code' => 'nullable',
+            'ownership' => 'required|string',
+            'clinician_contact' => 'required',
+            'email' => 'required|email',
+            'is_active' => 'required|integer',
+            'is_hub' => 'nullable|integer',
+            'is_training_partner' => 'nullable|integer',
+            'details_sent' => 'nullable|integer',
+            'district_id' => 'required|integer',
             // 'sub_district_id'=>'required|integer',
             // ... other validation rules ...
         ]);
@@ -87,10 +102,10 @@ class FacilityComponent extends Component
         $facility->ownership = $this->ownership;
         $facility->clinician_contact = $this->clinician_contact;
         $facility->email = $this->email;
-        $facility->is_hub = $this->is_hub??0;
+        $facility->is_hub = $this->is_hub ?? 0;
         $facility->is_active = $this->is_active;
-        $facility->is_training_partner = $this->is_training_partner??0;
-        $facility->details_sent = $this->details_sent??0;
+        $facility->is_training_partner = $this->is_training_partner ?? 0;
+        $facility->details_sent = $this->details_sent ?? 0;
         $facility->district_id = $this->district_id;
         $facility->sub_district_id = $this->sub_district_id;
         $facility->save();
@@ -100,6 +115,7 @@ class FacilityComponent extends Component
         $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Facility updated successfully!']);
 
     }
+
     public function editData(Facility $facility)
     {
         $this->edit_id = $facility->id;
@@ -121,29 +137,30 @@ class FacilityComponent extends Component
         $this->createNew = true;
         $this->toggleForm = true;
     }
+
     public function updatevalue()
     {
         // Validate the input
         $this->validate([
-            'name'=>'nullable|string',
-            'level'=>'nullable|integer',
-            'ip'=>'nullable',
-            'parent_id'=>'nullable|integer',
-            'dhis2_facility_name'=>'nullable|string',
-            'dhis2_facility_code'=>'nullable',
-            'ownership'=>'required|string',
-            'clinician_contact'=>'required',
-            'email'=>'required|email',
-            'is_hub'=>'integer',
-            'is_active'=>'integer',
-            'is_training_partner'=>'integer',
-            'details_sent'=>'integer',
-            'district_id'=>'required|integer',
-            'sub_district_id'=>'required|integer',
+            'name' => 'nullable|string',
+            'level' => 'nullable|integer',
+            'ip' => 'nullable',
+            'parent_id' => 'nullable|integer',
+            'dhis2_facility_name' => 'nullable|string',
+            'dhis2_facility_code' => 'nullable',
+            'ownership' => 'required|string',
+            'clinician_contact' => 'required',
+            'email' => 'required|email',
+            'is_hub' => 'integer',
+            'is_active' => 'integer',
+            'is_training_partner' => 'integer',
+            'details_sent' => 'integer',
+            'district_id' => 'required|integer',
+            'sub_district_id' => 'required|integer',
             // ... other validation rules ...
         ]);
 
-        $facility = Facility::where('id',$this->edit_id)->first();
+        $facility = Facility::where('id', $this->edit_id)->first();
         $facility->name = $this->name;
         $facility->level = $this->level;
         $facility->ip = $this->ip;
@@ -165,7 +182,6 @@ class FacilityComponent extends Component
         $this->close();
         $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Facility updated successfully!']);
 
-
         // Clear input fields after saving
         $this->createNew = false;
         $this->toggleForm = false;
@@ -174,6 +190,7 @@ class FacilityComponent extends Component
         $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Facility updated successfully!']);
 
     }
+
     public function resetInputs()
     {
         $this->reset([
@@ -194,6 +211,7 @@ class FacilityComponent extends Component
             'sub_district_id',
         ]);
     }
+
     public function filterFaclities()
     {
         $data = Facility::search($this->search)
@@ -221,6 +239,7 @@ class FacilityComponent extends Component
             ->paginate($this->perPage);
         $data['districts'] = District::all();
         $data['divisions'] = County::where('district_id', $this->district_id)->get();
+
         return view('livewire.facility.facility-component', $data);
     }
 }

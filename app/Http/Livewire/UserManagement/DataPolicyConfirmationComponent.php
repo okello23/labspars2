@@ -2,15 +2,15 @@
 
 namespace App\Http\Livewire\UserManagement;
 
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class DataPolicyConfirmationComponent extends Component
 {
+    public function acceptPolicy()
+    {
 
-    public function acceptPolicy(){
-
-        auth()->user()->update(['declaration'=>true]);
+        auth()->user()->update(['declaration' => true]);
 
         $this->dispatchBrowserEvent('close-modal');
         $this->dispatchBrowserEvent('swal:modal', [
@@ -21,9 +21,10 @@ class DataPolicyConfirmationComponent extends Component
 
     }
 
-    public function declinePolicy(){
+    public function declinePolicy()
+    {
 
-        auth()->user()->update(['declaration'=>false]);
+        auth()->user()->update(['declaration' => false]);
 
         Auth::guard('web')->logout();
         session()->invalidate();

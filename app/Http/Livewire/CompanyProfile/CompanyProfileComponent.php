@@ -2,38 +2,57 @@
 
 namespace App\Http\Livewire\CompanyProfile;
 
+use App\Models\CompanyProfile\CompanyProfile;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use App\Models\CompanyProfile\CompanyProfile;
 
 class CompanyProfileComponent extends Component
 {
     use WithFileUploads;
+
     public $createNew = false;
+
     public $toggleForm = false;
 
     public $company_name;
+
     public $slogan;
+
     public $about;
+
     public $company_type;
+
     public $physical_address;
+
     public $address2;
+
     public $contact;
+
     public $alt_contact;
+
     public $email;
+
     public $alt_email;
+
     public $tin;
+
     public $logo;
+
     public $logo2;
+
     public $website;
+
     public $fax;
 
     public $profile;
+
     public $existingLogo;
+
     public $existingLogo2;
 
-    public function mount(){
-        $profile=CompanyProfile::first();
+    public function mount()
+    {
+        $profile = CompanyProfile::first();
         if ($profile) {
             $this->company_name = $profile->company_name;
             $this->slogan = $profile->slogan;
@@ -51,12 +70,12 @@ class CompanyProfileComponent extends Component
             $this->website = $profile->website;
             $this->fax = $profile->fax;
 
-            $this->createNew=false;
-        }else{
-            $this->createNew=true;
+            $this->createNew = false;
+        } else {
+            $this->createNew = true;
         }
 
-        $this->profile=$profile;
+        $this->profile = $profile;
     }
 
     public function storeProfileInformation()
@@ -72,7 +91,7 @@ class CompanyProfileComponent extends Component
 
         $logoPath = '';
         $logo2Path = '';
-    
+
         if ($this->logo && $this->logo2) {
             $this->validate(['logo' => 'image|max:300|dimensions:max_width=600,max_height=400',
                 'logo2' => 'image|max:300|dimensions:max_width=600,max_height=400']);
@@ -128,7 +147,7 @@ class CompanyProfileComponent extends Component
 
         $logoPath = '';
         $logo2Path = '';
-    
+
         if ($this->logo && $this->logo2) {
             $this->validate(['logo' => 'image|max:300|dimensions:max_width=600,max_height=400',
                 'logo2' => 'image|max:300|dimensions:max_width=600,max_height=400']);

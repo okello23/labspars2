@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('fv_supervisors', function (Blueprint $table) {
             $table->id();
-            $table->string('name',120);
-            $table->string('email',50)->nullable();
-            $table->string('contact',20);
-            $table->string('title',10);
+            $table->string('name', 120);
+            $table->string('email', 50)->nullable();
+            $table->string('contact', 20);
+            $table->string('title', 10);
             $table->foreignId('visit_id')->references('id')->on('facility_visits')->onDelete('RESTRICT')->onUpdate('CASCADE');
             $table->timestamps();
         });

@@ -2,9 +2,9 @@
 
 namespace App\Http\Livewire\Dashboard\Charts;
 
+use App\Models\CaseManagement\Cases;
 use Carbon\Carbon;
 use Livewire\Component;
-use App\Models\CaseManagement\Cases;
 
 class CovidChart extends Component
 {
@@ -43,8 +43,6 @@ class CovidChart extends Component
     //     $this->specimen_type = $details['sample'];
     // }
 
-
-
     public $pathogens;
 
     public $specimenTypes;
@@ -58,9 +56,9 @@ class CovidChart extends Component
     public function updatedSelectedOption()
     {
 
-        $Data = Cases::where('id','!=', null)
-        ->where('disease_id',1)
-        ->when($this->from_date, function ($query) {
+        $Data = Cases::where('id', '!=', null)
+            ->where('disease_id', 1)
+            ->when($this->from_date, function ($query) {
                 $from = Carbon::parse($this->from_date)->toDateTimeString();
                 $to = Carbon::parse($this->to_date)->addHour(23)->addMinutes(59)->toDateTimeString();
                 $query->whereBetween('lab_test_date', [$from, $to]);
@@ -69,7 +67,7 @@ class CovidChart extends Component
             ->selectRaw("DATE_FORMAT(lab_test_date, '%M-%Y') display_date")
             ->selectRaw("DATE_FORMAT(lab_test_date, '%Y-%m') new_date")
             ->groupBy('new_date')->orderBy('new_date', 'ASC')->limit(12)->get();
-            // dd($Data);
+        // dd($Data);
         $mydata = $Data->flatten()
             ->pluck('sample_count')->toArray();
         $mycata = $Data->flatten()

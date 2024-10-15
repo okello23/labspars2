@@ -2,11 +2,11 @@
 
 namespace App\Models\Settings;
 
-use Spatie\Activitylog\LogOptions;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Product extends Model
 {
@@ -23,6 +23,7 @@ class Product extends Model
             ->dontSubmitEmptyLogs();
         // Chain fluent methods for configuration options
     }
+
     protected $fillable = [
         'name',
         'type',
@@ -33,6 +34,7 @@ class Product extends Model
     {
         return $this->belongsTo(Region::class, 'created_at', 'id');
     }
+
     public static function boot()
     {
         parent::boot();
@@ -47,7 +49,7 @@ class Product extends Model
     {
         return empty($search) ? static::query()
         : static::query()
-            ->where('name', 'like', '%' . $search . '%')
-            ->orWhere('type', 'like', '%' . $search . '%');
+            ->where('name', 'like', '%'.$search.'%')
+            ->orWhere('type', 'like', '%'.$search.'%');
     }
 }

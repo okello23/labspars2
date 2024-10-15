@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
-use Laravel\Passport\PassportServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -44,7 +43,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Blade::directive('dateTimeFormater', function ($date) {
-          return "<?php echo date('d-M-Y G:i:s', strtotime($date)); ?>";
+            return "<?php echo date('d-M-Y G:i:s', strtotime($date)); ?>";
         });
     }
 }

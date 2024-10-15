@@ -7,6 +7,7 @@
             <div class="card-body">
 
                 <div class="row">
+                <div class="col-md-12">
 
                     <div class="stepwizard overflow-auto">
                         <div class="stepwizard-row setup-panel overflow-auto">
@@ -37,14 +38,13 @@
                         </div>
                     </div>
                     @if($step == 1)
-                    <div class="row setup-content {{ $step != 1 ? 'display-none' : '' }}" id="step-1">
+                    <div  class ="{{ $step != 1 ? 'display-none' : '' }}" id="step-1">
 
-                        <div class="col-md-12">
+                        <div >
                             <div class="border border-success rounded">
                                 @include('livewire.facility.visits.inc.facility-visit-info')
                                 <hr>
                                 <div class="container">
-
                                     @if ($toggleForm)
                                         <x-button
                                             class="btn btn-success nextBtn btn-lg float-right fa fa-arrow-circle-right"
@@ -52,7 +52,7 @@
                                     @else
                                         <x-button
                                             class="btn btn-success nextBtn btn-lg float-right fa fa-arrow-circle-right"
-                                            wire:click="firstStepSubmit">Next</x-button>
+                                            wire:click="secondStepSubmit">Next</x-button>
                                     @endif
                                 </div>
                                 <br><br>
@@ -61,9 +61,9 @@
                     </div>
                     @endif
                     @if($step == 2)
-                    <div class="row setup-content {{ $step != 2 ? 'display-none' : '' }}" id="step-2">
+                    <div class="row  {{ $step != 2 ? 'display-none' : '' }}" id="step-2">
                         <div class="col-md-12">
-                            <div class="border border-success rounded">
+                            <div class="border border-success rounded p-3">
                                 @include('livewire.facility.visits.inc.facility-visit-stock-mgt')
                                 <hr>
                                 <div class="container">
@@ -83,8 +83,8 @@
                     </div>
                     @endif
                     @if($step == 3)
-                    <div class="row setup-content {{ $step != 3 ? 'display-none' : '' }}" id="step-3">
-                        <div class="col-md-12">
+                    <div class="row  {{ $step != 3 ? 'display-none' : '' }}" id="step-3">
+                        <div class="col-md-12 p-3">
                             <div class="border border-success rounded">
                                 @include('livewire.facility.visits.inc.facility-visit-storage-mgt')
                                 <hr>
@@ -104,7 +104,7 @@
                     </div>
                     @endif
                     @if($step == 4)
-                    <div class="row setup-content {{ $step != 4 ? 'display-none' : '' }} overflow-auto"
+                    <div class="row  {{ $step != 4 ? 'display-none' : '' }} overflow-auto"
                         id="step-4">
                         <div class="col-md-12">
 
@@ -127,7 +127,7 @@
                     </div>
                     @endif
                     @if($step == 5)
-                    <div class="row setup-content {{ $step != 5 ? 'display-none' : '' }} overflow-auto"
+                    <div class="row  {{ $step != 5 ? 'display-none' : '' }} overflow-auto"
                         id="step-5">
                         <div class="col-md-12">
 
@@ -150,7 +150,7 @@
                     </div>
                     @endif
                     @if($step == 6)
-                    <div class="row setup-content {{ $step != 6 ? 'display-none' : '' }} overflow-auto"
+                    <div class="row  {{ $step != 6 ? 'display-none' : '' }} overflow-auto"
                         id="step-6">
                         <div class="col-md-12">
 
@@ -173,6 +173,7 @@
                     </div>
                     @endif
                 </div>
+            </div>
             </div>
         </div>
     </div>

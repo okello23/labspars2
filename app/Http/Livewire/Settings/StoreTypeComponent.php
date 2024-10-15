@@ -2,13 +2,14 @@
 
 namespace App\Http\Livewire\Settings;
 
+use App\Models\Facility\FvStorageType;
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\Facility\FvStorageType;
 
 class StoreTypeComponent extends Component
 {
     use WithPagination;
+
     //Filters
     public $from_date;
 
@@ -26,7 +27,7 @@ class StoreTypeComponent extends Component
 
     public $name;
 
-    public $description =1;
+    public $description = 1;
 
     public $is_active;
 
@@ -146,12 +147,12 @@ class StoreTypeComponent extends Component
         }
     }
 
-  
     public function render()
     {
         $data['StorageTypes'] = FvStorageType::search($this->search)
-        ->orderBy($this->orderBy, $this->orderAsc ? 'asc' : 'desc')
-        ->paginate($this->perPage);
+            ->orderBy($this->orderBy, $this->orderAsc ? 'asc' : 'desc')
+            ->paginate($this->perPage);
+
         return view('livewire.settings.store-type-component', $data);
     }
 }

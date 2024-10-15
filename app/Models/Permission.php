@@ -13,12 +13,12 @@ class Permission extends LaratrustPermission
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-        ->logOnly(['*'])
-        ->logFillable()
-        ->useLogName('Permissions')
-        ->dontLogIfAttributesChangedOnly(['updated_at'])
-        ->logOnlyDirty()
-        ->dontSubmitEmptyLogs();
+            ->logOnly(['*'])
+            ->logFillable()
+            ->useLogName('Permissions')
+            ->dontLogIfAttributesChangedOnly(['updated_at'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
         // Chain fluent methods for configuration options
     }
 
