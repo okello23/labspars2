@@ -633,32 +633,33 @@ class FacilityVisitDetailsComponent extends Component
     {
         $this->step = 4;
         $ordering = FvOrderManagement::where('visit_id', $this->active_visit->id)->first();
+        // dd($this->active_visit->id);
 
-        $this->cycles_filed_stored = $ordering->cycles_filed_stored;
-        $this->cycles_filed_comments = $ordering->cycles_filed_comments;
-        $this->electronic_submission = $ordering->electronic_submission;
-        $this->electronic_submission_comments = $ordering->electronic_submission_comments;
-        $this->soh = $ordering->soh;
-        $this->quantity_issued = $ordering->quantity_issued;
-        $this->days_out_of_stock = $ordering->days_out_of_stock;
-        $this->adjusted_amc = $ordering->adjusted_amc;
-        $this->max_quantity = $ordering->max_quantity;
-        $this->quantity_to_order = $ordering->quantity_to_order;
-        $this->test_menu_available = $ordering->test_menu_available;
-        $this->qty_to_order_score = $ordering->qty_to_order_score;
+        // $this->cycles_filed_stored = $ordering->cycles_filed_stored;
+        // $this->cycles_filed_comments = $ordering->cycles_filed_comments;
+        // $this->electronic_submission = $ordering->electronic_submission;
+        // $this->electronic_submission_comments = $ordering->electronic_submission_comments;
+        // $this->soh = $ordering->soh;
+        // $this->quantity_issued = $ordering->quantity_issued;
+        // $this->days_out_of_stock = $ordering->days_out_of_stock;
+        // $this->adjusted_amc = $ordering->adjusted_amc;
+        // $this->max_quantity = $ordering->max_quantity;
+        // $this->quantity_to_order = $ordering->quantity_to_order;
+        // $this->test_menu_available = $ordering->test_menu_available;
+        // $this->qty_to_order_score = $ordering->qty_to_order_score;
 
-        $adherence = FvAdherence::where('visit_id', $this->active_visit->id)->first();
-        $this->ordering_schedule_deadline = $adherence->ordering_schedule_deadline;
-        $this->actual_ordering_date = $adherence->actual_ordering_date;
-        $this->ordering_timely = $adherence->ordering_timely;
-        $this->delivery_schedule_deadline = $adherence->delivery_schedule_deadline;
-        $this->delivery_date = $adherence->delivery_date;
-        $this->delivery_on_time = $adherence->delivery_on_time;
-        $this->adherence_comments = $adherence->adherence_comments;
-        $this->adherence_score = $adherence->adherence_score;
-        $this->adherence_percentage = $adherence->adherence_percentage;
-        $this->annual_procurement_plan = $adherence->annual_procurement_plan;
-        $this->procurement_plan_comments = $adherence->procurement_plan_comments;
+        // $adherence = FvAdherence::where('visit_id', $this->active_visit->id)->first();
+        // $this->ordering_schedule_deadline = $adherence->ordering_schedule_deadline;
+        // $this->actual_ordering_date = $adherence->actual_ordering_date;
+        // $this->ordering_timely = $adherence->ordering_timely;
+        // $this->delivery_schedule_deadline = $adherence->delivery_schedule_deadline;
+        // $this->delivery_date = $adherence->delivery_date;
+        // $this->delivery_on_time = $adherence->delivery_on_time;
+        // $this->adherence_comments = $adherence->adherence_comments;
+        // $this->adherence_score = $adherence->adherence_score;
+        // $this->adherence_percentage = $adherence->adherence_percentage;
+        // $this->annual_procurement_plan = $adherence->annual_procurement_plan;
+        // $this->procurement_plan_comments = $adherence->procurement_plan_comments;
     }
 
     public function fourthStepSubmit()
