@@ -1,13 +1,12 @@
 <?php
+
 namespace App\Traits;
 
-use App\Models\InvStorageSection;
 use App\Models\CaseManagement\Contact;
 
 trait SaveContactTrait
 {
-
-    function validateData()
+    public function validateData()
     {
         return [
             'ext_case_id' => 'required',
@@ -72,7 +71,8 @@ trait SaveContactTrait
             'in_contact' => 'nullable',
             'hospitalization' => 'nullable'];
     }
-    function saveContact(
+
+    public function saveContact(
         $external_id,
         $contact_no,
         $case_id,
@@ -125,8 +125,7 @@ trait SaveContactTrait
         $household_members,
         $washrooms,
         $washrooms_shared,
-    )
-    {
+    ) {
         $this->validate(
             $this->validateData()
         );

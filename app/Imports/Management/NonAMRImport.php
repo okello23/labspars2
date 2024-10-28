@@ -7,9 +7,6 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 
 class NonAMRImport implements ToCollection
 {
-    /**
-    * @param Collection $collection
-    */
     public function collection(Collection $collection)
     {
         //

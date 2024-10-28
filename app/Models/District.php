@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use App\Models\Settings\Region;
-use Spatie\Activitylog\LogOptions;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class District extends Model
 {
@@ -24,6 +24,7 @@ class District extends Model
             ->dontSubmitEmptyLogs();
         // Chain fluent methods for configuration options
     }
+
     protected $fillable = [
         'name',
         'dhis2_code',
@@ -34,6 +35,7 @@ class District extends Model
     {
         return $this->belongsTo(Region::class, 'region_id', 'id');
     }
+
     public static function boot()
     {
         parent::boot();
@@ -48,7 +50,8 @@ class District extends Model
     {
         return empty($search) ? static::query()
         : static::query()
-            ->where('name', 'like', '%' . $search . '%');
+            ->where('name', 'like', '%'.$search.'%');
     }
+
     protected $table = 'districts';
 }

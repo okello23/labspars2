@@ -126,10 +126,10 @@ class UserProfileComponent extends Component
                 $this->validate([
                     'password' => ['required',
                         Password::min(8)
-                        ->mixedCase()
-                        ->numbers()
-                        ->symbols()
-                        ->uncompromised(),
+                            ->mixedCase()
+                            ->numbers()
+                            ->symbols()
+                            ->uncompromised(),
                         'confirmed', ],
                 ]);
                 $currentUser->update([

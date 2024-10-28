@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -18,8 +17,8 @@ class RevokeBearerTokenMailable extends Mailable
      *
      * @return void
      */
+    public $integration_request;
 
-     public $integration_request;
     public function __construct($mail_content)
     {
         $this->integration_request = $mail_content;
@@ -45,7 +44,7 @@ class RevokeBearerTokenMailable extends Mailable
     public function content()
     {
         return new Content(
-              markdown: 'emails.api-integration.revoke-bearer-token',
+            markdown: 'emails.api-integration.revoke-bearer-token',
         );
     }
 

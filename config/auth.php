@@ -2,7 +2,7 @@
 
 return [
 
-  /*
+    /*
   |--------------------------------------------------------------------------
   | Authentication Defaults
   |--------------------------------------------------------------------------
@@ -13,12 +13,12 @@ return [
   |
   */
 
-  'defaults' => [
-    'guard' => 'web',
-    'passwords' => 'users',
-  ],
+    'defaults' => [
+        'guard' => 'web',
+        'passwords' => 'users',
+    ],
 
-  /*
+    /*
   |--------------------------------------------------------------------------
   | Authentication Guards
   |--------------------------------------------------------------------------
@@ -35,25 +35,25 @@ return [
   |
   */
 
-  'guards' => [
-    'web' => [
-      'driver' => 'session',
-      'provider' => 'users',
-    ],
-    'api' => [
-      'driver' => 'passport',
-      'provider' => 'users',
-      // 'hash' => true,
+    'guards' => [
+        'web' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
+        'api' => [
+            'driver' => 'passport',
+            'provider' => 'users',
+            // 'hash' => true,
 
-    ],
-    
-    'api-customers' => [
-      'driver' => 'passport',
-      'provider' => 'customers',
-      ],
-      ],
+        ],
 
-      /*
+        'api-customers' => [
+            'driver' => 'passport',
+            'provider' => 'customers',
+        ],
+    ],
+
+    /*
       |--------------------------------------------------------------------------
       | User Providers
       |--------------------------------------------------------------------------
@@ -70,19 +70,19 @@ return [
       |
       */
 
-      'providers' => [
-      'users' => [
-      'driver' => 'eloquent',
-      'model' => App\Models\User::class,
-      ],
+    'providers' => [
+        'users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\User::class,
+        ],
 
-      // 'users' => [
-      //     'driver' => 'database',
-      //     'table' => 'users',
-      // ],
-      ],
+        // 'users' => [
+        //     'driver' => 'database',
+        //     'table' => 'users',
+        // ],
+    ],
 
-      /*
+    /*
       |--------------------------------------------------------------------------
       | Resetting Passwords
       |--------------------------------------------------------------------------
@@ -97,16 +97,16 @@ return [
       |
       */
 
-      'passwords' => [
-      'users' => [
-      'provider' => 'users',
-      'table' => 'password_resets',
-      'expire' => 60,
-      'throttle' => 60,
-      ],
-      ],
+    'passwords' => [
+        'users' => [
+            'provider' => 'users',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+    ],
 
-      /*
+    /*
       |--------------------------------------------------------------------------
       | Password Confirmation Timeout
       |--------------------------------------------------------------------------
@@ -117,9 +117,9 @@ return [
       |
       */
 
-      'password_timeout' => 10800,
+    'password_timeout' => 10800,
 
-      /*
+    /*
       |--------------------------------------------------------------------------
       | Password Expiration
       |--------------------------------------------------------------------------
@@ -127,6 +127,6 @@ return [
       | Here you may define the number of days for the user password to expire after which a user will be forced to change to a new one.
       |
       */
-      'password_expires_days' => 60,
+    'password_expires_days' => 60,
 
-      ];
+];

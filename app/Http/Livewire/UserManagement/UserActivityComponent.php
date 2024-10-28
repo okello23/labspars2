@@ -34,27 +34,27 @@ class UserActivityComponent extends Component
     public function filterLogs()
     {
         $logs = Activity::select('*')->whereNotNull('causer_id')->with('causer')
-                    ->when($this->causer != 0, function ($query) {
-                        $query->where('causer_id', $this->causer);
-                    }, function ($query) {
-                        return $query;
-                    })
-                    ->when($this->event != '', function ($query) {
-                        $query->where('event', $this->event);
-                    }, function ($query) {
-                        return $query;
-                    })
-                    ->when($this->subject != '', function ($query) {
-                        $query->where('log_name', $this->subject);
-                    }, function ($query) {
-                        return $query;
-                    })
-                    ->when($this->from_date != '' && $this->to_date != '', function ($query) {
-                        $query->whereBetween('created_at', [$this->from_date, $this->to_date]);
-                    }, function ($query) {
-                        return $query;
-                    })
-                    ->latest()->get()->take(1000);
+            ->when($this->causer != 0, function ($query) {
+                $query->where('causer_id', $this->causer);
+            }, function ($query) {
+                return $query;
+            })
+            ->when($this->event != '', function ($query) {
+                $query->where('event', $this->event);
+            }, function ($query) {
+                return $query;
+            })
+            ->when($this->subject != '', function ($query) {
+                $query->where('log_name', $this->subject);
+            }, function ($query) {
+                return $query;
+            })
+            ->when($this->from_date != '' && $this->to_date != '', function ($query) {
+                $query->whereBetween('created_at', [$this->from_date, $this->to_date]);
+            }, function ($query) {
+                return $query;
+            })
+            ->latest()->get()->take(1000);
 
         return $logs;
     }
@@ -65,7 +65,7 @@ class UserActivityComponent extends Component
             Artisan::call('activitylog:clean');
             $this->dispatchBrowserEvent('close-modal');
             $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => 'Logs deleted successfully!']);
-        } catch(Exception $error) {
+        } catch (Exception $error) {
             $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => 'Something went wrong! Logs could not be cleared!']);
         }
     }

@@ -13,12 +13,12 @@ class Role extends LaratrustRole
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-        ->logOnly(['*'])
-        ->logFillable()
-        ->useLogName('Roles')
-        ->dontLogIfAttributesChangedOnly(['updated_at'])
-        ->logOnlyDirty()
-        ->dontSubmitEmptyLogs();
+            ->logOnly(['*'])
+            ->logFillable()
+            ->useLogName('Roles')
+            ->dontLogIfAttributesChangedOnly(['updated_at'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
         // Chain fluent methods for configuration options
     }
 

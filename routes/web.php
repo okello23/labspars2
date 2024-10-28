@@ -15,6 +15,7 @@ use App\Http\Livewire\Facility\FacilityComponent;
 use App\Http\Livewire\Facility\Visits\FacilityVisitDetailsComponent;
 use App\Http\Livewire\Facility\Visits\FacilityVisitsComponent;
 use App\Http\Livewire\Facility\Visits\FacilityVisitViewComponent;
+use App\Http\Livewire\Settings\LabPlatformComponent;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,6 +58,7 @@ Route::group(['middleware' => ['auth', 'password_expired', 'suspended_user']], f
       Route::get('health-facilities', HealthFacilitiesComponent::class)->name('health-facilities');
       Route::get('product/types', ProductComponent::class)->name('product-types');
       Route::get('store/types', StoreTypeComponent::class)->name('store-types');
+      Route::get('laboratory/platforms', LabPlatformComponent::class)->name('lab_platforms');
       });
       Route::group(['prefix' => 'facility'], function () {
         Route::get('list', FacilityComponent::class)->name('facility');

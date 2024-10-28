@@ -2,15 +2,15 @@
 
 namespace App\Http\Livewire\Facility\Visits;
 
-use Livewire\Component;
-use Livewire\WithPagination;
 use App\Models\Facility\Facility;
 use App\Models\Facility\FacilityVisit;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 class FacilityVisitsComponent extends Component
 {
-
     use WithPagination;
+
     //Filters
     public $from_date;
 
@@ -39,26 +39,33 @@ class FacilityVisitsComponent extends Component
     public $filter = false;
 
     public $visit_number;
+
     public $in_charge_name;
+
     public $in_charge_contact;
+
     public $responsible_lss_name;
+
     public $facility_id;
+
     public $use_stock_cards;
+
     public $date_of_visit;
+
     public $date_of_next_visit;
 
     public function storevalue()
     {
         // Validate the input
         $this->validate([
-            'visit_number'=>'required',
-            'in_charge_name'=>'required',
-            'in_charge_contact'=>'required',
-            'responsible_lss_name'=>'required',
-            'facility_id'=>'required',
-            'use_stock_cards'=>'nullable',
-            'date_of_visit'=>'required',
-            'date_of_next_visit'=>'required',
+            'visit_number' => 'required',
+            'in_charge_name' => 'required',
+            'in_charge_contact' => 'required',
+            'responsible_lss_name' => 'required',
+            'facility_id' => 'required',
+            'use_stock_cards' => 'nullable',
+            'date_of_visit' => 'required',
+            'date_of_next_visit' => 'required',
         ]);
 
         // Create a new Facility record
@@ -76,9 +83,11 @@ class FacilityVisitsComponent extends Component
         $this->resetInputs();
         $this->close();
         $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Facility updated successfully!']);
+
         return redirect()->SignedRoute('facility-visit_details', $visit->visit_code);
 
     }
+
     public function editData(FacilityVisit $visit)
     {
         $this->edit_id = $visit->id;
@@ -94,23 +103,26 @@ class FacilityVisitsComponent extends Component
         $this->createNew = true;
         $this->toggleForm = true;
     }
-    public function updatedFacilitId() {
+
+    public function updatedFacilitId()
+    {
         // $facility = Facility::find($this->facility_id);
         // $this->in_charge_name = $facility->in_charge_name;
         // $this->in_charge_contact = $facility->in_charge_contact;
     }
+
     public function updatevalue()
     {
         // Validate the input
         $this->validate([
-            'visit_number'=>'required',
-            'in_charge_name'=>'required',
-            'in_charge_contact'=>'required',
-            'responsible_lss_name'=>'required',
-            'facility_id'=>'required',
-            'use_stock_cards'=>'nullable',
-            'date_of_visit'=>'required',
-            'date_of_next_visit'=>'required',
+            'visit_number' => 'required',
+            'in_charge_name' => 'required',
+            'in_charge_contact' => 'required',
+            'responsible_lss_name' => 'required',
+            'facility_id' => 'required',
+            'use_stock_cards' => 'nullable',
+            'date_of_visit' => 'required',
+            'date_of_next_visit' => 'required',
 
         ]);
 
@@ -129,10 +141,11 @@ class FacilityVisitsComponent extends Component
         $this->resetInputs();
         $this->close();
         $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Facility updated successfully!']);
+
         return redirect()->SignedRoute('facility-visit_details', $visit->visit_code);
 
-
     }
+
     public function resetInputs()
     {
         $this->reset([
@@ -146,6 +159,7 @@ class FacilityVisitsComponent extends Component
             'date_of_next_visit',
         ]);
     }
+
     public function filterFacilities()
     {
         $data = FacilityVisit::search($this->search)
@@ -170,10 +184,11 @@ class FacilityVisitsComponent extends Component
     public function render()
     {
         $data['visits'] = $this->filterFacilities()
-        ->with(['facility', 'facility.healthSubDistrict', 'facility.healthSubDistrict.district','facility.healthSubDistrict.district.region'])
-        ->orderBy($this->orderBy, $this->orderAsc ? 'asc' : 'desc')
+            ->with(['facility', 'facility.healthSubDistrict', 'facility.healthSubDistrict.district', 'facility.healthSubDistrict.district.region'])
+            ->orderBy($this->orderBy, $this->orderAsc ? 'asc' : 'desc')
             ->paginate($this->perPage);
         $data['facilities'] = Facility::all();
+
         return view('livewire.facility.visits.facility-visits-component', $data);
     }
 }

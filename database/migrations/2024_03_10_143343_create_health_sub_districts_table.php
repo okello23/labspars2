@@ -1,27 +1,28 @@
 <?php
-use Illuminate\Support\Facades\DB;
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-  /**
-  * Run the migrations.
-  *
-  * @return void
-  */
-  public function up()
-  {
-    Schema::create('health_sub_districts', function (Blueprint $table) {
-      $table->id();
-      $table->string('name');
-      $table->foreignId('district_id')->nullable()->references('id')->on('districts')->onDelete('RESTRICT')->onUpdate('CASCADE');
-      $table->foreignId('created_by')->nullable()->references('id')->on('users')->constrained()->onUpdate('cascade')->onDelete('restrict');
-      $table->timestamps();
-    });
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('health_sub_districts', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->foreignId('district_id')->nullable()->references('id')->on('districts')->onDelete('RESTRICT')->onUpdate('CASCADE');
+            $table->foreignId('created_by')->nullable()->references('id')->on('users')->constrained()->onUpdate('cascade')->onDelete('restrict');
+            $table->timestamps();
+        });
 
-    DB::statement("
+        DB::statement("
     INSERT INTO `health_sub_districts`(`name`,`district_id`) VALUES
     ('Buikwe North',1),
     ('Bukomansimbi',2),
@@ -249,15 +250,15 @@ return new class extends Migration
     ('Katerera',115),
     ('Sheema North',116),
     ('Sheema South',116)");
-  }
+    }
 
-  /**
-  * Reverse the migrations.
-  *
-  * @return void
-  */
-  public function down()
-  {
-    Schema::dropIfExists('health_sub_districts');
-  }
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('health_sub_districts');
+    }
 };

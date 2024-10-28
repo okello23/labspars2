@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('storage_type_id')->references('id')->on('fv_storage_types')->onDelete('RESTRICT')->onUpdate('CASCADE');
             $table->foreignId('visit_id')->references('id')->on('facility_visits')->onDelete('RESTRICT')->onUpdate('CASCADE');
-            $table->string('entry_type',50);
+            $table->string('entry_type', 50);
             $table->text('other')->nullable();
             $table->text('comment')->nullable();
             $table->foreignId('created_by')->nullable()->references('id')->on('users')->constrained()->onUpdate('cascade')->onDelete('restrict');

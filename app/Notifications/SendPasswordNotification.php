@@ -43,11 +43,11 @@ class SendPasswordNotification extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->subject('Your Lab SPARS Information System Password')
-                    ->greeting($this->details['greeting'])
-                    ->line($this->details['body'])
-                    ->action($this->details['actiontext'], $this->details['actionurl'])
-                    ->line('Thank you for using our application!');
+            ->subject('Your Lab SPARS Information System Password')
+            ->greeting($this->details['greeting'])
+            ->line($this->details['body'])
+            ->action($this->details['actiontext'], $this->details['actionurl'])
+            ->line('Thank you for using our application!');
     }
 
     /**

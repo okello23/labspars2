@@ -2,11 +2,11 @@
 
 namespace App\Models\Facility;
 
-use Spatie\Activitylog\LogOptions;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class FvStorageType extends Model
 {
@@ -23,20 +23,20 @@ class FvStorageType extends Model
             ->dontSubmitEmptyLogs();
         // Chain fluent methods for configuration options
     }
+
     protected $fillable = [
         'name',
         'description',
         'is_active',
     ];
 
-  
     public static function boot()
     {
         parent::boot();
         if (Auth::check()) {
             self::creating(function ($model) {
                 $model->created_by = auth()->id();
-            });  
+            });
             self::updating(function ($model) {
                 $model->updated_by = auth()->id();
             });
@@ -48,6 +48,6 @@ class FvStorageType extends Model
     {
         return empty($search) ? static::query()
         : static::query()
-            ->where('name', 'like', '%' . $search . '%');
+            ->where('name', 'like', '%'.$search.'%');
     }
 }

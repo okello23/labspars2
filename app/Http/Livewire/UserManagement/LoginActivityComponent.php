@@ -84,26 +84,26 @@ class LoginActivityComponent extends Component
     public function filterLogs()
     {
         $loginRecords = LoginRecord::search($this->search)
-                    ->when($this->description != 0, function ($query) {
-                        $query->where('description', $this->description);
-                    }, function ($query) {
-                        return $query;
-                    })
-                    ->when($this->platform != 0, function ($query) {
-                        $query->where('platform', $this->platform);
-                    }, function ($query) {
-                        return $query;
-                    })
-                    ->when($this->browser != 0, function ($query) {
-                        $query->where('browser', $this->browser);
-                    }, function ($query) {
-                        return $query;
-                    })
-                    ->when($this->from_date != '' && $this->to_date != '', function ($query) {
-                        $query->whereBetween('created_at', [$this->from_date, $this->to_date]);
-                    }, function ($query) {
-                        return $query;
-                    });
+            ->when($this->description != 0, function ($query) {
+                $query->where('description', $this->description);
+            }, function ($query) {
+                return $query;
+            })
+            ->when($this->platform != 0, function ($query) {
+                $query->where('platform', $this->platform);
+            }, function ($query) {
+                return $query;
+            })
+            ->when($this->browser != 0, function ($query) {
+                $query->where('browser', $this->browser);
+            }, function ($query) {
+                return $query;
+            })
+            ->when($this->from_date != '' && $this->to_date != '', function ($query) {
+                $query->whereBetween('created_at', [$this->from_date, $this->to_date]);
+            }, function ($query) {
+                return $query;
+            });
 
         $this->loginRecordIds = $loginRecords->pluck('id')->toArray();
 
@@ -113,8 +113,8 @@ class LoginActivityComponent extends Component
     public function render()
     {
         $logs = $this->filterLogs()
-        ->orderBy($this->orderBy, ! $this->orderAsc ? 'desc' : 'asc')
-        ->paginate($this->perPage);
+            ->orderBy($this->orderBy, ! $this->orderAsc ? 'desc' : 'asc')
+            ->paginate($this->perPage);
 
         return view('livewire.user-management.login-activity-component', compact('logs'))->layout('layouts.app');
     }

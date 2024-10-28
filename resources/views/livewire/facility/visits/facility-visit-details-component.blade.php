@@ -7,6 +7,7 @@
             <div class="card-body">
 
                 <div class="row">
+                <div class="col-md-12">
 
                     <div class="stepwizard overflow-auto">
                         <div class="stepwizard-row setup-panel overflow-auto">
@@ -31,20 +32,19 @@
                                     class="btn {{ $step != 5 ? 'btn-default' : 'btn-success' }}">LABORATORY EQUIPMENT </a>
                             </div>
                             <div class="multi-wizard-step overflow-auto">
-                                <a href="#step-5" type="button"
-                                    class="btn {{ $step != 5 ? 'btn-default' : 'btn-success' }}">LABORATORY INFORMATION SYSTEM</a>
+                                <a href="#step-6" type="button"
+                                    class="btn {{ $step != 6 ? 'btn-default' : 'btn-success' }}">LABORATORY INFORMATION SYSTEM</a>
                             </div>
                         </div>
                     </div>
                     @if($step == 1)
-                    <div class="row setup-content {{ $step != 1 ? 'display-none' : '' }}" id="step-1">
+                    <div  class ="{{ $step != 1 ? 'display-none' : '' }}" id="step-1">
 
-                        <div class="col-md-12">
+                        <div >
                             <div class="border border-success rounded">
                                 @include('livewire.facility.visits.inc.facility-visit-info')
                                 <hr>
                                 <div class="container">
-
                                     @if ($toggleForm)
                                         <x-button
                                             class="btn btn-success nextBtn btn-lg float-right fa fa-arrow-circle-right"
@@ -52,7 +52,7 @@
                                     @else
                                         <x-button
                                             class="btn btn-success nextBtn btn-lg float-right fa fa-arrow-circle-right"
-                                            wire:click="firstStepSubmit">Next</x-button>
+                                            wire:click="secondStepSubmit">Next</x-button>
                                     @endif
                                 </div>
                                 <br><br>
@@ -61,10 +61,10 @@
                     </div>
                     @endif
                     @if($step == 2)
-                    <div class="row setup-content {{ $step != 2 ? 'display-none' : '' }}" id="step-2">
+                    <div class="row  {{ $step != 2 ? 'display-none' : '' }}" id="step-2">
                         <div class="col-md-12">
-                            <div class="border border-success rounded">
-                                {{-- @include('livewire.chw.inc.section-b-component') --}}
+                            <div class="border border-success rounded p-3">
+                                @include('livewire.facility.visits.inc.facility-visit-stock-mgt')
                                 <hr>
                                 <div class="container">
                                     <div class="btn-group float-right" role="group">
@@ -72,7 +72,10 @@
                                             class="btn btn-success nextBtn btn-lg float-right fa fa-arrow-circle-right"
                                             wire:click="secondStepSubmit">Next</x-button>
                                     </div>
-                                    
+                                    <div class="btn-group" role="group">
+                                        <x-button class="btn-danger float-right nextBtn btn-lg fa fa-arrow-circle-left"
+                                            wire:click="back(1)">Back</x-button>
+                                    </div>
                                     <br><br>
                                 </div>
                             </div>
@@ -80,10 +83,10 @@
                     </div>
                     @endif
                     @if($step == 3)
-                    <div class="row setup-content {{ $step != 3 ? 'display-none' : '' }}" id="step-3">
-                        <div class="col-md-12">
+                    <div class="row  {{ $step != 3 ? 'display-none' : '' }}" id="step-3">
+                        <div class="col-md-12 p-3">
                             <div class="border border-success rounded">
-                                {{-- @include('livewire.chw.inc.section-c-component') --}}
+                                @include('livewire.facility.visits.inc.facility-visit-storage-mgt')
                                 <hr>
                                 <div class="container">
                                     <div class="btn-group float-right" role="group">
@@ -101,12 +104,12 @@
                     </div>
                     @endif
                     @if($step == 4)
-                    <div class="row setup-content {{ $step != 4 ? 'display-none' : '' }} overflow-auto"
+                    <div class="row  {{ $step != 4 ? 'display-none' : '' }} overflow-auto"
                         id="step-4">
                         <div class="col-md-12">
 
                             <div class="border border-success rounded overflow-auto">
-                                {{-- @include('livewire.chw.inc.section-d-component') --}}
+                                @include('livewire.facility.visits.inc.facility-visit-ordering')
                                 <hr>
                                 <div class="container">
                                     <div class="btn-group float-right" role="group">
@@ -124,17 +127,17 @@
                     </div>
                     @endif
                     @if($step == 5)
-                    <div class="row setup-content {{ $step != 5 ? 'display-none' : '' }} overflow-auto"
+                    <div class="row  {{ $step != 5 ? 'display-none' : '' }} overflow-auto"
                         id="step-5">
                         <div class="col-md-12">
 
                             <div class="border border-success rounded overflow-auto">
-                                {{-- @include('livewire.chw.inc.language-incentives-and-functions') --}}
+                                @include('livewire.facility.visits.inc.facility-visit-equipment')
                                 <hr>
                                 <div class="container">
                                     <div class="btn-group float-right" role="group">
                                         <x-button class="btn-success  nextBtn btn-lg fa fa-arrow-circle-right"
-                                            wire:click="fifthStepSubmit">Finish</x-button>
+                                            wire:click="fifthStepSubmit">Next</x-button>
                                     </div>
                                     <div class="btn-group" role="group">
                                         <x-button class="btn-danger float-right nextBtn btn-lg fa fa-arrow-circle-left"
@@ -146,7 +149,31 @@
                         </div>
                     </div>
                     @endif
+                    @if($step == 6)
+                    <div class="row  {{ $step != 6 ? 'display-none' : '' }} overflow-auto"
+                        id="step-6">
+                        <div class="col-md-12">
+
+                            <div class="border border-success rounded overflow-auto">
+                                @include('livewire.facility.visits.inc.facility-visit-lims')
+                                <hr>
+                                <div class="container">
+                                    <div class="btn-group float-right" role="group">
+                                        <a class="btn-success  nextBtn btn-lg fa fa-arrow-circle-right"
+                                            href="{{ URL::signedRoute('facility-visit_view', $active_visit->visit_code) }}">Finish</a>
+                                    </div>
+                                    <div class="btn-group" role="group">
+                                        <x-button class="btn-danger float-right nextBtn btn-lg fa fa-arrow-circle-left"
+                                            wire:click="back(5)">Back</x-button>
+                                    </div>
+                                    <br><br>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                 </div>
+            </div>
             </div>
         </div>
     </div>
