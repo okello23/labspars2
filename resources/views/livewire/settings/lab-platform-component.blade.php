@@ -35,7 +35,7 @@
                         <th >Name</th>
                         <th >Type</th>
                         <th >Manufacturer</th>
-                        <th >Model</th>
+                        <!-- <th >Model</th> -->
                         <th >Status</th>
                         <th >Actions</th>
                     </tr>
@@ -44,12 +44,12 @@
                     @foreach($platforms as $key=> $platform)
                         <tr>
                             <td>{{ $key + 1 }}</td>
-                            <td >{{ $platform->name }}</td>
-                            <td >{{ $platform->type }}</td>
-                            <td >{{ $platform->manufacturer }}</td>
-                            <td >{{ $platform->model_number }}</td>
-                            <td >{{ $platform->status }}</td>
-                            <td >
+                            <td>{{ $platform->name }}</td>
+                            <td>{{ $platform->type }}</td>
+                            <td>{{ $platform->manufacturer }}</td>
+                            <!-- <td >{{ $platform->model_number }}</td> -->
+                            <td> @if($platform->is_active == 1)<span class="badge bg-success">Active</span>@else<span class="badge bg-danger">Deactived</span> </td>
+                            <td>
                                 <button wire:click="editData({{ $platform->id }})" class="action-ico btn btn-sm btn-success mx-1" data-toggle="modal" data-target="#addUpdateRecord">
                                     <i class="fa fa-edit"></i>
                                 </button>
