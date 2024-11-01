@@ -52,7 +52,7 @@
                                     @else
                                         <x-button
                                             class="btn btn-success nextBtn btn-lg float-right fa fa-arrow-circle-right"
-                                            wire:click="secondStepSubmit">Next</x-button>
+                                            wire:click="firstStepSubmit">Next</x-button>
                                     @endif
                                 </div>
                                 <br><br>

@@ -44,7 +44,7 @@
                         <option value="2">N/A</option>
                     </select>
                 </td>
-                <td colspan="4">
+                <td rowspan="4">
                     <textarea class="form-control" type="text" wire:model.lazy='electronic_submission_comments'
                         wire:model.lazy="electronic_submission_comments"></textarea>
                 </td>
