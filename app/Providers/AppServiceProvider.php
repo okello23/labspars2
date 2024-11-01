@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -47,7 +48,7 @@ class AppServiceProvider extends ServiceProvider
     });
 
     if (env('APP_ENV') !== 'local') {
-      URL::forceScheme('https');
+      \URL::forceScheme('https');
     }
   }
 }
