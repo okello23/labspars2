@@ -100,7 +100,7 @@
                            <option value="0">No</option>
                        </select>
                    </td>
-                   <td colspan="3">
+                   <td rowspan="3">
                        <textarea class="form-control" wire:model.lazy="equipment_mgt_comments"></textarea>
                    </td>
                </tr>

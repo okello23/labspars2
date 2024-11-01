@@ -13,11 +13,14 @@ use App\Models\Facility\Visits\FvEquipmentUtilization;
 use App\Models\Facility\Visits\FvHygieneManagement;
 use App\Models\Facility\Visits\FvOrderManagement;
 use App\Models\Facility\Visits\FvOrderReview;
+use App\Models\Facility\Visits\FvStockManagement;
 use App\Models\Facility\Visits\FvStorageConditionManagement;
 use App\Models\Facility\Visits\FvStorageManagement;
 use App\Models\Facility\Visits\FvStoragePracticeManagement;
 use App\Models\Facility\Visits\FvStorageSystemManagement;
 use App\Models\Settings\LabPlatform;
+use App\Models\Settings\Reagent;
+use App\Models\Settings\TestingCategory;
 use Livewire\Component;
 
 class FacilityVisitDetailsComponent extends Component
@@ -634,31 +637,31 @@ class FacilityVisitDetailsComponent extends Component
         $this->step = 4;
         $ordering = FvOrderManagement::where('visit_id', $this->active_visit->id)->first();
 
-        $this->cycles_filed_stored = $ordering->cycles_filed_stored;
-        $this->cycles_filed_comments = $ordering->cycles_filed_comments;
-        $this->electronic_submission = $ordering->electronic_submission;
-        $this->electronic_submission_comments = $ordering->electronic_submission_comments;
-        $this->soh = $ordering->soh;
-        $this->quantity_issued = $ordering->quantity_issued;
-        $this->days_out_of_stock = $ordering->days_out_of_stock;
-        $this->adjusted_amc = $ordering->adjusted_amc;
-        $this->max_quantity = $ordering->max_quantity;
-        $this->quantity_to_order = $ordering->quantity_to_order;
-        $this->test_menu_available = $ordering->test_menu_available;
-        $this->qty_to_order_score = $ordering->qty_to_order_score;
+        $this->cycles_filed_stored = $ordering->cycles_filed_stored ?? null;
+        $this->cycles_filed_comments = $ordering->cycles_filed_comments ?? null;
+        $this->electronic_submission = $ordering->electronic_submission ?? null;
+        $this->electronic_submission_comments = $ordering->electronic_submission_comments ?? null;
+        $this->soh = $ordering->soh ?? null;
+        $this->quantity_issued = $ordering->quantity_issued ?? null;
+        $this->days_out_of_stock = $ordering->days_out_of_stock ?? null;
+        $this->adjusted_amc = $ordering->adjusted_amc ?? null;
+        $this->max_quantity = $ordering->max_quantity ?? null;
+        $this->quantity_to_order = $ordering->quantity_to_order ?? null;
+        $this->test_menu_available = $ordering->test_menu_available ?? null;
+        $this->qty_to_order_score = $ordering->qty_to_order_score ?? null;
 
         $adherence = FvAdherence::where('visit_id', $this->active_visit->id)->first();
-        $this->ordering_schedule_deadline = $adherence->ordering_schedule_deadline;
-        $this->actual_ordering_date = $adherence->actual_ordering_date;
-        $this->ordering_timely = $adherence->ordering_timely;
-        $this->delivery_schedule_deadline = $adherence->delivery_schedule_deadline;
-        $this->delivery_date = $adherence->delivery_date;
-        $this->delivery_on_time = $adherence->delivery_on_time;
-        $this->adherence_comments = $adherence->adherence_comments;
-        $this->adherence_score = $adherence->adherence_score;
-        $this->adherence_percentage = $adherence->adherence_percentage;
-        $this->annual_procurement_plan = $adherence->annual_procurement_plan;
-        $this->procurement_plan_comments = $adherence->procurement_plan_comments;
+        $this->ordering_schedule_deadline = $adherence->ordering_schedule_deadline ?? null;
+        $this->actual_ordering_date = $adherence->actual_ordering_date ?? null;
+        $this->ordering_timely = $adherence->ordering_timely ?? null;
+        $this->delivery_schedule_deadline = $adherence->delivery_schedule_deadline ?? null;
+        $this->delivery_date = $adherence->delivery_date ?? null;
+        $this->delivery_on_time = $adherence->delivery_on_time ?? null;
+        $this->adherence_comments = $adherence->adherence_comments ?? null;
+        $this->adherence_score = $adherence->adherence_score ?? null;
+        $this->adherence_percentage = $adherence->adherence_percentage ?? null;
+        $this->annual_procurement_plan = $adherence->annual_procurement_plan ?? null;
+        $this->procurement_plan_comments = $adherence->procurement_plan_comments ?? null;
     }
 
     public function fourthStepSubmit()
@@ -749,7 +752,7 @@ class FacilityVisitDetailsComponent extends Component
     {
         if (is_numeric($this->actual_output) && is_numeric($this->expected_output) && $this->actual_output > 0 && $this->expected_output) {
             $utilization = ($this->actual_output / $this->expected_output) * 100;
-            $this->utilization = round($utilization,2);
+            $this->utilization = round($utilization, 2);
             if ($this->utilization > 69) {
                 $this->greater_score = 1;
             }
@@ -796,6 +799,77 @@ class FacilityVisitDetailsComponent extends Component
 
     }
     public $submitted_on_time, $hmis_105_previous_months, $hmis_105_outpatient_report;
+    public $visit_id;
+    public $reagent_id;
+    public $test_performed = false;
+    public $item_available = false;
+    public $stock_card_available = false;
+    public $physical_count_done = false;
+    public $stock_card_correct = false;
+    public $balance_on_card;
+    public $physical_count;
+    public $balance_matches_physical = false;
+    public $last_issues;
+    public $out_of_stock_days;
+    public $amc_on_card;
+    public $amc_calculated = false;
+    public $amc_calculated_matches = false;
+    public $elmis_installed = false;
+    public $elmis_quantity = 0;
+    public $elmis_balance_matches = false;
+    public $test_type_id;
+
+    public function StorageSubmit()
+    {
+        $this->validate([
+            'reagent_id' => 'required|exists:reagents,id',
+            'test_performed' => 'required',
+            'item_available' => 'required',
+            'stock_card_available' => 'required',
+            'physical_count_done' => 'required',
+            'stock_card_correct' => 'required',
+            'balance_on_card' => 'nullable|integer',
+            'physical_count' => 'nullable|integer',
+            'balance_matches_physical' => 'required',
+            'last_issues' => 'nullable|integer',
+            'out_of_stock_days' => 'nullable|integer',
+            'amc_on_card' => 'nullable|integer',
+            'amc_calculated' => 'required',
+            'amc_calculated_matches' => 'required',
+            'elmis_installed' => 'required',
+            'elmis_quantity' => 'integer',
+            'elmis_balance_matches' => 'required',
+        ]);
+
+        // Save the data to the database
+        FvStockManagement::updateOrCreate(
+            ['visit_id' => $this->active_visit->id,
+                'reagent_id' => $this->reagent_id,
+            ],
+            [
+                'reagent_id' => $this->reagent_id,
+                'test_performed' => $this->test_performed,
+                'item_available' => $this->item_available,
+                'stock_card_available' => $this->stock_card_available,
+                'physical_count_done' => $this->physical_count_done,
+                'stock_card_correct' => $this->stock_card_correct,
+                'balance_on_card' => $this->balance_on_card,
+                'physical_count' => $this->physical_count,
+                'balance_matches_physical' => $this->balance_matches_physical,
+                'last_issues' => $this->last_issues,
+                'out_of_stock_days' => $this->out_of_stock_days,
+                'amc_on_card' => $this->amc_on_card,
+                'amc_calculated' => $this->amc_calculated,
+                'amc_calculated_matches' => $this->amc_calculated_matches,
+                'elmis_installed' => $this->elmis_installed,
+                'elmis_quantity' => $this->elmis_quantity,
+                'elmis_balance_matches' => $this->elmis_balance_matches,
+            ]);
+
+        $this->dispatchBrowserEvent('close-modal');
+        $this->resetInputs();
+        $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Record successfully added!']);
+    }
     public function fifthStepSubmit()
     {
         $this->step = 6;
@@ -848,7 +922,23 @@ class FacilityVisitDetailsComponent extends Component
             'capacity',
             'final_score',
             'expected_output',
-
+            'reagent_id',
+            'test_performed',
+            'item_available',
+            'stock_card_available',
+            'physical_count_done',
+            'stock_card_correct',
+            'balance_on_card',
+            'physical_count',
+            'balance_matches_physical',
+            'last_issues',
+            'out_of_stock_days',
+            'amc_on_card',
+            'amc_calculated',
+            'amc_calculated_matches',
+            'elmis_installed',
+            'elmis_quantity',
+            'elmis_balance_matches',
         ]);
     }
 
@@ -864,13 +954,21 @@ class FacilityVisitDetailsComponent extends Component
         $data['reviews'] = collect([]);
         $data['functionalities'] = collect([]);
         $data['utilizations'] = collect([]);
+        $data['test_types'] = collect([]);
+        $data['reagents'] = collect([]);
         $data['platforms'] = collect([]);
         $data['supply_storages'] = collect([]);
         $data['stock_card_storages'] = collect([]);
+        $data['storageMgts'] =  collect([]);
         if ($this->step == 1) {
             $data['supervised_persons'] = FvPersonsSupervised::where('visit_id', $this->active_visit->id)->get();
             $data['supervisors'] = FvSupervisor::where('visit_id', $this->active_visit->id)->get();
             $data['supply_storages'] = FvStorageManagement::where('visit_id', $this->active_visit->id)->with('storageType')->get();
+        }
+        if ($this->step == 2) {
+            $data['test_types'] = TestingCategory::where(['is_active' => true])->get();
+            $data['reagents'] = Reagent::where(['is_active' => true, 'testing_category_id' => $this->test_type_id])->get();
+            $data['storageMgts'] = FvStockManagement::where('visit_id', $this->active_visit->id)->with('reagent')->get();
         }
         if ($this->step == 4) {
             $data['reviews'] = FvOrderReview::where('visit_id', $this->active_visit->id)->get();
