@@ -48,7 +48,13 @@
                             <td>{{ $platform->type }}</td>
                             <td>{{ $platform->manufacturer }}</td>
                             <!-- <td >{{ $platform->model_number }}</td> -->
-                            <td> @if($platform->is_active == 1)<span class="badge bg-success">Active</span>@else<span class="badge bg-danger">Deactived</span> </td>
+                            <td>
+                              @if($platform->is_active == 1)
+                              <span class="badge bg-success">Active</span>
+                              @else
+                              <span class="badge bg-danger">Deactived</span>
+                              @endif
+                            </td>
                             <td>
                                 <button wire:click="editData({{ $platform->id }})" class="action-ico btn btn-sm btn-success mx-1" data-toggle="modal" data-target="#addUpdateRecord">
                                     <i class="fa fa-edit"></i>
