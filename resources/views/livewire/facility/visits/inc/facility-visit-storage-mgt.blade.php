@@ -53,7 +53,7 @@
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td colspan="4">
+            <td rowspan="4">
                 <textarea class="form-control" type="text" wire:model.lazy='cleanliness_comments' name="practices_comments"></textarea>
             </td>
         </tr>
@@ -148,7 +148,7 @@
                 </select>
             </td>
 
-            <td colspan="3">
+            <td rowspan="3">
                 <textarea class="form-control" type="text" wire:model="hygiene_comments"></textarea>
             </td>
         </tr>
@@ -282,7 +282,7 @@
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td colspan="4">
+            <td rowspan="4">
                 <textarea class="form-control" type="text" wire:model="storage_comments"></textarea>
             </td>
         </tr>
@@ -395,7 +395,7 @@
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td colspan="3">
+            <td rowspan="3">
                 <textarea class="form-control" type="text" wire:model="condition_comments"></textarea>
             </td>
         </tr>
