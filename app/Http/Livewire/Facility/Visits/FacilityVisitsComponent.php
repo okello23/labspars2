@@ -2,10 +2,11 @@
 
 namespace App\Http\Livewire\Facility\Visits;
 
-use App\Models\Facility\Facility;
-use App\Models\Facility\FacilityVisit;
+use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\Facility\Facility;
+use App\Models\Facility\FacilityVisit;
 
 class FacilityVisitsComponent extends Component
 {
@@ -53,6 +54,12 @@ class FacilityVisitsComponent extends Component
     public $date_of_visit;
 
     public $date_of_next_visit;
+
+    public function updatedDateOfVisit()
+    {
+        $date_of_visit = Carbon::parse($this->date_of_visit);
+        $this->date_of_next_visit = $date_of_visit->addDays(60)->format('Y-m-d');
+    }
 
     public function storevalue()
     {

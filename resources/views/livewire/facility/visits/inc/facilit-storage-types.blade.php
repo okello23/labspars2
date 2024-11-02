@@ -7,7 +7,7 @@
                            Add
                        @else 
                            Update
-                       @endif a Storage Type
+                       @endif Record
                    </h5>
                </div>
                <form

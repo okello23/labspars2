@@ -14,6 +14,7 @@ use App\Models\Facility\Visits\FvHygieneManagement;
 use App\Models\Facility\Visits\FvOrderManagement;
 use App\Models\Facility\Visits\FvOrderReview;
 use App\Models\Facility\Visits\FvStockManagement;
+use App\Models\Facility\Visits\FvStockMgtScore;
 use App\Models\Facility\Visits\FvStorageConditionManagement;
 use App\Models\Facility\Visits\FvStorageManagement;
 use App\Models\Facility\Visits\FvStoragePracticeManagement;
@@ -398,10 +399,29 @@ class FacilityVisitDetailsComponent extends Component
     public function firstStepSubmit()
     {
         $this->step = 2;
+       
+        $stkScores = FvStockMgtScore::where('visit_id', $this->active_visit->id)->first();
+        // dd($stkScores);
+        $this->availability_score = $stkScores->availability_score;
+        $this->availability_percentage = $stkScores->availability_percentage;
+        $this->stock_card_score = $stkScores->stock_card_score;
+        $this->stock_card_percentage = $stkScores->stock_card_percentage;
+        $this->correct_filling_score = $stkScores->correct_filling_score;
+        $this->correct_filling_percentage = $stkScores->correct_filling_percentage;
+        $this->physical_agrees_score = $stkScores->physical_agrees_score;
+        $this->physical_agrees_percentage = $stkScores->physical_agrees_percentage;
+        $this->amc_well_calculated_score = $stkScores->amc_well_calculated_score;
+        $this->amc_well_calculated_percentage = $stkScores->amc_well_calculated_percentage;
+        $this->emr_usage_score = $stkScores->emr_usage_score;
+        $this->emr_usage_percentage = $stkScores->emr_usage_percentage;
+        $this->stock_mgt_comments = $stkScores->stock_mgt_comments;
+      
     }
 
     public function secondStepSubmit()
     {
+
+        $this->saveStkMgtScore();
         $this->step = 3;
         $cleanliness = FvCleanlinessManagement::where('visit_id', $this->active_visit->id)->first();
         $this->lab_store_clean = $cleanliness->lab_store_clean ?? null;
@@ -634,6 +654,12 @@ class FacilityVisitDetailsComponent extends Component
 
     public function thirdStepSubmit()
     {
+        
+        $this->saveSystemStorage();
+        $this->saveStorageCondition();
+        $this->saveStoragePractices();
+        $this->saveHygiene();
+        $this->saveCleanliness();
         $this->step = 4;
         $ordering = FvOrderManagement::where('visit_id', $this->active_visit->id)->first();
 
@@ -753,12 +779,28 @@ class FacilityVisitDetailsComponent extends Component
         if (is_numeric($this->actual_output) && is_numeric($this->expected_output) && $this->actual_output > 0 && $this->expected_output) {
             $utilization = ($this->actual_output / $this->expected_output) * 100;
             $this->utilization = round($utilization, 2);
-            if ($this->utilization > 69) {
+            if ($this->utilization > 70) {
                 $this->greater_score = 1;
+            }else{
+                $this->greater_score = 0;
             }
         } else {
             $this->utilization = 0;
             $this->greater_score = null;
+        }
+    }
+    public function updatedCapacity(){
+
+        $this->checkScore();
+    }
+    public function updatedThroughPut(){
+        $this->checkScore();
+    }
+    public function checkScore()  {
+        if($this->capacity == $this->through_put){
+            $this->final_score =1;
+        }else{
+            $this->final_score =0;
         }
     }
     public function storUtilization()
@@ -870,6 +912,63 @@ class FacilityVisitDetailsComponent extends Component
         $this->resetInputs();
         $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Record successfully added!']);
     }
+     // Define properties for each field
+     public $availability_score;
+     public $availability_percentage;
+     public $stock_card_score;
+     public $stock_card_percentage;
+     public $correct_filling_score;
+     public $correct_filling_percentage;
+     public $physical_agrees_score;
+     public $physical_agrees_percentage;
+     public $amc_well_calculated_score;
+     public $amc_well_calculated_percentage;
+     public $emr_usage_score;
+     public $emr_usage_percentage;
+     public $stock_mgt_comments;
+ 
+ 
+     // Method to store data in the database
+     public function saveStkMgtScore()
+     {
+         $this->validate([
+            'availability_score' => 'required|integer',
+            'availability_percentage' => 'required|integer',
+            'stock_card_score' => 'required|integer',
+            'stock_card_percentage' => 'required|integer',
+            'correct_filling_score' => 'required|integer',
+            'correct_filling_percentage' => 'required|integer',
+            'physical_agrees_score' => 'required|integer',
+            'physical_agrees_percentage' => 'required|integer',
+            'amc_well_calculated_score' => 'required|integer',
+            'amc_well_calculated_percentage' => 'required|integer',
+            'emr_usage_score' => 'required|integer',
+            'emr_usage_percentage' => 'required|integer',
+            'stock_mgt_comments' => 'required|string',
+        ]); // Validate input data
+ 
+         FvStockMgtScore::updateOrCreate(
+            ['visit_id' => $this->active_visit->id],
+            [
+             'availability_score' => $this->availability_score,
+             'availability_percentage' => $this->availability_percentage,
+             'stock_card_score' => $this->stock_card_score,
+             'stock_card_percentage' => $this->stock_card_percentage,
+             'correct_filling_score' => $this->correct_filling_score,
+             'correct_filling_percentage' => $this->correct_filling_percentage,
+             'physical_agrees_score' => $this->physical_agrees_score,
+             'physical_agrees_percentage' => $this->physical_agrees_percentage,
+             'amc_well_calculated_score' => $this->amc_well_calculated_score,
+             'amc_well_calculated_percentage' => $this->amc_well_calculated_percentage,
+             'emr_usage_score' => $this->emr_usage_score,
+             'emr_usage_percentage' => $this->emr_usage_percentage,
+             'stock_mgt_comments' => $this->stock_mgt_comments,
+         ]);        
+         $this->dispatchBrowserEvent('close-modal');
+         $this->resetInputs();
+         $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Record successfully added!']);
+     }
+    
     public function fifthStepSubmit()
     {
         $this->step = 6;

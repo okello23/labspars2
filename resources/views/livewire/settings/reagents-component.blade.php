@@ -11,7 +11,7 @@
                             <div class="d-sm-flex align-items-center">
                                 <h5 class="mb-2 mb-sm-0">
                                     @if (!$toggleForm)
-                                        Storage Types (<span class="text-danger fw-bold">{{ $reagents->total() }}</span>)
+                                        Reagents (<span class="text-danger fw-bold">{{ $reagents->total() }}</span>)
                                         @include('livewire.layouts.partials.inc.filter-toggle')
                                     @else
                                         Edit value
@@ -94,7 +94,8 @@
                                         <th>No.</th>
                                         <th>Name</th>
                                         <th>Category</th>
-                                        <th>Created at</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -105,8 +106,13 @@
                                             <td>{{ $value->name }}</td>
                                             <td>{{ $value->category->name??'N/A' }}</td>
                                             <td>{{ $value->description }}</td>
-
-                                            <td>{{ date('d-m-Y', strtotime($value->created_at)) }}</td>
+                                            <td>
+                                                @if ($value->is_active == 0)
+                                                    <span class="badge bg-danger">Suspended</span>
+                                                @else
+                                                    <span class="badge bg-success">Active</span>
+                                                @endif
+                                            </td>
                                             <td>
                                                 <button wire:click="editData({{ $value->id }})" class="action-ico btn btn-sm btn-success mx-1" data-toggle="modal" data-target="#addUpdateRecord">
                                                     <i class="fa fa-edit"></i>

@@ -72,7 +72,7 @@ class ReagentsComponent extends Component
         $this->dispatchBrowserEvent('show-modal');
     }
 
-    public function store()
+    public function storevalue()
     {
         $this->validate([
             'name' => 'required|unique:testing_categories',
@@ -100,7 +100,7 @@ class ReagentsComponent extends Component
         $this->testing_category_id = $reagent->testing_category_id;
         $this->description = $reagent->description;
         $this->is_active = $reagent->is_active;
-
+        $this->toggleForm = true;
         $this->createNew = false;
         $this->dispatchBrowserEvent('show-modal');
     }
@@ -118,7 +118,7 @@ class ReagentsComponent extends Component
         $this->reset(['name', 'is_active']);
     }
 
-    public function update()
+    public function updatevalue()
     {
         $this->validate([
             'name' => 'required|unique:testing_categories,name,'.$this->edit_id.'',
@@ -127,6 +127,7 @@ class ReagentsComponent extends Component
 
         $reagent = Reagent::find($this->edit_id);
         $reagent->name = $this->name;
+        $reagent->testing_category_id = $this->testing_category_id;
         $reagent->is_active = $this->is_active;
         $reagent->update();
 
@@ -134,7 +135,7 @@ class ReagentsComponent extends Component
         $this->createNew = false;
         $this->dispatchBrowserEvent('close-modal');
         $this->resetInputs();
-        $this->dispatchBrowserEvent('alert', ['testing_category_id' => 'success',  'message' => 'reagent updated successfully!']);
+        $this->dispatchBrowserEvent('alert', ['testing_category_id' => 'success',  'message' => 'Reagent updated successfully!']);
     }
 
     public function refresh()
@@ -147,7 +148,7 @@ class ReagentsComponent extends Component
         if (count($this->reagentIDs) > 0) {
             // return (new reagentsExport($this->reagentIDs))->download('lss_reagents'.date('d-m-Y').'_'.now()->toTimeString().'.xlsx');
         } else {
-            $this->dispatchBrowserEventBrowserEvent('swal:modal', [
+            $this->dispatchBrowserEvent('swal:modal', [
                 'testing_category_id' => 'warning',
                 'message' => 'Oops! Not Found!',
                 'text' => 'No Test selected for export!',

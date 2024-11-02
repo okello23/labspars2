@@ -23,3 +23,5 @@ class FvEquipmentUtilization extends Model
         'visit_id'
    ];
 }
+
+

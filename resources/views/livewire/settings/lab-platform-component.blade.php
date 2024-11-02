@@ -53,7 +53,7 @@
                                 <button wire:click="editData({{ $platform->id }})" class="action-ico btn btn-sm btn-success mx-1" data-toggle="modal" data-target="#addUpdateRecord">
                                     <i class="fa fa-edit"></i>
                                 </button>
-                                <button wire:click="delete({{ $platform->id }})" class="action-ico btn btn-sm btn-success mx-1"> <i class="fa fa-trash"></i></button>
+                                <button wire:click="delete({{ $platform->id }})" class="action-ico btn btn-sm btn-danger mx-1"> <i class="fa fa-trash"></i></button>
                             </td>
                         </tr>
                     @endforeach

@@ -371,7 +371,7 @@
 </table>
 
 <p>
-    <strong>Score:</strong> Sum of 2 divided by 2: ______<br>
+    <strong>Score:</strong> Sum of 2 divided by 2: ______
     <strong>Percentage:</strong> _______%
 </p>
 
@@ -395,7 +395,8 @@
                     <option value="">Select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
-                </select></td>
+                </select>
+            </td>
             {{-- <td><input type="text" name="comments_submitted_on_time"></td> --}}
         </tr>
         <tr>
@@ -414,7 +415,7 @@
 </table>
 
 <p>
-    <strong>Score:</strong> ______<br>
+    <strong>Score:</strong> ______
     <strong>Percentage:</strong> _______%
 </p>
 
@@ -439,7 +440,8 @@
         </tr>
         <tr>
             <td>HMIS 105 report section 10 is completely filled (No blanks left)</td>
-            <td><select  name="section_10_complete">
+            <td>
+            <select  name="section_10_complete">
                 <option value="">Select</option>
                 <option value="1">Yes</option>
                 <option value="0">No</option>
@@ -450,7 +452,7 @@
 </table>
 
 <p>
-    <strong>Sum of (i & ii) divided by 2:</strong> _______<br>
+    <strong>Sum of (i & ii) divided by 2:</strong> _______
     <strong>Accuracy = Sum/(7 - NA):</strong> _______
 </p>
 
@@ -470,15 +472,27 @@
         <tr>
             <td>1</td>
             <td>Table/Graph/Chart/Map</td>
-            <td><input type="checkbox" name="table_graph_chart_map"></td>
-            <td><input type="checkbox" name="updated_last_quarter"></td>
+            <td>
+                <select  name="section_10_complete">
+                    <option value="">Select</option>
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+            </td>
+            <td>
+                <select  name="section_10_complete">
+                    <option value="">Select</option>
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+            </td>
             <td><input type="text" name="comments_table_graph_chart_map"></td>
         </tr>
     </tbody>
 </table>
 
 <p>
-    <strong>Score:</strong> Sum of 2 divided by 2: _______<br>
+    <strong>Score:</strong> Sum of 2 divided by 2: _______
     <strong>Percentage:</strong> _______%
 </p>
 
@@ -542,6 +556,6 @@
 </table>
 
 <p>
-    <strong>Score:</strong> Sum of 4 divided by 4: _______<br>
+    <strong>Score:</strong> Sum of 4 divided by 4: _______
     <strong>Percentage:</strong> _______%
 </p>
