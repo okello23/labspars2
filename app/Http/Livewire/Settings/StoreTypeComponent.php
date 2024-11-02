@@ -139,7 +139,7 @@ class StoreTypeComponent extends Component
         if (count($this->exportIds) > 0) {
             // return (new StorageTypesExport($this->exportIds))->download('StorageTypes_'.date('d-m-Y').'_'.now()->toTimeString().'.xlsx');
         } else {
-            $this->dispatchBrowserEventBrowserEvent('swal:modal', [
+            $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'warning',
                 'message' => 'Oops! Not Found!',
                 'text' => 'No StorageTypes selected for export!',

@@ -329,8 +329,32 @@
 
 <!-- Comments Section -->
 <h6>Comments</h6>
-<textarea name="comments" class="form-control" placehlider="Add comments here..."></textarea>
+<textarea wire:model.lazy="stock_mgt_comments" class="form-control" placehlider="Add comments here..."></textarea>
 
+    @php
+    $scoreconditionsFields =[
+        'visit_id',
+        'availability_score',
+        'availability_percentage',
+        'stock_card_score',
+        'stock_card_percentage',
+        'correct_filling_score',
+        'correct_filling_percentage',
+        'physical_agrees_score',
+        'physical_agrees_percentage',
+        'amc_well_calculated_score',
+        'amc_well_calculated_percentage',
+        'emr_usage_score',
+        'emr_usage_percentage',
+        'stock_mgt_comments',
+    ];
+@endphp
+
+@foreach ($scoreconditionsFields as $conditionsField)
+    @error($conditionsField)
+        <div class="text-danger text-small">{{ $message }}</div>
+    @enderror
+@endforeach
 <!-- Score Summary Section -->
 <h3>Score Summary</h3>
 <table>
@@ -344,70 +368,70 @@
     <tbody>
         <tr>
             <td>1. Availability of reagents</td>
-            <td><select name="availability_score">
+            <td><select wire:model="availability_score">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select></td>
-            <td><input type="number" name="availability_percentage"></td>
+            <td><input type="number" wire:model.lazy="availability_percentage"></td>
         </tr>
         <tr>
             <td>2. Stock card availability</td>
-            <td><select name="stock_card_score">
+            <td><select wire:model.lazy="stock_card_score">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td><input type="number" name="stock_card_percentage">
+            <td><input type="number" wire:model.lazy="stock_card_percentage">
             </td>
         </tr>
         <tr>
             <td>3. Correct filling of stock card</td>
-            <td><select name="correct_filling_score">
+            <td><select wire:model.lazy="correct_filling_score">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td><input type="number" name="correct_filling_percentage"></td>
+            <td><input type="number" wire:model.lazy="correct_filling_percentage"></td>
         </tr>
 
         <tr>
             <td>4. Does physical count agree with stock card balance? </td>
-            <td><select name="availability_score">
+            <td><select wire:model.lazy="physical_agrees_score">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select></td>
-            <td><input type="number" name="availability_percentage"></td>
+            <td><input type="number" wire:model.lazy="physical_agrees_percentage"></td>
         </tr>
         <tr>
             <td>5. Is AMC in the stock card correctly calculated </td>
-            <td><select name="stock_card_score">
+            <td><select wire:model.lazy="amc_well_calculated_score">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td><input type="number" name="stock_card_percentage">
+            <td><input type="number" wire:model.lazy="amc_well_calculated_percentage">
             </td>
         </tr>
         <tr>
             <td>6. Is the ELMIS/EMR correctly used and updated?</td>
-            <td><select name="correct_filling_score">
+            <td><select wire:model.lazy="emr_usage_score">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td><input type="number" name="correct_filling_percentage"></td>
+            <td><input type="number" wire:model.lazy="emr_usage_percentage"></td>
         </tr>
         <!-- Add more rows for other indicators as needed -->
     </tbody>

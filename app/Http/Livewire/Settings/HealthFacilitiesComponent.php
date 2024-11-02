@@ -167,7 +167,7 @@ class HealthFacilitiesComponent extends Component
         if (count($this->SubCountyIds) > 0) {
             // return (new countiesExport($this->SubCountyIds))->download('counties_'.date('d-m-Y').'_'.now()->toTimeString().'.xlsx');
         } else {
-            $this->dispatchBrowserEventBrowserEvent('swal:modal', [
+            $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'warning',
                 'message' => 'Oops! Not Found!',
                 'text' => 'No counties selected for export!',

@@ -11,9 +11,15 @@ class FvStoragePracticeManagement extends Model
 
     protected $fillable = [
         'visit_id',
-        'lab_store_clean',
-        'main_store_clean',
-        'laboratory_clean',
-        'cleanliness_comments',
+                'main_store_expired_record',
+                'lab_store_expired_record',
+                'main_store_expired_separate',
+                'lab_store_expired_separate',
+                'main_store_fefo',
+                'lab_store_fefo',
+                'main_store_opening_date',
+                'lab_store_opening_date',
+                'practices_comments',
+
     ];
 }
