@@ -402,19 +402,19 @@ class FacilityVisitDetailsComponent extends Component
        
         $stkScores = FvStockMgtScore::where('visit_id', $this->active_visit->id)->first();
         // dd($stkScores);
-        $this->availability_score = $stkScores->availability_score;
-        $this->availability_percentage = $stkScores->availability_percentage;
-        $this->stock_card_score = $stkScores->stock_card_score;
-        $this->stock_card_percentage = $stkScores->stock_card_percentage;
-        $this->correct_filling_score = $stkScores->correct_filling_score;
-        $this->correct_filling_percentage = $stkScores->correct_filling_percentage;
-        $this->physical_agrees_score = $stkScores->physical_agrees_score;
-        $this->physical_agrees_percentage = $stkScores->physical_agrees_percentage;
-        $this->amc_well_calculated_score = $stkScores->amc_well_calculated_score;
-        $this->amc_well_calculated_percentage = $stkScores->amc_well_calculated_percentage;
-        $this->emr_usage_score = $stkScores->emr_usage_score;
-        $this->emr_usage_percentage = $stkScores->emr_usage_percentage;
-        $this->stock_mgt_comments = $stkScores->stock_mgt_comments;
+        $this->availability_score = $stkScores->availability_score??null;
+        $this->availability_percentage = $stkScores->availability_percentage??null;
+        $this->stock_card_score = $stkScores->stock_card_score??null;
+        $this->stock_card_percentage = $stkScores->stock_card_percentage??null;
+        $this->correct_filling_score = $stkScores->correct_filling_score??null;
+        $this->correct_filling_percentage = $stkScores->correct_filling_percentage??null;
+        $this->physical_agrees_score = $stkScores->physical_agrees_score??null;
+        $this->physical_agrees_percentage = $stkScores->physical_agrees_percentage??null;
+        $this->amc_well_calculated_score = $stkScores->amc_well_calculated_score??null;
+        $this->amc_well_calculated_percentage = $stkScores->amc_well_calculated_percentage??null;
+        $this->emr_usage_score = $stkScores->emr_usage_score??null;
+        $this->emr_usage_percentage = $stkScores->emr_usage_percentage??null;
+        $this->stock_mgt_comments = $stkScores->stock_mgt_comments??null;
       
     }
 
