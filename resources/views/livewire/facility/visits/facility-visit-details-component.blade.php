@@ -21,7 +21,7 @@
                             </div>
                             <div class="multi-wizard-step overflow-auto">
                                 <a href="#step-3" type="button"
-                                    class="btn {{ $step != 3 ? 'btn-default' : 'btn-success' }}">PSTORAGE & LAB FACILITIES MANAGEMENT</a>
+                                    class="btn {{ $step != 3 ? 'btn-default' : 'btn-success' }}">STORAGE & LAB FACILITIES MANAGEMENT</a>
                             </div>
                             <div class="multi-wizard-step overflow-auto">
                                 <a href="#step-4" type="button"
@@ -41,7 +41,7 @@
                     <div  class ="{{ $step != 1 ? 'display-none' : '' }}" id="step-1">
 
                         <div >
-                            <div class="border border-success rounded">
+                            <div class="border border-success rounded p-3">
                                 @include('livewire.facility.visits.inc.facility-visit-info')
                                 <hr>
                                 <div class="container">
@@ -85,7 +85,7 @@
                     @if($step == 3)
                     <div class="row  {{ $step != 3 ? 'display-none' : '' }}" id="step-3">
                         <div class="col-md-12 p-3">
-                            <div class="border border-success rounded">
+                            <div class="border border-success rounded p-3">
                                 @include('livewire.facility.visits.inc.facility-visit-storage-mgt')
                                 <hr>
                                 <div class="container">
@@ -108,7 +108,7 @@
                         id="step-4">
                         <div class="col-md-12">
 
-                            <div class="border border-success rounded overflow-auto">
+                            <div class="border border-success rounded overflow-auto p-3">
                                 @include('livewire.facility.visits.inc.facility-visit-ordering')
                                 <hr>
                                 <div class="container">
@@ -131,7 +131,7 @@
                         id="step-5">
                         <div class="col-md-12">
 
-                            <div class="border border-success rounded overflow-auto">
+                            <div class="border border-success rounded overflow-auto p-3">
                                 @include('livewire.facility.visits.inc.facility-visit-equipment')
                                 <hr>
                                 <div class="container">
@@ -154,7 +154,7 @@
                         id="step-6">
                         <div class="col-md-12">
 
-                            <div class="border border-success rounded overflow-auto">
+                            <div class="border border-success rounded overflow-auto p-3">
                                 @include('livewire.facility.visits.inc.facility-visit-lims')
                                 <hr>
                                 <div class="container">

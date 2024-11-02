@@ -142,7 +142,7 @@ class DistrictsComponent extends Component
         if (count($this->DistrictIds) > 0) {
             // return (new districtsExport($this->DistrictIds))->download('districts_'.date('d-m-Y').'_'.now()->toTimeString().'.xlsx');
         } else {
-            $this->dispatchBrowserEventBrowserEvent('swal:modal', [
+            $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'warning',
                 'message' => 'Oops! Not Found!',
                 'text' => 'No districts selected for export!',

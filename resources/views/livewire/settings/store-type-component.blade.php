@@ -94,7 +94,7 @@
                                         <th>No.</th>
                                         <th>Name</th>
                                         <th>DHIS2 Code</th>
-                                        <th>Created at</th>
+                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -104,8 +104,13 @@
                                             <td>{{ $key + 1 }}</td>
                                             <td>{{ $value->name }}</td>
                                             <td>{{ $value->description }}</td>
-
-                                            <td>{{ date('d-m-Y', strtotime($value->created_at)) }}</td>
+                                            <td>
+                                                @if ($value->is_active == 0)
+                                                    <span class="badge bg-danger">Suspended</span>
+                                                @else
+                                                    <span class="badge bg-success">Active</span>
+                                                @endif
+                                            </td>
                                             <td>
                                                 <button wire:click="editData({{ $value->id }})" class="action-ico btn btn-sm btn-success mx-1" data-toggle="modal" data-target="#addUpdateRecord">
                                                     <i class="fa fa-edit"></i>

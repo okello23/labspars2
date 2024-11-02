@@ -59,7 +59,7 @@
         </tr>
     </tbody>
 </table>
-<button class="btn btn-success" wire:click ='saveCleanliness'> Save</button>
+{{-- <button class="btn btn-success" wire:click ='saveCleanliness'> Save</button> --}}
 <p>
     <strong>Score:</strong> Sum of scores for (a+b+c) divided by 3 minus NA = ______
     <strong>Percentage:</strong> __________
@@ -154,7 +154,8 @@
         </tr>
     </tbody>
 </table>
-<button class="btn btn-success" wire:click ='saveHygiene'> Save</button>
+{{-- <button class="btn btn-success" wire:click ='saveHygiene'> Save</button> --}}
+
 <p>
     <strong>Score:</strong> Sum of scores (a to d) divided by 5 minus NA = ______
     <strong>Percentage:</strong> __________
@@ -288,7 +289,7 @@
         </tr>
     </tbody>
 </table>
-<button class="btn btn-success" wire:click ='saveSystemStorage'> Save</button>
+{{-- <button class="btn btn-success" wire:click ='saveSystemStorage'> Save</button> --}}
 
 <p>
     <strong>Score:</strong> Sum of scores (a to e) divided by 5 minus NA = ______
@@ -402,7 +403,9 @@
         <!-- Add more rows as per other indicators -->
     </tbody>
 </table>
-<button class="btn btn-success" wire:click ='saveStorageCondition'> Save</button>
+{{-- <button class="btn btn-success" wire:click ='saveStorageCondition'> Save</button> --}}
+
+
 <p>
     <strong>Score:</strong> Sum of scores (a to l) divided by 14 minus NA = ______
     <strong>Percentage:</strong> __________
@@ -514,7 +517,8 @@
         </tr>
     </tbody>
 </table>
-<button class="btn btn-success" wire:click ='saveStoragePractices'> Save</button>
+{{-- <button class="btn btn-success" wire:click ='saveStoragePractices'> Save</button> --}}
+
 <p>
     <strong>Score:</strong> Sum of scores (a to i) divided by 9 minus NA = ______
     <strong>Percentage:</strong> __________

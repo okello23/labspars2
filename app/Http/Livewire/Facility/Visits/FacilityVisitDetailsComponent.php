@@ -9,11 +9,13 @@ use App\Models\Facility\FvSupervisor;
 use App\Models\Facility\Visits\FvAdherence;
 use App\Models\Facility\Visits\FvCleanlinessManagement;
 use App\Models\Facility\Visits\FvEquipmentFunctionality;
+use App\Models\Facility\Visits\FvEquipmentManagement;
 use App\Models\Facility\Visits\FvEquipmentUtilization;
 use App\Models\Facility\Visits\FvHygieneManagement;
 use App\Models\Facility\Visits\FvOrderManagement;
 use App\Models\Facility\Visits\FvOrderReview;
 use App\Models\Facility\Visits\FvStockManagement;
+use App\Models\Facility\Visits\FvStockMgtScore;
 use App\Models\Facility\Visits\FvStorageConditionManagement;
 use App\Models\Facility\Visits\FvStorageManagement;
 use App\Models\Facility\Visits\FvStoragePracticeManagement;
@@ -397,11 +399,35 @@ class FacilityVisitDetailsComponent extends Component
 
     public function firstStepSubmit()
     {
+        $this->validate([
+            'consumption_reconciliation' => 'required|string',
+        ]);
+        $this->active_visit->consumption_reconciliation = $this->consumption_reconciliation;
+        $this->active_visit->update();
         $this->step = 2;
+
+        $stkScores = FvStockMgtScore::where('visit_id', $this->active_visit->id)->first();
+        // dd($stkScores);
+        $this->availability_score = $stkScores->availability_score ?? null;
+        $this->availability_percentage = $stkScores->availability_percentage ?? null;
+        $this->stock_card_score = $stkScores->stock_card_score ?? null;
+        $this->stock_card_percentage = $stkScores->stock_card_percentage ?? null;
+        $this->correct_filling_score = $stkScores->correct_filling_score ?? null;
+        $this->correct_filling_percentage = $stkScores->correct_filling_percentage ?? null;
+        $this->physical_agrees_score = $stkScores->physical_agrees_score ?? null;
+        $this->physical_agrees_percentage = $stkScores->physical_agrees_percentage ?? null;
+        $this->amc_well_calculated_score = $stkScores->amc_well_calculated_score ?? null;
+        $this->amc_well_calculated_percentage = $stkScores->amc_well_calculated_percentage ?? null;
+        $this->emr_usage_score = $stkScores->emr_usage_score ?? null;
+        $this->emr_usage_percentage = $stkScores->emr_usage_percentage ?? null;
+        $this->stock_mgt_comments = $stkScores->stock_mgt_comments ?? null;
+
     }
 
     public function secondStepSubmit()
     {
+
+        $this->saveStkMgtScore();
         $this->step = 3;
         $cleanliness = FvCleanlinessManagement::where('visit_id', $this->active_visit->id)->first();
         $this->lab_store_clean = $cleanliness->lab_store_clean ?? null;
@@ -608,6 +634,7 @@ class FacilityVisitDetailsComponent extends Component
                 'qty_to_order_score' => $this->qty_to_order_score,
             ]);
 
+        // dd($this->delivery_on_time);
         $add = FvAdherence::updateOrCreate(
             ['visit_id' => $this->active_visit->id],
             [
@@ -622,9 +649,10 @@ class FacilityVisitDetailsComponent extends Component
                 'adherence_percentage' => $this->adherence_percentage,
                 'annual_procurement_plan' => $this->annual_procurement_plan,
                 'procurement_plan_comments' => $this->procurement_plan_comments]);
+        // dd( $add );
         $this->dispatchBrowserEvent('close-modal');
         $this->resetInputs();
-        $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Record successfully added!']);
+        $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Adherence successfully added!']);
         if ($order && $add) {
 
             $this->step = 5;
@@ -634,6 +662,12 @@ class FacilityVisitDetailsComponent extends Component
 
     public function thirdStepSubmit()
     {
+
+        $this->saveSystemStorage();
+        $this->saveStorageCondition();
+        $this->saveStoragePractices();
+        $this->saveHygiene();
+        $this->saveCleanliness();
         $this->step = 4;
         $ordering = FvOrderManagement::where('visit_id', $this->active_visit->id)->first();
 
@@ -651,6 +685,7 @@ class FacilityVisitDetailsComponent extends Component
         $this->qty_to_order_score = $ordering->qty_to_order_score ?? null;
 
         $adherence = FvAdherence::where('visit_id', $this->active_visit->id)->first();
+        // dd($adherence);
         $this->ordering_schedule_deadline = $adherence->ordering_schedule_deadline ?? null;
         $this->actual_ordering_date = $adherence->actual_ordering_date ?? null;
         $this->ordering_timely = $adherence->ordering_timely ?? null;
@@ -666,20 +701,23 @@ class FacilityVisitDetailsComponent extends Component
 
     public function fourthStepSubmit()
     {
-        $this->saveOrdering();
-    }
 
-    public $inventory_log_available;
-    public $inventory_log_updated;
-    public $service_info_available;
-    public $equipment_serviced;
-    public $iqc_performed;
-    public $operator_manuals_available;
-    public $equipment_inv_score;
-    public $equipment_inv_percentage;
-    public $equipment_score;
-    public $equipment_percentage;
-    public $equipment_mgt_comments;
+        $this->saveOrdering();
+        $equipmentMgt = FvEquipmentManagement::where('visit_id', $this->active_visit->id)->first();
+        $this->inventory_log_available = $equipmentMgt->inventory_log_available ?? null;
+        $this->inventory_log_updated = $equipmentMgt->inventory_log_updated ?? null;
+        $this->service_info_available = $equipmentMgt->service_info_available ?? null;
+        $this->equipment_serviced = $equipmentMgt->equipment_serviced ?? null;
+        $this->iqc_performed = $equipmentMgt->iqc_performed ?? null;
+        $this->operator_manuals_available = $equipmentMgt->operator_manuals_available ?? null;
+        $this->equipment_inv_score = $equipmentMgt->equipment_inv_score ?? null;
+        $this->equipment_inv_percentage = $equipmentMgt->equipment_inv_percentage ?? null;
+        $this->equipment_score = $equipmentMgt->equipment_score ?? null;
+        $this->equipment_percentage = $equipmentMgt->equipment_percentage ?? null;
+        $this->equipment_mgt_comments = $equipmentMgt->equipment_mgt_comments ?? null;
+        $this->equipment_maintenance_comment = $equipmentMgt->equipment_maintenance_comment ?? null;
+
+    }
 
     public $equipment_id;
     public $equipment_name;
@@ -753,12 +791,31 @@ class FacilityVisitDetailsComponent extends Component
         if (is_numeric($this->actual_output) && is_numeric($this->expected_output) && $this->actual_output > 0 && $this->expected_output) {
             $utilization = ($this->actual_output / $this->expected_output) * 100;
             $this->utilization = round($utilization, 2);
-            if ($this->utilization > 69) {
+            if ($this->utilization > 70) {
                 $this->greater_score = 1;
+            } else {
+                $this->greater_score = 0;
             }
         } else {
             $this->utilization = 0;
             $this->greater_score = null;
+        }
+    }
+    public function updatedCapacity()
+    {
+
+        $this->checkScore();
+    }
+    public function updatedThroughPut()
+    {
+        $this->checkScore();
+    }
+    public function checkScore()
+    {
+        if ($this->capacity == $this->through_put) {
+            $this->final_score = 1;
+        } else {
+            $this->final_score = 0;
         }
     }
     public function storUtilization()
@@ -870,8 +927,108 @@ class FacilityVisitDetailsComponent extends Component
         $this->resetInputs();
         $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Record successfully added!']);
     }
+    // Define properties for each field
+    public $availability_score;
+    public $availability_percentage;
+    public $stock_card_score;
+    public $stock_card_percentage;
+    public $correct_filling_score;
+    public $correct_filling_percentage;
+    public $physical_agrees_score;
+    public $physical_agrees_percentage;
+    public $amc_well_calculated_score;
+    public $amc_well_calculated_percentage;
+    public $emr_usage_score;
+    public $emr_usage_percentage;
+    public $stock_mgt_comments;
+
+    // Method to store data in the database
+    public function saveStkMgtScore()
+    {
+        $this->validate([
+            'availability_score' => 'required|integer',
+            'availability_percentage' => 'required|integer',
+            'stock_card_score' => 'required|integer',
+            'stock_card_percentage' => 'required|integer',
+            'correct_filling_score' => 'required|integer',
+            'correct_filling_percentage' => 'required|integer',
+            'physical_agrees_score' => 'required|integer',
+            'physical_agrees_percentage' => 'required|integer',
+            'amc_well_calculated_score' => 'required|integer',
+            'amc_well_calculated_percentage' => 'required|integer',
+            'emr_usage_score' => 'required|integer',
+            'emr_usage_percentage' => 'required|integer',
+            'stock_mgt_comments' => 'required|string',
+        ]); // Validate input data
+
+        FvStockMgtScore::updateOrCreate(
+            ['visit_id' => $this->active_visit->id],
+            [
+                'availability_score' => $this->availability_score,
+                'availability_percentage' => $this->availability_percentage,
+                'stock_card_score' => $this->stock_card_score,
+                'stock_card_percentage' => $this->stock_card_percentage,
+                'correct_filling_score' => $this->correct_filling_score,
+                'correct_filling_percentage' => $this->correct_filling_percentage,
+                'physical_agrees_score' => $this->physical_agrees_score,
+                'physical_agrees_percentage' => $this->physical_agrees_percentage,
+                'amc_well_calculated_score' => $this->amc_well_calculated_score,
+                'amc_well_calculated_percentage' => $this->amc_well_calculated_percentage,
+                'emr_usage_score' => $this->emr_usage_score,
+                'emr_usage_percentage' => $this->emr_usage_percentage,
+                'stock_mgt_comments' => $this->stock_mgt_comments,
+            ]);
+        $this->dispatchBrowserEvent('close-modal');
+        $this->resetInputs();
+        $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Record successfully added!']);
+    }
+
+    public $inventory_log_available;
+    public $inventory_log_updated;
+    public $service_info_available;
+    public $equipment_serviced;
+    public $iqc_performed;
+    public $operator_manuals_available;
+    public $equipment_inv_score;
+    public $equipment_inv_percentage;
+    public $equipment_score;
+    public $equipment_percentage;
+    public $equipment_mgt_comments;
+    public $equipment_maintenance_comment;
     public function fifthStepSubmit()
     {
+        $this->validate([
+
+            'inventory_log_available' => 'required|integer',
+            'inventory_log_updated' => 'required|integer',
+            'service_info_available' => 'required|integer',
+            'equipment_serviced' => 'required|integer',
+            'iqc_performed' => 'required|integer',
+            'operator_manuals_available' => 'required|integer',
+            'equipment_inv_score' => 'nullable|integer',
+            'equipment_inv_percentage' => 'nullable|integer',
+            'equipment_score' => 'nullable|integer',
+            'equipment_percentage' => 'nullable|integer',
+            'equipment_mgt_comments' => 'required|string',
+            'equipment_maintenance_comment' => 'required|string',
+        ]);
+
+        FvEquipmentManagement::updateOrCreate(
+            ['visit_id' => $this->active_visit->id],
+            [
+                'inventory_log_available' => $this->inventory_log_available,
+                'inventory_log_updated' => $this->inventory_log_updated,
+                'service_info_available' => $this->service_info_available,
+                'equipment_serviced' => $this->equipment_serviced,
+                'iqc_performed' => $this->iqc_performed,
+                'operator_manuals_available' => $this->operator_manuals_available,
+                'equipment_inv_score' => $this->equipment_inv_score,
+                'equipment_inv_percentage' => $this->equipment_inv_percentage,
+                'equipment_score' => $this->equipment_score,
+                'equipment_percentage' => $this->equipment_percentage,
+                'equipment_mgt_comments' => $this->equipment_mgt_comments,
+                'equipment_maintenance_comment' => $this->equipment_maintenance_comment,
+            ]);
         $this->step = 6;
     }
 
@@ -959,7 +1116,7 @@ class FacilityVisitDetailsComponent extends Component
         $data['platforms'] = collect([]);
         $data['supply_storages'] = collect([]);
         $data['stock_card_storages'] = collect([]);
-        $data['storageMgts'] =  collect([]);
+        $data['storageMgts'] = collect([]);
         if ($this->step == 1) {
             $data['supervised_persons'] = FvPersonsSupervised::where('visit_id', $this->active_visit->id)->get();
             $data['supervisors'] = FvSupervisor::where('visit_id', $this->active_visit->id)->get();

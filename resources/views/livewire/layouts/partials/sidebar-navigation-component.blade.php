@@ -72,12 +72,12 @@
                     <a href="#Room" class="has-arrow"><i class="fa fa-cog"></i><span>System Settings</span></a>
                     <ul>
                       <li><a href="{{ route('reagents')}}">Reagents</a></li>
-                      <li><a href="{{ route('test-category')}}">Test Types</a></li>
+                      <li><a href="{{ route('test-category')}}">Test Categories</a></li>
                       <li><a href="{{ route('store-types')}}">Storage Types</a></li>
                       <li><a href="{{ route('lab_platforms')}}">Lab Platforms</a></li>
-                      <li><a href="{{ route('product-types')}}">Product Types</a></li>
+                      {{-- <li><a href="{{ route('product-types')}}">Products</a></li> --}}
                       <li><a href="{{ route('districts') }}">Districts</a></li>
-                      <li><a href="{{ route('health-facilities') }}">Health Facilities</a></li>
+                      <li><a hr ef="{{ route('health-facilities') }}">Health Facilities</a></li>
                       <li><a href="{{ route('health-sub-districts') }}">Health Sub Districts</a></li>
                     </ul>
                   </li>

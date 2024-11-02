@@ -1,6 +1,6 @@
 <div>
 
-    @section('title', 'Storage Types')
+    @section('title', 'Test Categories')
     @include('livewire.layouts.partials.inc.create-resource')
     <div class="row">
         <div class="col-12">
@@ -11,7 +11,7 @@
                             <div class="d-sm-flex align-items-center">
                                 <h5 class="mb-2 mb-sm-0">
                                     @if (!$toggleForm)
-                                        Test Types (<span class="text-danger fw-bold">{{ $categories->total() }}</span>)
+                                        Categories (<span class="text-danger fw-bold">{{ $categories->total() }}</span>)
                                         @include('livewire.layouts.partials.inc.filter-toggle')
                                     @else
                                         Edit value
@@ -42,8 +42,7 @@
 
                             <div class="mb-3 col-md-2">
                                 <label for="from_date" class="form-label">From Date</label>
-                                <input id="from_date" type="date" class="form-control"
-                                    wire:model.lazy="from_date">
+                                <input id="from_date" type="date" class="form-control" wire:model.lazy="from_date">
                             </div>
 
                             <div class="mb-3 col-md-2">
@@ -93,7 +92,7 @@
                                     <tr>
                                         <th>No.</th>
                                         <th>Name</th>
-                                        <th>Created at</th>
+                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -102,10 +101,17 @@
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
                                             <td>{{ $value->name }}</td>
-
-                                            <td>{{ date('d-m-Y', strtotime($value->created_at)) }}</td>
                                             <td>
-                                                <button wire:click="editData({{ $value->id }})" class="action-ico btn btn-sm btn-success mx-1" data-toggle="modal" data-target="#addUpdateRecord">
+                                                @if ($value->is_active == 0)
+                                                    <span class="badge bg-danger">Suspended</span>
+                                                @else
+                                                    <span class="badge bg-success">Active</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <button wire:click="editData({{ $value->id }})"
+                                                    class="action-ico btn btn-sm btn-success mx-1" data-toggle="modal"
+                                                    data-target="#addUpdateRecord">
                                                     <i class="fa fa-edit"></i>
                                                 </button>
                                             </td>
@@ -126,19 +132,20 @@
             </div> <!-- end card -->
         </div><!-- end col-->
     </div>
-    <div wire:ignore.self  class="modal fade" id="addUpdateRecord" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="addUpdateRecord" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="defaultModalLabel">
-                      @if (!$toggleForm)
-                      Add Storage Type
-                      @else
-                      Update Storage Type
-                      @endif
-                      </h5>
+                        @if (!$toggleForm)
+                            Add Storage Type
+                        @else
+                            Update Storage Type
+                        @endif
+                    </h5>
                 </div>
-                <form  @if ($toggleForm) wire:submit.prevent="updatevalue" @else wire:submit.prevent="storevalue" @endif >
+                <form
+                    @if ($toggleForm) wire:submit.prevent="updatevalue" @else wire:submit.prevent="storevalue" @endif>
                     <div class="modal-body">
                         <div class="row">
                             <div class="mb-3 col-md-8">
@@ -151,7 +158,7 @@
                             </div>
                             <div class="mb-3 col-md-4">
                                 <label for="is_active" class="form-label required">{{ __('public.status') }}</label>
-                                <select class="form-control selectr"  id="is_active" wire:model.defer="is_active">
+                                <select class="form-control selectr" id="is_active" wire:model.defer="is_active">
                                     <option selected value="">Select</option>
                                     <option value='1'>Active</option>
                                     <option value='0'>Inactive</option>
@@ -163,12 +170,13 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal" wire:click="close()" >{{ __('close') }}</button>
-                        @if($toggleForm)
-                        <x-button type="submit"  class="btn-success btn-sm">{{ __('Update') }}</x-button>
-                         @else
-                         <x-button type="submit"  class="btn-success btn-sm">{{ __('Save') }}</x-button>
-                         @endif
+                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"
+                            wire:click="close()">{{ __('close') }}</button>
+                        @if ($toggleForm)
+                            <x-button type="submit" class="btn-success btn-sm">{{ __('Update') }}</x-button>
+                        @else
+                            <x-button type="submit" class="btn-success btn-sm">{{ __('Save') }}</x-button>
+                        @endif
                     </div><!--end modal-footer-->
                 </form>
 
@@ -176,15 +184,15 @@
         </div>
     </div>
     @push('scripts')
-            <script>
-                window.addEventListener('close-modal', event => {
-                    $('#addUpdateRecord').modal('hide');
-                    $('#delete_modal').modal('hide');
-                    $('#show-delete-confirmation-modal').modal('hide');
-                });
-                window.addEventListener('delete-modal', event => {
-                    $('#delete_modal').modal('show');
-                });
-            </script>
+        <script>
+            window.addEventListener('close-modal', event => {
+                $('#addUpdateRecord').modal('hide');
+                $('#delete_modal').modal('hide');
+                $('#show-delete-confirmation-modal').modal('hide');
+            });
+            window.addEventListener('delete-modal', event => {
+                $('#delete_modal').modal('show');
+            });
+        </script>
     @endpush
 </div>

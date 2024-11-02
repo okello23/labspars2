@@ -137,7 +137,7 @@ class ProductComponent extends Component
         if (count($this->ProductIDs) > 0) {
             return (new ProductsExport($this->ProductIDs))->download('lss_products'.date('d-m-Y').'_'.now()->toTimeString().'.xlsx');
         } else {
-            $this->dispatchBrowserEventBrowserEvent('swal:modal', [
+            $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'warning',
                 'message' => 'Oops! Not Found!',
                 'text' => 'No products selected for export!',

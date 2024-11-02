@@ -51,12 +51,12 @@
                             </div>
                             <div class="form-group col-md-3">
                                 <label>Date Of Visit</label>
-                                <input type="date" class="form-control" wire:model="date_of_visit">
+                                <input type="date" class="form-control" max="{{ date('Y-m-d') }}" wire:model="date_of_visit">
                                 @error('date_of_visit') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
                             <div class="form-group col-md-3">
                                 <label>Date Of Next Visit</label>
-                                <input type="date" class="form-control" wire:model="date_of_next_visit">
+                                <input type="date" class="form-control" min="{{ date('Y-m-d') }}" wire:model="date_of_next_visit">
                                 @error('date_of_next_visit') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
                           

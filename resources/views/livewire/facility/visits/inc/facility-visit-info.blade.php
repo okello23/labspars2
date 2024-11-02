@@ -1,4 +1,4 @@
-<div class="card-body">
+<div >
     <div>
         <h4>Persons Supervised <span class="ms-auto text-right"><button class="action-ico btn btn-sm btn-success mx-1"
                     data-toggle="modal" data-target="#personalModal">
@@ -125,7 +125,7 @@
     <!-- Supervisors -->
     <div>
         <h4>Supervisors
-            <button class="action-ico btn btn-sm btn-info mx-1" data-toggle="modal" data-target="#supervisorModal">
+            <button class="action-ico btn btn-sm btn-success mx-1" data-toggle="modal" data-target="#supervisorModal">
                 Add New
             </button>
         </h4>

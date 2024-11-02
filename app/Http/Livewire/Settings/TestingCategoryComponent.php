@@ -67,7 +67,7 @@ class TestingCategoryComponent extends Component
         $this->dispatchBrowserEvent('show-modal');
     }
 
-    public function store()
+    public function storevalue()
     {
         $this->validate([
             'name' => 'required|unique:testing_categories',
@@ -80,7 +80,7 @@ class TestingCategoryComponent extends Component
         $TestingCategory->save();
         $this->dispatchBrowserEvent('close-modal');
         $this->resetInputs();
-        $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => 'TestingCategory added successfully!']);
+        $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => 'Test Categories added successfully!']);
     }
 
     public function editData(TestingCategory $TestingCategory)
@@ -120,6 +120,7 @@ class TestingCategoryComponent extends Component
 
         $this->resetInputs();
         $this->createNew = false;
+        $this->toggleForm = true;
         $this->dispatchBrowserEvent('close-modal');
         $this->resetInputs();
         $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => 'TestingCategory updated successfully!']);
@@ -135,7 +136,7 @@ class TestingCategoryComponent extends Component
         if (count($this->TestingCategoryIDs) > 0) {
             // return (new TestingCategorysExport($this->TestingCategoryIDs))->download('lss_TestingCategorys'.date('d-m-Y').'_'.now()->toTimeString().'.xlsx');
         } else {
-            $this->dispatchBrowserEventBrowserEvent('swal:modal', [
+            $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'warning',
                 'message' => 'Oops! Not Found!',
                 'text' => 'No Test selected for export!',
@@ -160,7 +161,7 @@ class TestingCategoryComponent extends Component
     public function render()
     {
 
-        $data['categories'] = $this->mainQuery()->with('category')
+        $data['categories'] = $this->mainQuery()
             ->when($this->is_active, function ($query) {
                 $query->where('is_active', $this->is_active);
             })

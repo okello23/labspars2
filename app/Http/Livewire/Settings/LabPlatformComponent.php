@@ -139,8 +139,17 @@ class LabPlatformComponent extends Component
     }
     public function delete($id)
     {
+        try{
         LabPlatform::find($id)->delete();
         $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Platform Deleted Successfully.']);
+            //code...
+        } catch (\Throwable $th) {
+            $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'warning',
+                'message' => 'Oops!!',
+                'text' => 'Record can not be deleted!',
+            ]);
+        }
     }
 
     public function export()
@@ -148,7 +157,7 @@ class LabPlatformComponent extends Component
         if (count($this->SubCountyIds) > 0) {
             // return (new countiesExport($this->SubCountyIds))->download('counties_'.date('d-m-Y').'_'.now()->toTimeString().'.xlsx');
         } else {
-            $this->dispatchBrowserEventBrowserEvent('swal:modal', [
+            $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'warning',
                 'message' => 'Oops! Not Found!',
                 'text' => 'No counties selected for export!',
