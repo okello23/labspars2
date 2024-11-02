@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
+    return;
+
         Schema::create('fv_lis_hmis_reports', function (Blueprint $table) {
             $table->id();
-            Lab_copies_available
-            Monthly_previous_reports
-            availability_score
-            availability_percentage
+            // Lab_copies_available
+            // Monthly_previous_reports
+            // availability_score
+            // availability_percentage
 
             $table->boolean('t_reports_submitted_to_district')->default(false);
             $table->boolean('t_reports_submitted_on_time')->default(false);
@@ -26,7 +28,7 @@ return new class extends Migration
             $table->integer('timeliness_percentage')->nullable();
 
             
-            $table->boolean('hmis_sect6_submitted')->default(false);
+            $table->boolean('hmis_sect 6_submitted')->default(false);
             $table->boolean('hmis_sect10_submittedt')->default(false);
             $table->integer('completeness_score')->nullable();
             $table->integer('completeness_percentage')->nullable();
