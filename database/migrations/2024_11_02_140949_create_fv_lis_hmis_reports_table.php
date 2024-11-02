@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-    return;
+      return;
 
         Schema::create('fv_lis_hmis_reports', function (Blueprint $table) {
             $table->id();
