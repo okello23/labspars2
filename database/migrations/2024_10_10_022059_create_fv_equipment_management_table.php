@@ -26,7 +26,7 @@ return new class extends Migration
             $table->float('equipment_inv_percentage')->nullable(); 
             $table->float('equipment_score')->nullable();
             $table->float('equipment_percentage')->nullable(); 
-            $table->float('equipment_mgt_comments')->nullable(); 
+            $table->string('equipment_mgt_comments')->nullable(); 
             $table->timestamps();
         });
     }

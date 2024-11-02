@@ -195,18 +195,18 @@
     <div class="row">
         <div class="col-md-2">
             <label class="form-label required">Ordering Schedule Deadline:</label>
-            <input class="form-control" type="date" wire:model.lazy="ordering_schedule_deadline">
+            <input class="form-control" type="date" wire:model="ordering_schedule_deadline">
         </div>
         <div class="col-md-2">
             <label class="form-label required">Actual Date of Ordering:</label>
-            <input class="form-control" type="date" wire:model.lazy="actual_ordering_date">
+            <input class="form-control" type="date" wire:model="actual_ordering_date">
         </div>
         <div class="col-md-2">
             <label class="form-label required">Was ordering timely?</label>
-            <select class="form-control" wire:model.lazy="ordering_timely">
+            <select class="form-control" wire:model="ordering_timely">
                 <option value="">select</option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
             </select>
         </div>
         <div class="col-md-2">
@@ -219,10 +219,10 @@
         </div>
         <div class="col-md-2">
             <label class="form-label required">Was delivery on schedule?</label>
-            <select class="form-control" wire:model.lazy="delivery_on_time">
+            <select class="form-control" wire:model="delivery_on_time">
                 <option value="">select</option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
             </select>
         </div>
         <div class="col-md-12">

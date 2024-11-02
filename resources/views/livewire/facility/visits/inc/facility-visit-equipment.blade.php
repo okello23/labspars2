@@ -15,7 +15,7 @@
                <tr>
                    <td>Is the Laboratory Equipment Inventory Log (HMIS Lab 20) available? </td>
                    <td>
-                       <select class="form-control" wire:model.lazy="inventory_log_available" required>
+                       <select class="form-control" wire:model="inventory_log_available" required>
                            <option value="">select</option>
                            <option value="1">Yes</option>
                            <option value="0">No</option>
@@ -28,14 +28,14 @@
                <tr>
                    <td>b) Did the facility submit the last order to the warehouse electronically?</td>
                    <td>
-                       <select class="form-control" wire:model.lazy="inventory_log_updated">
+                       <select class="form-control" wire:model="inventory_log_updated">
                            <option value="">select</option>
                            <option value="1">Yes</option>
                            <option value="0">No</option>
                        </select>
                    </td>
                    <td colspan="2">
-                       <textarea class="form-control" type="text" wire:model.lazy="inventory_log_updated"></textarea>
+                       <textarea class="form-control" type="text" wire:model="equipment_maintenance_comment"></textarea>
                    </td>
                </tr>
            </tbody>
@@ -284,6 +284,29 @@
                </tbody>
            </table>
        </div>
+       @php
+    $fields = [
+     'visit_id',
+        'inventory_log_available',
+        'inventory_log_updated',
+        'service_info_available',
+        'equipment_serviced',
+        'iqc_performed',
+        'operator_manuals_available',
+        'equipment_inv_score',
+        'equipment_inv_percentage',
+        'equipment_score',
+        'equipment_percentage',
+        'equipment_mgt_comments',
+        'equipment_maintenance_comment',
+    ];
+@endphp
+
+@foreach ($fields as $field)
+    @error($field)
+        <div class="text-danger text-small">{{ $message }}</div>
+    @enderror
+@endforeach
        @include('livewire.facility.visits.inc.new-eqt-fuctionalty-modal')
        @include('livewire.facility.visits.inc.new-eqt-utilization-modal')
    </div>
