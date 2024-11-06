@@ -12,6 +12,8 @@ use App\Models\Facility\Visits\FvEquipmentFunctionality;
 use App\Models\Facility\Visits\FvEquipmentManagement;
 use App\Models\Facility\Visits\FvEquipmentUtilization;
 use App\Models\Facility\Visits\FvHygieneManagement;
+use App\Models\Facility\Visits\FvLisHmisReport;
+use App\Models\Facility\Visits\FvLisLabDataUse;
 use App\Models\Facility\Visits\FvOrderManagement;
 use App\Models\Facility\Visits\FvOrderReview;
 use App\Models\Facility\Visits\FvStockManagement;
@@ -20,7 +22,9 @@ use App\Models\Facility\Visits\FvStorageConditionManagement;
 use App\Models\Facility\Visits\FvStorageManagement;
 use App\Models\Facility\Visits\FvStoragePracticeManagement;
 use App\Models\Facility\Visits\FvStorageSystemManagement;
+use App\Models\Settings\FvLisDataToolScore;
 use App\Models\Settings\LabPlatform;
+use App\Models\Settings\LisDataCollectionTool;
 use App\Models\Settings\Reagent;
 use App\Models\Settings\TestingCategory;
 use Livewire\Component;
@@ -527,6 +531,7 @@ class FacilityVisitDetailsComponent extends Component
     public $quantity_received;
 
     public $fulfillment_rate;
+    public $order_item_id;
 
     public function updatedQuantityOrdered()
     {
@@ -544,16 +549,17 @@ class FacilityVisitDetailsComponent extends Component
     public function saveOrderReview()
     {
         $this->validate([
-            'item' => 'required|string',
+            'order_item_id' => 'required|integer',
             'quantity_ordered' => 'required|numeric',
             'quantity_received' => 'required|numeric',
             'fulfillment_rate' => 'required|numeric',
 
         ]);
 
-        FvOrderReview::create(
-            [
-                'visit_id' => $this->active_visit->id,
+        FvOrderReview::updateOrCreate(
+            [ 'visit_id' => $this->active_visit->id,
+            'order_item_id' => $this->order_item_id],
+            [               
                 'item' => $this->item,
                 'quantity_ordered' => $this->quantity_ordered,
                 'quantity_received' => $this->quantity_received,
@@ -563,6 +569,11 @@ class FacilityVisitDetailsComponent extends Component
         $this->dispatchBrowserEvent('close-modal');
         $this->resetInputs();
         $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Record successfully added!']);
+    }
+
+    public function deleteOrderItem($id) {
+        FvOrderReview::where('id', $id)->delete();
+        $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Record successfully deleted!']);
     }
 
     public $ordering_schedule_deadline;
@@ -855,7 +866,7 @@ class FacilityVisitDetailsComponent extends Component
         $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Record successfully added!']);
 
     }
-    public $submitted_on_time, $hmis_105_previous_months, $hmis_105_outpatient_report;
+    public $submitted_on_time;
     public $visit_id;
     public $reagent_id;
     public $test_performed = false;
@@ -1032,6 +1043,156 @@ class FacilityVisitDetailsComponent extends Component
         $this->step = 6;
     }
 
+    public $tool_id;
+    public $dct_availability_score;
+    public $dct_usage_score;
+
+    public function saveLisDctScores()
+    {
+        $this->validate([
+            'tool_id' => 'required|integer',
+            'dct_availability_score' => 'required|numeric',
+            'dct_usage_score' => 'required|numeric',
+        ]); // Validate input data
+
+        FvLisDataToolScore::updateOrCreate(
+            ['visit_id' => $this->active_visit->id,
+                'tool_id' => $this->tool_id,
+            ],
+            [
+                'dct_availability_score' => $this->dct_availability_score,
+                'dct_usage_score' => $this->dct_usage_score,
+            ]);
+        $this->resetInputs();
+        $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Record successfully added!']);
+    }
+    
+    public $hmis_105_outpatient_report;
+    public $hmis_105_previous_months;
+    public $lis_availability_score;
+    public $lis_availability_percentage;
+    public $lis_availability_comments;
+    public $t_reports_submitted_to_district;
+    public $t_reports_submitted_on_time;
+    public $timeliness_score;
+    public $timeliness_percentage;
+    public $timeliness_comments;
+    public $hmis_section_6_complete;
+    public $hmis_section_10_complete;
+    public $completeness_score;
+    public $completeness_percentage;
+    public $lis_tools_comments;
+    public $total_availability_sum;
+    public $total_availability_percentage;
+    public $total_inuse_sum;
+    public $total_inuse_percentage;
+    public $availability_inuse_sum;
+    public $availability_inuse_percentage;
+    public $hmis_105_report_comments;
+    public $hmis_105_report_score;
+    public $hmis_105_report_percentage;
+    public $lab_data_usage_comments;
+    public $lab_data_usaget_score;
+    public $lab_data_usage_percentage;
+    public $reports_filling_comments;
+    public $reports_filling_score;
+    public $reports_filling_percentage;
+
+    public function saveLisHmisReport()
+    {
+        $this->validate([
+            'hmis_105_outpatient_report' => 'required|numeric',
+            'hmis_105_previous_months' => 'required|numeric',
+            'lis_availability_score' => 'nullable|numeric',
+            'lis_availability_percentage' => 'nullable|numeric',
+            'lis_availability_comments' => 'required|string',
+            't_reports_submitted_to_district' => 'required|numeric',
+            't_reports_submitted_on_time' => 'required|numeric',
+            'timeliness_score' => 'nullable|numeric',
+            'timeliness_percentage' => 'nullable|numeric',
+            'timeliness_comments' => 'required|string',
+            'hmis_section_6_complete' => 'required|numeric',
+            'hmis_section_10_complete' => 'required|numeric',
+            'completeness_score' => 'nullable|numeric',
+            'completeness_percentage' => 'nullable|numeric',
+            'lis_tools_comments' => 'required|string',
+            'total_availability_sum' => 'nullable|numeric',
+            'total_availability_percentage' => 'nullable|numeric',
+            'total_inuse_sum' => 'nullable|numeric',
+            'total_inuse_percentage' => 'nullable|numeric',
+            'availability_inuse_sum' => 'nullable|numeric',
+            'availability_inuse_percentage' => 'nullable|numeric',
+            'hmis_105_report_comments' => 'required|string',
+            'hmis_105_report_score' => 'required|numeric',
+            'hmis_105_report_percentage' => 'required|numeric',
+            'lab_data_usage_comments' => 'required|numeric',
+            'lab_data_usage_score' => 'required|numeric',
+            'lab_data_usage_percentage' => 'required|numeric',
+            'reports_filling_comments' => 'required|numeric',
+            'reports_filling_score' => 'required|numeric',
+            'reports_filling_percentage' => 'required|numeric',
+        ]); // Validate input data
+
+        FvLisHmisReport::updateOrCreate(
+            ['visit_id' => $this->active_visit->id],
+            [
+                'hmis_105_outpatient_report' => $this->hmis_105_outpatient_report,
+                'hmis_105_previous_months' => $this->hmis_105_previous_months,
+                'lis_availability_score' => $this->lis_availability_score,
+                'lis_availability_percentage' => $this->lis_availability_percentage,
+                'lis_availability_comments' => $this->lis_availability_comments,
+                't_reports_submitted_to_district' => $this->t_reports_submitted_to_district,
+                't_reports_submitted_on_time' => $this->t_reports_submitted_on_time,
+                'timeliness_score' => $this->timeliness_score,
+                'timeliness_percentage' => $this->timeliness_percentage,
+                'timeliness_comments' => $this->timeliness_comments,
+                'hmis_section_6_complete' => $this->hmis_section_6_complete,
+                'hmis_section_10_complete' => $this->hmis_section_10_complete,
+                'completeness_score' => $this->completeness_score,
+                'completeness_percentage' => $this->completeness_percentage,
+                'lis_tools_comments' => $this->lis_tools_comments,
+                'total_availability_sum' => $this->total_availability_sum,
+                'total_availability_percentage' => $this->total_availability_percentage,
+                'total_inuse_sum' => $this->total_inuse_sum,
+                'total_inuse_percentage' => $this->total_inuse_percentage,
+                'availability_inuse_sum' => $this->availability_inuse_sum,
+                'availability_inuse_percentage' => $this->availability_inuse_percentage,
+                'hmis_105_report_comments' => $this->hmis_105_report_comments,
+                'hmis_105_report_score' => $this->hmis_105_report_score,
+                'hmis_105_report_percentage' => $this->hmis_105_report_percentage,
+                'lab_data_usage_comments' => $this->lab_data_usage_comments,
+                'lab_data_usage_score' => $this->lab_data_usage_score,
+                'lab_data_usage_percentage' => $this->lab_data_usage_percentage,
+                'reports_filling_comments' => $this->reports_filling_comments,
+                'reports_filling_score' => $this->reports_filling_score,
+                'reports_filling_percentage' => $this->reports_filling_percentage,
+            ]);
+        $this->resetInputs();
+        $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Record successfully added!']);
+    }
+    public $item_name;
+    public $updated_last_quarter;
+    public $is_available;
+
+    public function saveLisDataUsage()
+    {
+        $this->validate([
+            'item_name' => 'required|string',
+            'updated_last_quarter' => 'required|numeric',
+            'is_available' => 'required|numeric',
+        ]); // Validate input data
+
+        FvLisLabDataUse::updateOrCreate(
+            ['visit_id' => $this->active_visit->id,
+            'item_name' => $this->dct_availability_score],
+            [
+                
+                'updated_last_quarter' => $this->updated_last_quarter,
+                'is_available' => $this->is_available,
+            ]);
+        $this->resetInputs();
+        $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Laboratory monthly statistics  successfully added!']);
+    }
     public function back($num)
     {
         if ($num == 1) {
@@ -1050,6 +1211,12 @@ class FacilityVisitDetailsComponent extends Component
     public function resetInputs()
     {
         $this->reset([
+            'item_name',
+            'is_available',
+            'updated_last_quarter',
+            'tool_id',
+            'dct_availability_score',
+            'dct_usage_score',
             'name',
             'contact',
             'sex',
@@ -1117,6 +1284,9 @@ class FacilityVisitDetailsComponent extends Component
         $data['supply_storages'] = collect([]);
         $data['stock_card_storages'] = collect([]);
         $data['storageMgts'] = collect([]);
+        $data['dcTools'] = collect([]);
+        $data['dcToolScores'] = collect([]);
+        $data['orderItems'] = collect([]);
         if ($this->step == 1) {
             $data['supervised_persons'] = FvPersonsSupervised::where('visit_id', $this->active_visit->id)->get();
             $data['supervisors'] = FvSupervisor::where('visit_id', $this->active_visit->id)->get();
@@ -1128,12 +1298,18 @@ class FacilityVisitDetailsComponent extends Component
             $data['storageMgts'] = FvStockManagement::where('visit_id', $this->active_visit->id)->with('reagent')->get();
         }
         if ($this->step == 4) {
-            $data['reviews'] = FvOrderReview::where('visit_id', $this->active_visit->id)->get();
+            $items = FvStockManagement::where('visit_id', $this->active_visit->id)->orderBy('id','asc')->limit(5)->pluck('reagent_id')->toArray();
+            $data['reviews'] = FvOrderReview::where('visit_id', $this->active_visit->id)->with('reagent')->get();
+            $data['orderItems'] = Reagent::where(['is_active' => true])->whereIn('id',$items)->get();
         }
         if ($this->step == 5) {
             $data['platforms'] = LabPlatform::where('is_active', true)->get();
             $data['functionalities'] = FvEquipmentFunctionality::where('visit_id', $this->active_visit->id)->get();
             $data['utilizations'] = FvEquipmentUtilization::where('visit_id', $this->active_visit->id)->get();
+        }
+        if ($this->step == 6) {
+            $data['dcTools'] = LisDataCollectionTool::where('is_active', true)->get();
+            $data['dcToolScores'] = FvLisDataToolScore::where('visit_id', $this->active_visit->id)->with('dcTool')->get();
         }
         $data['storageTypes'] = FvStorageType::where('is_active', true)->get();
 
