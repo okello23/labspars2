@@ -193,7 +193,7 @@
     @enderror
 @endforeach
 <!-- Score Summary Section -->
-<button class="btn btn-success" wire:click='calculateScored'>Cal</button>
+{{-- <button class="btn btn-success" wire:click='calculateScored'>Cal</button> --}}
 <h3>Score Summary</h3>
 <table>
     <thead>
