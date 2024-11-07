@@ -159,8 +159,8 @@
                                 <hr>
                                 <div class="container">
                                     <div class="btn-group float-right" role="group">
-                                        <a class="btn-success  nextBtn btn-lg fa fa-arrow-circle-right"
-                                            href="{{ URL::signedRoute('facility-visit_view', $active_visit->visit_code) }}">Finish</a>
+                                        <button class="btn-success  nextBtn btn-lg fa fa-arrow-circle-right" wire:click="saveLisHmisReport"
+                                            >Finish</button>
                                     </div>
                                     <div class="btn-group" role="group">
                                         <x-button class="btn-danger float-right nextBtn btn-lg fa fa-arrow-circle-left"
