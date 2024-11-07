@@ -20,6 +20,6 @@ class FvStorageConditionManagement extends Model
         'main_store_opening_date',
         'lab_store_opening_date',
         'practices_comments',
-
+        'condition_comments'
     ];
 }

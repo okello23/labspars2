@@ -8,6 +8,8 @@ use App\Models\Facility\FvStorageType;
 use App\Models\Facility\FvSupervisor;
 use App\Models\Facility\Visits\FvAdherence;
 use App\Models\Facility\Visits\FvCleanlinessManagement;
+use App\Models\Facility\Visits\FvCompServiceStatisticsAcc;
+use App\Models\Facility\Visits\FvCompStockStatusAcc;
 use App\Models\Facility\Visits\FvEquipmentFunctionality;
 use App\Models\Facility\Visits\FvEquipmentManagement;
 use App\Models\Facility\Visits\FvEquipmentUtilization;
@@ -28,6 +30,7 @@ use App\Models\Settings\FvLisDataToolScore;
 use App\Models\Settings\LabPlatform;
 use App\Models\Settings\LisDataCollectionTool;
 use App\Models\Settings\Reagent;
+use App\Models\Settings\StockItem;
 use App\Models\Settings\TestingCategory;
 use Livewire\Component;
 
@@ -434,7 +437,7 @@ class FacilityVisitDetailsComponent extends Component
     {
         $this->validate([
             'stock_mgt_comments' => 'required|string',
-        ]); 
+        ]);
         $this->calculateScored();
         $this->step = 3;
         $cleanliness = FvCleanlinessManagement::where('visit_id', $this->active_visit->id)->first();
@@ -561,9 +564,9 @@ class FacilityVisitDetailsComponent extends Component
         ]);
 
         FvOrderReview::updateOrCreate(
-            [ 'visit_id' => $this->active_visit->id,
-            'order_item_id' => $this->order_item_id],
-            [               
+            ['visit_id' => $this->active_visit->id,
+                'order_item_id' => $this->order_item_id],
+            [
                 'item' => $this->item,
                 'quantity_ordered' => $this->quantity_ordered,
                 'quantity_received' => $this->quantity_received,
@@ -575,7 +578,8 @@ class FacilityVisitDetailsComponent extends Component
         $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Record successfully added!']);
     }
 
-    public function deleteOrderItem($id) {
+    public function deleteOrderItem($id)
+    {
         FvOrderReview::where('id', $id)->delete();
         $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Record successfully deleted!']);
     }
@@ -937,7 +941,7 @@ class FacilityVisitDetailsComponent extends Component
                 'elmis_quantity' => $this->elmis_quantity,
                 'elmis_balance_matches' => $this->elmis_balance_matches,
             ]);
-            $this->calculateScored();
+        $this->calculateScored();
         $this->dispatchBrowserEvent('close-modal');
         $this->resetInputs();
         $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Record successfully added!']);
@@ -959,138 +963,157 @@ class FacilityVisitDetailsComponent extends Component
 
     public function calculateScored()
     {
-        $isavailableCount =0;
-            $isavailable=0;
-            $availability_score = 0;
-            $availability_percentage = 0;
+        $isavailableCount = 0;
+        $isavailable = 0;
+        $availability_score = 0;
+        $availability_percentage = 0;
 
-            $scAvailable =0;
-            $scAvailableCount =0;
-            $stock_card_score = 0;
-            $stock_card_percentage = 0;
+        $scAvailable = 0;
+        $scAvailableCount = 0;
+        $stock_card_score = 0;
+        $stock_card_percentage = 0;
 
-            $correct_filling =0; $correct_filling_count =0;
-            $correct_filling_score = 0;
-            $correct_filling_percentage = 0;
+        $correct_filling = 0;
+        $correct_filling_count = 0;
+        $correct_filling_score = 0;
+        $correct_filling_percentage = 0;
 
-            $Physical_agrees =0; $Physical_agrees_count=0;
-            $physical_agrees_score = 0;
-            $physical_agrees_percentage = 0;
+        $Physical_agrees = 0;
+        $Physical_agrees_count = 0;
+        $physical_agrees_score = 0;
+        $physical_agrees_percentage = 0;
 
-            $amc_well_calculated =0; $amc_well_calculated_count =0;
-            $amc_well_calculated_score = 0;
-            $amc_well_calculated_percentage = 0;
+        $amc_well_calculated = 0;
+        $amc_well_calculated_count = 0;
+        $amc_well_calculated_score = 0;
+        $amc_well_calculated_percentage = 0;
 
-            $emr_usage=0; $emr_usage_count=0;
-            $emr_usage_score = 0;
-            $emr_usage_percentage = 0;
-            $records =  FvStockManagement::where('visit_id', $this->active_visit->id)->with('reagent')->get();
-            foreach ($records as $storageItem){
-                if($storageItem->item_available==1){
-                    $isavailable +=1; $isavailableCount+=1;
-                }elseif($storageItem->item_available==0){
-                    $isavailable +=0;$isavailableCount+=1;
-                }else {
-                    $isavailable +=0; $isavailableCount+=0;
-                }
-                if($isavailableCount>0 && $isavailable>0){
-                    $availability_score = $isavailable/$isavailableCount;
-                }else {
-                    $availability_score = 0;
-                }
-                $availability_percentage = round($availability_score*100);
-                //--------STOCK CARD SCORES-------------
-                if($storageItem->stock_card_available==1){
-                    $scAvailable +=1;$scAvailableCount+=1;
-                }elseif($storageItem->stock_card_available==0){
-                    $scAvailable +=0; $scAvailableCount+=1;
-                }else {
-                    $scAvailable +=0;$scAvailableCount+=0;
-                }
-                if($scAvailableCount>0 && $scAvailable>0){
-                    $stock_card_score = $scAvailable/$scAvailableCount;
-                    }else {
-                    $stock_card_score = 0;
-                }
-                $stock_card_percentage = round($stock_card_score*100);
-
-
-                 //--------STOCK CARD OKAY-------------
-                 if($storageItem->stock_card_correct==1){
-                    $correct_filling +=1;$correct_filling_count+=1;
-                }elseif($storageItem->stock_card_correct==0){
-                    $correct_filling +=0; $correct_filling_count+=1;
-                }else {
-                    $correct_filling +=0;$correct_filling_count+=0;
-                }
-                if($correct_filling_count>0 && $correct_filling>0){
-                    $correct_filling_score = $correct_filling/$correct_filling_count;
-                    }else {
-                    $correct_filling_score = 0;
-                }
-                $correct_filling_percentage = round($stock_card_score*100);
-
-                //--------PHYSICAL AGREES-------------
-                if($storageItem->balance_matches_physical==1){
-                    $Physical_agrees +=1;$Physical_agrees_count+=1;
-                }elseif($storageItem->balance_matches_physical==0){
-                    $Physical_agrees +=0; $Physical_agrees_count+=1;
-                }else {
-                    $Physical_agrees +=0;$Physical_agrees_count+=0;
-                }
-                if($Physical_agrees>0 && $Physical_agrees_count>0){
-                    $physical_agrees_score = $Physical_agrees/$Physical_agrees_count;
-                    }else {
-                    $physical_agrees_score = 0;
-                }
-                $physical_agrees_percentage = round($physical_agrees_score*100);
-
-
-                 //--------AMC WELL CAL-------------
-                 if($storageItem->amc_calculated_matches==1){
-                    $amc_well_calculated +=1;$amc_well_calculated_count+=1;
-                }elseif($storageItem->amc_calculated_matches==0){
-                    $amc_well_calculated +=0; $amc_well_calculated_count+=1;
-                }else {
-                    $amc_well_calculated +=0;$amc_well_calculated_count+=0;
-                }
-                if($amc_well_calculated>0 && $amc_well_calculated_count>0){
-                    $amc_well_calculated_score = $amc_well_calculated/$amc_well_calculated_count;
-                    }else {
-                    $amc_well_calculated_score = 0;
-                }
-                $amc_well_calculated_percentage = round($amc_well_calculated_score*100);
-
-                 //--------AMC WELL CAL-------------
-                 if($storageItem->elmis_balance_matches==1){
-                    $emr_usage +=1;$emr_usage_count+=1;
-                }elseif($storageItem->elmis_balance_matches==0){
-                    $emr_usage +=0; $emr_usage_count+=1;
-                }else {
-                    $emr_usage +=0;$emr_usage_count+=0;
-                }
-                if($emr_usage>0 && $emr_usage_count>0){
-                    $emr_usage_score = $emr_usage/$amc_well_calculated_count;
-                    }else {
-                    $emr_usage_score = 0;
-                }
-                $emr_usage_percentage = round($emr_usage_score*100);
+        $emr_usage = 0;
+        $emr_usage_count = 0;
+        $emr_usage_score = 0;
+        $emr_usage_percentage = 0;
+        $records = FvStockManagement::where('visit_id', $this->active_visit->id)->with('reagent')->get();
+        foreach ($records as $storageItem) {
+            if ($storageItem->item_available == 1) {
+                $isavailable += 1;
+                $isavailableCount += 1;
+            } elseif ($storageItem->item_available == 0) {
+                $isavailable += 0;
+                $isavailableCount += 1;
+            } else {
+                $isavailable += 0;
+                $isavailableCount += 0;
             }
+            if ($isavailableCount > 0 && $isavailable > 0) {
+                $availability_score = $isavailable / $isavailableCount;
+            } else {
+                $availability_score = 0;
+            }
+            $availability_percentage = round($availability_score * 100);
+            //--------STOCK CARD SCORES-------------
+            if ($storageItem->stock_card_available == 1) {
+                $scAvailable += 1;
+                $scAvailableCount += 1;
+            } elseif ($storageItem->stock_card_available == 0) {
+                $scAvailable += 0;
+                $scAvailableCount += 1;
+            } else {
+                $scAvailable += 0;
+                $scAvailableCount += 0;
+            }
+            if ($scAvailableCount > 0 && $scAvailable > 0) {
+                $stock_card_score = $scAvailable / $scAvailableCount;
+            } else {
+                $stock_card_score = 0;
+            }
+            $stock_card_percentage = round($stock_card_score * 100);
 
+            //--------STOCK CARD OKAY-------------
+            if ($storageItem->stock_card_correct == 1) {
+                $correct_filling += 1;
+                $correct_filling_count += 1;
+            } elseif ($storageItem->stock_card_correct == 0) {
+                $correct_filling += 0;
+                $correct_filling_count += 1;
+            } else {
+                $correct_filling += 0;
+                $correct_filling_count += 0;
+            }
+            if ($correct_filling_count > 0 && $correct_filling > 0) {
+                $correct_filling_score = $correct_filling / $correct_filling_count;
+            } else {
+                $correct_filling_score = 0;
+            }
+            $correct_filling_percentage = round($stock_card_score * 100);
 
-            $this->availability_score              =$availability_score;
-            $this->availability_percentage              =$availability_percentage;
-            $this->stock_card_score              =$stock_card_score;
-            $this->stock_card_percentage              =$stock_card_percentage;
-            $this->correct_filling_score              =$correct_filling_score;
-            $this->correct_filling_percentage              =$correct_filling_percentage;
-            $this->physical_agrees_score              =$physical_agrees_score;
-            $this->physical_agrees_percentage              =$physical_agrees_percentage;
-            $this->amc_well_calculated_score              =$amc_well_calculated_score;
-            $this->amc_well_calculated_percentage              =$amc_well_calculated_percentage;
-            $this->emr_usage_score              =$emr_usage_score;
-            $this->emr_usage_percentage              =$emr_usage_percentage;
-            $this->saveStkMgtScore();
+            //--------PHYSICAL AGREES-------------
+            if ($storageItem->balance_matches_physical == 1) {
+                $Physical_agrees += 1;
+                $Physical_agrees_count += 1;
+            } elseif ($storageItem->balance_matches_physical == 0) {
+                $Physical_agrees += 0;
+                $Physical_agrees_count += 1;
+            } else {
+                $Physical_agrees += 0;
+                $Physical_agrees_count += 0;
+            }
+            if ($Physical_agrees > 0 && $Physical_agrees_count > 0) {
+                $physical_agrees_score = $Physical_agrees / $Physical_agrees_count;
+            } else {
+                $physical_agrees_score = 0;
+            }
+            $physical_agrees_percentage = round($physical_agrees_score * 100);
+
+            //--------AMC WELL CAL-------------
+            if ($storageItem->amc_calculated_matches == 1) {
+                $amc_well_calculated += 1;
+                $amc_well_calculated_count += 1;
+            } elseif ($storageItem->amc_calculated_matches == 0) {
+                $amc_well_calculated += 0;
+                $amc_well_calculated_count += 1;
+            } else {
+                $amc_well_calculated += 0;
+                $amc_well_calculated_count += 0;
+            }
+            if ($amc_well_calculated > 0 && $amc_well_calculated_count > 0) {
+                $amc_well_calculated_score = $amc_well_calculated / $amc_well_calculated_count;
+            } else {
+                $amc_well_calculated_score = 0;
+            }
+            $amc_well_calculated_percentage = round($amc_well_calculated_score * 100);
+
+            //--------AMC WELL CAL-------------
+            if ($storageItem->elmis_balance_matches == 1) {
+                $emr_usage += 1;
+                $emr_usage_count += 1;
+            } elseif ($storageItem->elmis_balance_matches == 0) {
+                $emr_usage += 0;
+                $emr_usage_count += 1;
+            } else {
+                $emr_usage += 0;
+                $emr_usage_count += 0;
+            }
+            if ($emr_usage > 0 && $emr_usage_count > 0) {
+                $emr_usage_score = $emr_usage / $amc_well_calculated_count;
+            } else {
+                $emr_usage_score = 0;
+            }
+            $emr_usage_percentage = round($emr_usage_score * 100);
+        }
+
+        $this->availability_score = $availability_score;
+        $this->availability_percentage = $availability_percentage;
+        $this->stock_card_score = $stock_card_score;
+        $this->stock_card_percentage = $stock_card_percentage;
+        $this->correct_filling_score = $correct_filling_score;
+        $this->correct_filling_percentage = $correct_filling_percentage;
+        $this->physical_agrees_score = $physical_agrees_score;
+        $this->physical_agrees_percentage = $physical_agrees_percentage;
+        $this->amc_well_calculated_score = $amc_well_calculated_score;
+        $this->amc_well_calculated_percentage = $amc_well_calculated_percentage;
+        $this->emr_usage_score = $emr_usage_score;
+        $this->emr_usage_percentage = $emr_usage_percentage;
+        $this->saveStkMgtScore();
 
     }
     // Method to store data in the database
@@ -1207,7 +1230,7 @@ class FacilityVisitDetailsComponent extends Component
         $this->resetInputs();
         $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Record successfully added!']);
     }
-    
+
     public $hmis_105_outpatient_report;
     public $hmis_105_previous_months;
     public $lis_availability_score;
@@ -1240,38 +1263,39 @@ class FacilityVisitDetailsComponent extends Component
     public $reports_filling_percentage;
     public $lab_data_usage_score;
 
-    public function loadLimsData(){
-        $lims =  FvLisHmisReport::where('visit_id', $this->active_visit->id)->first();
-        $this->hmis_105_outpatient_report = $lims->hmis_105_outpatient_report??null;
-        $this->hmis_105_previous_months = $lims->hmis_105_previous_months??null;
-        $this->lis_availability_score = $lims->lis_availability_score??null;
-        $this->lis_availability_percentage = $lims->lis_availability_percentage??null;
-        $this->lis_availability_comments = $lims->lis_availability_comments??null;
-        $this->t_reports_submitted_to_district = $lims->t_reports_submitted_to_district??null;
-        $this->t_reports_submitted_on_time = $lims->t_reports_submitted_on_time??null;
-        $this->timeliness_score = $lims->timeliness_score??null;
-        $this->timeliness_percentage = $lims->timeliness_percentage??null;
-        $this->timeliness_comments = $lims->timeliness_comments??null;
-        $this->hmis_section_6_complete = $lims->hmis_section_6_complete??null;
-        $this->hmis_section_10_complete = $lims->hmis_section_10_complete??null;
-        $this->completeness_score = $lims->completeness_score??null;
-        $this->completeness_percentage = $lims->completeness_percentage??null;
-        $this->lis_tools_comments = $lims->lis_tools_comments??null;
-        $this->total_availability_sum = $lims->total_availability_sum??null;
-        $this->total_availability_percentage = $lims->total_availability_percentage??null;
-        $this->total_inuse_sum = $lims->total_inuse_sum??null;
-        $this->total_inuse_percentage = $lims->total_inuse_percentage??null;
-        $this->availability_inuse_sum = $lims->availability_inuse_sum??null;
-        $this->availability_inuse_percentage = $lims->availability_inuse_percentage??null;
-        $this->hmis_105_report_comments = $lims->hmis_105_report_comments??null;
-        $this->hmis_105_report_score = $lims->hmis_105_report_score??null;
-        $this->hmis_105_report_percentage = $lims->hmis_105_report_percentage??null;
-        $this->lab_data_usage_comments = $lims->lab_data_usage_comments??null;
-        $this->lab_data_usage_score = $lims->lab_data_usage_score??null;
-        $this->lab_data_usage_percentage = $lims->lab_data_usage_percentage??null;
-        $this->reports_filling_comments = $lims->reports_filling_comments??null;
-        $this->reports_filling_score = $lims->reports_filling_score??null;
-        $this->reports_filling_percentage = $lims->reports_filling_percentage??null;
+    public function loadLimsData()
+    {
+        $lims = FvLisHmisReport::where('visit_id', $this->active_visit->id)->first();
+        $this->hmis_105_outpatient_report = $lims->hmis_105_outpatient_report ?? null;
+        $this->hmis_105_previous_months = $lims->hmis_105_previous_months ?? null;
+        $this->lis_availability_score = $lims->lis_availability_score ?? null;
+        $this->lis_availability_percentage = $lims->lis_availability_percentage ?? null;
+        $this->lis_availability_comments = $lims->lis_availability_comments ?? null;
+        $this->t_reports_submitted_to_district = $lims->t_reports_submitted_to_district ?? null;
+        $this->t_reports_submitted_on_time = $lims->t_reports_submitted_on_time ?? null;
+        $this->timeliness_score = $lims->timeliness_score ?? null;
+        $this->timeliness_percentage = $lims->timeliness_percentage ?? null;
+        $this->timeliness_comments = $lims->timeliness_comments ?? null;
+        $this->hmis_section_6_complete = $lims->hmis_section_6_complete ?? null;
+        $this->hmis_section_10_complete = $lims->hmis_section_10_complete ?? null;
+        $this->completeness_score = $lims->completeness_score ?? null;
+        $this->completeness_percentage = $lims->completeness_percentage ?? null;
+        $this->lis_tools_comments = $lims->lis_tools_comments ?? null;
+        $this->total_availability_sum = $lims->total_availability_sum ?? null;
+        $this->total_availability_percentage = $lims->total_availability_percentage ?? null;
+        $this->total_inuse_sum = $lims->total_inuse_sum ?? null;
+        $this->total_inuse_percentage = $lims->total_inuse_percentage ?? null;
+        $this->availability_inuse_sum = $lims->availability_inuse_sum ?? null;
+        $this->availability_inuse_percentage = $lims->availability_inuse_percentage ?? null;
+        $this->hmis_105_report_comments = $lims->hmis_105_report_comments ?? null;
+        $this->hmis_105_report_score = $lims->hmis_105_report_score ?? null;
+        $this->hmis_105_report_percentage = $lims->hmis_105_report_percentage ?? null;
+        $this->lab_data_usage_comments = $lims->lab_data_usage_comments ?? null;
+        $this->lab_data_usage_score = $lims->lab_data_usage_score ?? null;
+        $this->lab_data_usage_percentage = $lims->lab_data_usage_percentage ?? null;
+        $this->reports_filling_comments = $lims->reports_filling_comments ?? null;
+        $this->reports_filling_score = $lims->reports_filling_score ?? null;
+        $this->reports_filling_percentage = $lims->reports_filling_percentage ?? null;
     }
     public function saveLisHmisReport()
     {
@@ -1346,9 +1370,80 @@ class FacilityVisitDetailsComponent extends Component
         $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Record successfully added!']);
         return redirect()->signedRoute('facility-visit_view', $this->active_visit->visit_code);
     }
+
+    public $stock_item_id;
+    public $c_reports_available;
+    public $chmis_qty_consumed;
+    public $chmis_days_out_of_stock;
+    public $chmis_Stock_on_hand;
+    public $csc_qty_consumed;
+    public $csc_days_out_of_stock;
+    public $csc_Stock_on_hand;
+    public $c_report_sc_agree;
+
+    public function saveStockAccuracy()
+    {
+        $this->validate([
+            'stock_item_id' => 'required|numeric',
+            'c_reports_available' => 'required|numeric',
+            'chmis_qty_consumed' => 'required|numeric',
+            'chmis_days_out_of_stock' => 'required|numeric',
+            'chmis_Stock_on_hand' => 'required|numeric',
+            'csc_qty_consumed' => 'required|numeric',
+            'csc_days_out_of_stock' => 'required|numeric',
+            'csc_Stock_on_hand' => 'required|numeric',
+            'c_report_sc_agree' => 'required|numeric',
+        ]); // Validate input data
+
+        FvCompStockStatusAcc::updateOrCreate(
+            ['visit_id' => $this->active_visit->id,
+                'stock_item_id' => $this->stock_item_id],
+            [
+                'c_reports_available' => $this->c_reports_available,
+                'chmis_qty_consumed' => $this->chmis_qty_consumed,
+                'chmis_days_out_of_stock' => $this->chmis_days_out_of_stock,
+                'chmis_Stock_on_hand' => $this->chmis_Stock_on_hand,
+                'csc_qty_consumed' => $this->csc_qty_consumed,
+                'csc_days_out_of_stock' => $this->csc_days_out_of_stock,
+                'csc_Stock_on_hand' => $this->csc_Stock_on_hand,
+                'c_report_sc_agree' => $this->c_report_sc_agree,
+            ]);
+        $this->resetInputs();
+        $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Stock statistics  successfully added!']);
+    }
+
+    public $service_name;
+    public $service_statistics_available;
+    public $hims_tests_reported;
+    public $lab_reg_tests_reported;
+    public $hims_lab_tests_balance;
+    public function saveServiceAccuracy()
+    {
+        $this->validate([
+            'service_name' => 'required|string',
+            'service_statistics_available' => 'required|numeric',
+            'hims_tests_reported' => 'required|numeric',
+            'lab_reg_tests_reported' => 'required|numeric',
+            'hims_lab_tests_balance' => 'required|numeric',
+        ]); // Validate input data
+
+        FvCompServiceStatisticsAcc::updateOrCreate(
+            ['visit_id' => $this->active_visit->id,
+                'service_name' => $this->service_name],
+            [
+                'service_statistics_available' => $this->service_statistics_available,
+                'hims_tests_reported' => $this->hims_tests_reported,
+                'lab_reg_tests_reported' => $this->lab_reg_tests_reported,
+                'hims_lab_tests_balance' => $this->hims_lab_tests_balance,
+            ]);
+        $this->resetInputs();
+        $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'statistics  successfully added!']);
+    }
+
     public $item_name;
     public $updated_last_quarter;
     public $is_available;
+    public $lab_data_usage_comment;
 
     public function saveLisDataUsage()
     {
@@ -1356,14 +1451,16 @@ class FacilityVisitDetailsComponent extends Component
             'item_name' => 'required|string',
             'updated_last_quarter' => 'required|numeric',
             'is_available' => 'required|numeric',
+            'lab_data_usage_comment' => 'required|string',
         ]); // Validate input data
 
         FvLisLabDataUse::updateOrCreate(
             ['visit_id' => $this->active_visit->id,
-            'item_name' => $this->item_name],
+                'item_name' => $this->item_name],
             [
-                
+
                 'updated_last_quarter' => $this->updated_last_quarter,
+                'comments' => $this->lab_data_usage_comment,
                 'is_available' => $this->is_available,
             ]);
         $this->resetInputs();
@@ -1381,9 +1478,9 @@ class FacilityVisitDetailsComponent extends Component
 
         FvReportFilling::updateOrCreate(
             ['visit_id' => $this->active_visit->id,
-            'report_id' => $this->report_id],
+                'report_id' => $this->report_id],
             [
-                
+
                 'filling_score' => $this->filling_score,
             ]);
         $this->resetInputs();
@@ -1407,6 +1504,20 @@ class FacilityVisitDetailsComponent extends Component
     public function resetInputs()
     {
         $this->reset([
+            'stock_item_id',
+            'c_reports_available',
+            'chmis_qty_consumed',
+            'chmis_days_out_of_stock',
+            'chmis_Stock_on_hand',
+            'csc_qty_consumed',
+            'csc_days_out_of_stock',
+            'csc_Stock_on_hand',
+            'c_report_sc_agree',
+            'service_name',
+            'service_statistics_available',
+            'hims_tests_reported',
+            'lab_reg_tests_reported',
+            'hims_lab_tests_balance',
             'report_id',
             'filling_score',
             'item_name',
@@ -1488,6 +1599,9 @@ class FacilityVisitDetailsComponent extends Component
         $data['filedReports'] = collect([]);
         $data['reports'] = collect([]);
         $data['filedReports'] = collect([]);
+        $data['stockItems'] = collect([]);
+        $data['services'] = collect([]);
+        $data['stockStatus'] = collect([]);
         if ($this->step == 1) {
             $data['supervised_persons'] = FvPersonsSupervised::where('visit_id', $this->active_visit->id)->get();
             $data['supervisors'] = FvSupervisor::where('visit_id', $this->active_visit->id)->get();
@@ -1499,9 +1613,9 @@ class FacilityVisitDetailsComponent extends Component
             $data['storageMgts'] = FvStockManagement::where('visit_id', $this->active_visit->id)->with('reagent')->get();
         }
         if ($this->step == 4) {
-            $items = FvStockManagement::where('visit_id', $this->active_visit->id)->orderBy('id','asc')->limit(5)->pluck('reagent_id')->toArray();
+            $items = FvStockManagement::where('visit_id', $this->active_visit->id)->orderBy('id', 'asc')->limit(5)->pluck('reagent_id')->toArray();
             $data['reviews'] = FvOrderReview::where('visit_id', $this->active_visit->id)->with('reagent')->get();
-            $data['orderItems'] = Reagent::where(['is_active' => true])->whereIn('id',$items)->get();
+            $data['orderItems'] = Reagent::where(['is_active' => true])->whereIn('id', $items)->get();
         }
         if ($this->step == 5) {
             $data['platforms'] = LabPlatform::where('is_active', true)->get();
@@ -1511,9 +1625,12 @@ class FacilityVisitDetailsComponent extends Component
         if ($this->step == 6) {
             $data['dcTools'] = LisDataCollectionTool::where('is_active', true)->get();
             $data['reports'] = FilledReport::where('is_active', true)->get();
+            $data['stockItems'] = StockItem::where('is_active', true)->get();
             $data['dcToolScores'] = FvLisDataToolScore::where('visit_id', $this->active_visit->id)->with('dcTool')->get();
             $data['lisLabDataUsages'] = FvLisLabDataUse::where('visit_id', $this->active_visit->id)->get();
             $data['filedReports'] = FvReportFilling::where('visit_id', $this->active_visit->id)->with('report')->get();
+            $data['services'] = FvCompServiceStatisticsAcc::where('visit_id', $this->active_visit->id)->get();
+            $data['stockStatus'] = FvCompStockStatusAcc::where('visit_id', $this->active_visit->id)->with('stkItem')->get();
         }
         $data['storageTypes'] = FvStorageType::where('is_active', true)->get();
 
