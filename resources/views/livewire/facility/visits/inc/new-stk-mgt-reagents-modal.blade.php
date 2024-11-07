@@ -40,6 +40,7 @@
                                  <option value="">select</option>
                                  <option value="1">Yes</option>
                                  <option value="0">No</option>
+                                 <option value="2">N/A</option>
                              </select>
                              @error('test_performed')
                                  <div class="text-danger text-small">{{ $message }}</div>

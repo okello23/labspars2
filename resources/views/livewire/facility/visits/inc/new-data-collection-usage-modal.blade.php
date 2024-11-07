@@ -2,7 +2,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addeDataUsageModal">Add Scores</h5>
+                    <h5 class="modal-title" id="addeDataUsageModal">Add New</h5>
                 </div>
                 <form   wire:submit.prevent="saveLisDataUsage" >
                     <div class="modal-body">
@@ -23,7 +23,7 @@
                             </div>                         
                             
                             <div class="mb-3 col-md-4">
-                                <label for="is_available" class="form-label required">Available? Yes=1/No=0</label>
+                                <label for="is_available" class="form-label required">Available?</label>
                                 <select id="nonfunctional_hw" class="form-control"  required 
                                     wire:model.lazy="is_available">
                                     <option  value="">Select</option>
@@ -35,7 +35,7 @@
                                 @enderror
                             </div>  
                             <div class="mb-3 col-md-4">
-                                <label for="updated_last_quarter" class="form-label required">Updated in last quarter? (Yes=1/NO=0</label>
+                                <label for="updated_last_quarter" class="form-label required">Updated in last quarter?</label>
                                 <select id="nonfunctional_hw" class="form-control"  required 
                                     wire:model.lazy="updated_last_quarter">
                                     <option  value="">Select</option>
@@ -45,7 +45,7 @@
                                 @error('updated_last_quarter')
                                     <div class="text-danger text-small">{{ $message }}</div>
                                 @enderror
-                            </div>                                          
+                            </div>                                         
                            
                         </div>
                     </div>

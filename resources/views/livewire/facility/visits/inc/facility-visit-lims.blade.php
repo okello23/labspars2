@@ -94,7 +94,10 @@
         </tr>
     </tbody>
 </table>
-
+<div class="mb-3">
+    <label for="">Availability of HMIS 105 Report Comment</label>
+    <textarea class="form-control" wire:model="hmis_105_report_comments"></textarea>
+</div>
 <p>
     <strong>Score:</strong> Sum of 2 divided by 2: ______
     <strong>Percentage:</strong> _______%
@@ -197,100 +200,111 @@
         </tr>
     </thead>
     <tbody>
-        @forelse ($collection as $item)            
+        @forelse ($lisLabDataUsages as $lisLabDataUsage)            
         <tr>
             <td>{{ $key + 1 }}</td>
-            <td>Table/Graph/Chart/Map</td>
-            <td>
-                <select class="form-control"  wire:model="section_10_complete">
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            <td>
-                <select class="form-control"  wire:model="section_10_complete">
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            <td><input type="text" wire:model="comments_table_graph_chart_map"></td>
+            <td>{{ $lisLabDataUsage->item_name }}</td>
+            <td>{{ $lisLabDataUsage->is_available }}</td>
+            <td>{{ $lisLabDataUsage->updated_last_quarter }}</td>
+            <td>{{ $lisLabDataUsage->comments }}</td>
         </tr>
         @empty
             <tr>
-                <td></td>
+                <td colspan="5">No entries</td>
             </tr>
         @endforelse
     </tbody>
 </table>
-
+<div class="mb-3">
+    <label for="">Use of Laboratory Data Comment</label>
+    <textarea class="form-control" wire:model="lab_data_usage_comments"></textarea>
+</div>
 <p>
     <strong>Score:</strong> Sum of 2 divided by 2: _______
     <strong>Percentage:</strong> _______%
 </p>
 
 <!-- Section 25: Filing of Reports -->
-<h2>25. Filing of Reports</h2>
+<h2>25. Filing of Reports
+    <a class="action-ico mx-1 btn btn-sm btn-success" data-toggle="modal" data-target="#addeReortFillingModal">
+        Add</a>
+</h2>
 <table>
     <thead>
         <tr>
             <th>No</th>
             <th>Item</th>
             <th>Score (1/0/NA)</th>
-            <th>Comments</th>
+            {{-- <th>Comments</th> --}}
         </tr>
     </thead>
     <tbody>
+        @foreach ($filedReports as $key=> $filedReport)
+            
         <tr>
-            <td>1</td>
-            <td>HMIS 105 (Section 10) monthly reports (Last 2 months)</td>
-            <td><select class="form-control" wire:model="hmis_105_section_10">
-                <option value="">Select</option>
-                <option value="1">Yes</option>
-                <option value="0">No</option>
-            </select></td>
+            <td>{{ $key+1 }}</td>
+            <td>{{  $filedReport->report->name }}</td>
+            <td>{{  $filedReport->filling_score }}</td>
             {{-- <td><input type="text" wire:model="comments_hmis_105_section_10"></td> --}}
         </tr>
-        <tr>
-            <td>2</td>
-            <td>HMIS Lab 024 Bimonthly Report & Order Calculation Form for HIV Test Kits (Last 2 order cycles)</td>
-            <td><select class="form-control" wire:model="hmis_lab_024">
-                <option value="">Select</option>
-                <option value="1">Yes</option>
-                <option value="0">No</option>
-            </select>
-            </td>
-            <td><input type="text" wire:model="comments_hmis_lab_024"></td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>HMIS 025 Laboratory Order Form (Last 2 order cycles)</td>
-            <td><select class="form-control" wire:model="hmis_lab_024">
-                <option value="">Select</option>
-                <option value="1">Yes</option>
-                <option value="0">No</option>
-            </select>
-            </td>
-            <td><input type="text" wire:model="comments_hmis_lab_024"></td>
-        </tr>
-        <tr>
-            <td>4</td>
-            <td>HMIS PHAR 020 Requisition & Issue vouchers (Last 2 weeks)</td>
-            <td><select class="form-control" wire:model="hmis_lab_024">
-                <option value="">Select</option>
-                <option value="1">Yes</option>
-                <option value="0">No</option>
-            </select>
-            </td>
-            <td><input type="text" wire:model="comments_hmis_lab_024"></td>
-        </tr>
+        @endforeach
+       
         <!-- Add more rows for other items as needed -->
     </tbody>
 </table>
-
+<div class="mb-3">
+    <label for="">Filing of Reports omment</label>
+    <textarea class="form-control" wire:model="reports_filling_comments"></textarea>
+</div>
 <p>
     <strong>Score:</strong> Sum of 4 divided by 4: _______
     <strong>Percentage:</strong> _______%
 </p>
+
+    <div class="col-12">
+        @php
+            $limsFields = [
+        'visit_id',
+        'hmis_105_outpatient_report',
+        'hmis_105_previous_months',
+        'lis_availability_score',
+        'lis_availability_percentage',
+        'lis_availability_comments',
+        't_reports_submitted_to_district',
+        't_reports_submitted_on_time',
+        'timeliness_score',
+        'timeliness_percentage',
+        'timeliness_comments',            
+        'hmis_section_6_complete',
+        'hmis_section_10_complete',
+        'completeness_score',
+        'completeness_percentage',
+        'lis_tools_comments',
+        'total_availability_sum',
+        'total_availability_percentage',
+        'total_inuse_sum',
+        'total_inuse_percentage',
+        'availability_inuse_sum',
+        'availability_inuse_percentage',
+        'hmis_105_report_comments',
+        'hmis_105_report_score',
+        'hmis_105_report_percentage',
+        'lab_data_usage_comments',
+        'lab_data_usage_score',
+        'lab_data_usage_percentage',
+        'reports_filling_comments',
+        'reports_filling_score',
+        'reports_filling_percentage',
+    ];
+        @endphp
+
+        @foreach ($limsFields as $limsField)
+            @error($limsField)
+                <div class="text-danger text-small">{{ $message }}</div>
+            @enderror
+        @endforeach
+
+    </div>
 @include('livewire.facility.visits.inc.new-data-collection-score-modal')
+@include('livewire.facility.visits.inc.new-data-collection-usage-modal')
+@include('livewire.facility.visits.inc.new-report-filing-modal')
