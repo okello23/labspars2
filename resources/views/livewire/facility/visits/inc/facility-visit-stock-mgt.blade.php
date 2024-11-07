@@ -149,12 +149,12 @@
             </tr>
         @endforeach
         <!-- Repeat similar rows for other reagents (R3 to R23) -->
-        <tr>
+        {{-- <tr>
             <td colspan="2">Sum</td>
             <td></td>
             <td>{{ $isavailable }}</td>
             <td>{{ $scAvailable }}</td>
-        </tr>
+        </tr> --}}
     </tbody>
 </table>
 <b>Note!</b>
