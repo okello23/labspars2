@@ -118,9 +118,14 @@
     <form wire:submit.prevent="saveOrderReview()">
         <div class="row">
             <div class="col-md-5">
-                <label for="expenditure">Expenditure Name:</label>
-                <input type="text" class="form-control" id="item" wire:model="item">
-                @error('item')
+                <label for="order_item_id">Item Name:</label>
+                <select class="form-control" id="order_item_id" wire:model="order_item_id">
+                    <option value="">selcet</option>
+                    @foreach ($orderItems as $item)
+                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                    @endforeach
+                </select>
+                @error('order_item_id')
                     <div class="text-danger text-small">{{ $message }}</div>
                 @enderror
             </div>
@@ -169,15 +174,14 @@
             @forelse ($reviews as $key => $review)
                 <tr>
                     <td>{{ $key + 1 }}</td>
-                    <td>{{ $review->item }}</td>
+                    <td>{{ $review->reagent->name??'N/A' }}</td>
                     <td>{{ $review->quantity_ordered ?? 'N/A' }}</td>
                     <td>{{ $review->quantity_received ?? 'N/A' }}</td>
                     <td>{{ $review->fulfillment_rate }}</td>
                     <td>
-                        <button wire:click="deleteItem({{ $review->id }})"
-                            class="action-ico btn btn-sm btn-success mx-1" data-toggle="modal"
-                            data-target="#personalModal">
-                            <i class="fa fa-delete"></i>
+                        <button wire:click="deleteOrderItem({{ $review->id }})"
+                            class="action-ico btn btn-sm btn-danger mx-1" >
+                            <i class="fa fa-trash"></i>
                         </button>
                     </td>
                 </tr>

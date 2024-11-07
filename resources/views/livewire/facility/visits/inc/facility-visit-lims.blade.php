@@ -1,7 +1,10 @@
 <h1>Laboratory Information System</h1>
 
 <!-- Section 20: Availability & Use of Laboratory Data Collection Tools -->
-<h2>20. Availability & Use of Laboratory Data Collection Tools</h2>
+<h2>20. Availability & Use of Laboratory Data Collection Tools wire:
+    <a class="action-ico mx-1 btn btn-sm btn-success" data-toggle="modal" data-target="#addeDataCollectionToolScore">
+               Add scores</a>
+</h2>
 <table>
     <thead>
         <tr>
@@ -13,312 +16,34 @@
         </tr>
     </thead>
     <tbody>
-
+        @forelse ($dcToolScores as $key=>$dcToolScore)
         <tr>
             <td>A</td>
-            <td>HMIS Lab 001 General Laboratory Request Form</td>
+            <td>{{ $dcToolScore->dcTool->name }}</td>
             <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
+                {{ $dcToolScore->dct_availability_score }}
             </td>
             <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
+              {{ $dcToolScore->dct_usage_score }}
             </td>
-            {{-- <td><input type="text" name="comments_lab_001"></td> --}}
+            <td></td>
         </tr>
-        <tr>
-            <td>B</td>
-            <td>HMIS Lab 002 Laboratory Specimen Reception Register</td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            {{-- <td><input type="text" name="comments_lab_001"></td> --}}
-        </tr>
-        <tr>
-            <td>C</td>
-            <td>HMIS Lab 004 General Laboratory Test Result Form</td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            {{-- <td><input type="text" name="comments_lab_001"></td> --}}
-        </tr>
-        <tr>
-            <td>D</td>
-            <td>HMIS Lab 005 Laboratory Specimen Referral Register</td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            {{-- <td><input type="text" name="comments_lab_001"></td> --}}
-        </tr>
-        <tr>
-            <td>E</td>
-            <td>HMIS Lab 010 HC II & HC III Daily Activity Register for General Analysis</td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            {{-- <td><input type="text" name="comments_lab_001"></td> --}}
-        </tr>
-        <tr>
-            <td>F</td>
-            <td>HMIS Lab 011 HC IV & Gen Hosp Daily Activity Register for General Analysis</td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            {{-- <td><input type="text" name="comments_lab_001"></td> --}}
-        </tr>
-        <tr>
-            <td>G</td>
-            <td>HMIS Lab 012 Hosp Gen Clinical Chem Register for Daily Activity & General Analysis</td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            {{-- <td><input type="text" name="comments_lab_001"></td> --}}
-        </tr>
-        <tr>
-            <td>H</td>
-            <td>HMIS Lab 014 Daily Activity Haematology Register  </td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            {{-- <td><input type="text" name="comments_lab_001"></td> --}}
-        </tr>
-        <tr>
-            <td>I</td>
-            <td>HMIS Lab 015 Daily Activity Register for Viral Load, CD4, TB LAM & CrAg </td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            {{-- <td><input type="text" name="comments_lab_001"></td> --}}
-        </tr>
-        <tr>
-            <td>J</td>
-            <td>HMIS Lab 016 Daily Activity Register for HIV Tests</td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            {{-- <td><input type="text" name="comments_lab_001"></td> --}}
-        </tr>
-        <tr>
-            <td>K</td>
-            <td>HMIS Lab 019 Facility Biosafety & Biosecurity Incident Register</td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            {{-- <td><input type="text" name="comments_lab_001"></td> --}}
-        </tr>
-        <tr>
-            <td>L</td>
-            <td>HMIS Lab 020 Laboratory Equipment Inventory Log </td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            {{-- <td><input type="text" name="comments_lab_001"></td> --}}
-        </tr>
-        <tr>
-            <td>M</td>
-            <td>HMIS Lab 022 Laboratory Equipment Breakdown Register </td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            {{-- <td><input type="text" name="comments_lab_001"></td> --}}
-        </tr>
-        <tr>
-            <td>N</td>
-            <td>HMIS Lab 023 Laboratory Equipment Maintenance Log </td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            {{-- <td><input type="text" name="comments_lab_001"></td> --}}
-        </tr>
-        <tr>
-            <td>O</td>
-            <td>HMIS PHAR 021 Bimonthly Report & Order Calculation Form for HIV Test Kits  </td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            {{-- <td><input type="text" name="comments_lab_001"></td> --}}
-        </tr>
-        <tr>
-            <td>P</td>
-            <td>HMIS PHAR 023 Laboratory Order Form</td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            <td>
-                <select  id="functional" wire:model.defer='functional'>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            {{-- <td><input type="text" name="comments_lab_001"></td> --}}
-        </tr>
-        <!-- Repeat similar rows for other items (C to P) -->
+        @empty
+            <tr>
+                <td colspan="5">No scores yet</td>
+            </tr>
+        @endforelse
+       <tr>
+        <td colspan="2">
+            <b>Sum</b>
+        </td>
+        <td></td>
+        <td></td>
+        <td>
+            <textarea class="form-control" wire:model="lis_tools_comments"></textarea>
+        </td>
+       </tr>
+       
     </tbody>
 </table>
 
@@ -348,7 +73,7 @@
             <td>Does the laboratory keep copies of the Laboratory HMIS 105 Health Unit Outpatient Monthly Report Section
                 10 pages 26 & 27?</td>
             <td>
-                <select  id="hmis_105_outpatient_report" wire:model.defer='hmis_105_outpatient_report'>
+                <select class="form-control"  id="hmis_105_outpatient_report" wire:model='hmis_105_outpatient_report'>
                     <option value="">Select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -359,17 +84,20 @@
             <td>2</td>
             <td>Does the facility have HMIS 105 Monthly reports for the previous 2 months?</td>
             <td>
-                <select  id="hmis_105_previous_months" wire:model.defer='hmis_105_previous_months'>
+                <select class="form-control"  id="hmis_105_previous_months" wire:model='hmis_105_previous_months'>
                     <option value="">Select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                 </select>
             </td>
-            <td rowspan="2"><textarea type="text" name="comments_hmis_105_previous_months"></textarea></td>
+            <td rowspan="2"><textarea class="form-control" wire:model="lis_availability_comments"></textarea></td>
         </tr>
     </tbody>
 </table>
-
+<div class="mb-3">
+    <label for="">Availability of HMIS 105 Report Comment</label>
+    <textarea class="form-control" wire:model="hmis_105_report_comments"></textarea>
+</div>
 <p>
     <strong>Score:</strong> Sum of 2 divided by 2: ______
     <strong>Percentage:</strong> _______%
@@ -391,25 +119,25 @@
             <td>1</td>
             <td>Date HMIS 105 Section 10 pages 26 & 27 report was submitted to the district?</td>
             <td>
-                <select  id="submitted_on_time" wire:model.defer='submitted_on_time'>
+                <select class="form-control"  id="t_reports_submitted_to_district" wire:model='t_reports_submitted_to_district'>
                     <option value="">Select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                 </select>
             </td>
-            {{-- <td><input type="text" name="comments_submitted_on_time"></td> --}}
+            {{-- <td><input type="text" wire:model="comments_submitted_on_time"></td> --}}
         </tr>
         <tr>
             <td>3</td>
             <td>Was the HMIS 105 Section 10 pages 26 & 27 report submitted to the district on time?</td>
             <td>
-                <select  id="submitted_on_time" wire:model.defer='submitted_on_time'>
+                <select class="form-control"  id="t_reports_submitted_on_time" wire:model='t_reports_submitted_on_time'>
                     <option value="">Select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                 </select>
             </td>
-            <td><textarea type="text" name="comments_submitted_on_time"></textarea></td>
+            <td><textarea class="form-control" wire:model="timeliness_comments"></textarea></td>
         </tr>
     </tbody>
 </table>
@@ -431,7 +159,7 @@
     <tbody>
         <tr>
             <td>HMIS 105 report section 6 is completely filled (No blanks left)</td>
-            <td><select  name="section_6_complete">
+            <td><select class="form-control"  wire:model="hmis_section_6_complete">
                 <option value="">Select</option>
                 <option value="1">Yes</option>
                 <option value="0">No</option>
@@ -441,7 +169,7 @@
         <tr>
             <td>HMIS 105 report section 10 is completely filled (No blanks left)</td>
             <td>
-            <select  name="section_10_complete">
+            <select class="form-control"  wire:model="hmis_section_10_complete">
                 <option value="">Select</option>
                 <option value="1">Yes</option>
                 <option value="0">No</option>
@@ -457,7 +185,10 @@
 </p>
 
 <!-- Section 24: Use of Laboratory Data -->
-<h2>24. Use of Laboratory Data</h2>
+<h2>24. Use of Laboratory Data
+    <a class="action-ico mx-1 btn btn-sm btn-success" data-toggle="modal" data-target="#addeDataUsageModal">
+        Add scores</a>
+</h2>
 <table>
     <thead>
         <tr>
@@ -469,93 +200,111 @@
         </tr>
     </thead>
     <tbody>
+        @forelse ($lisLabDataUsages as $lisLabDataUsage)            
         <tr>
-            <td>1</td>
-            <td>Table/Graph/Chart/Map</td>
-            <td>
-                <select  name="section_10_complete">
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            <td>
-                <select  name="section_10_complete">
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </td>
-            <td><input type="text" name="comments_table_graph_chart_map"></td>
+            <td>{{ $key + 1 }}</td>
+            <td>{{ $lisLabDataUsage->item_name }}</td>
+            <td>{{ $lisLabDataUsage->is_available }}</td>
+            <td>{{ $lisLabDataUsage->updated_last_quarter }}</td>
+            <td>{{ $lisLabDataUsage->comments }}</td>
         </tr>
+        @empty
+            <tr>
+                <td colspan="5">No entries</td>
+            </tr>
+        @endforelse
     </tbody>
 </table>
-
+<div class="mb-3">
+    <label for="">Use of Laboratory Data Comment</label>
+    <textarea class="form-control" wire:model="lab_data_usage_comments"></textarea>
+</div>
 <p>
     <strong>Score:</strong> Sum of 2 divided by 2: _______
     <strong>Percentage:</strong> _______%
 </p>
 
 <!-- Section 25: Filing of Reports -->
-<h2>25. Filing of Reports</h2>
+<h2>25. Filing of Reports
+    <a class="action-ico mx-1 btn btn-sm btn-success" data-toggle="modal" data-target="#addeReortFillingModal">
+        Add</a>
+</h2>
 <table>
     <thead>
         <tr>
             <th>No</th>
             <th>Item</th>
             <th>Score (1/0/NA)</th>
-            <th>Comments</th>
+            {{-- <th>Comments</th> --}}
         </tr>
     </thead>
     <tbody>
+        @foreach ($filedReports as $key=> $filedReport)
+            
         <tr>
-            <td>1</td>
-            <td>HMIS 105 (Section 10) monthly reports (Last 2 months)</td>
-            <td><select name="hmis_105_section_10">
-                <option value="">Select</option>
-                <option value="1">Yes</option>
-                <option value="0">No</option>
-            </select></td>
-            {{-- <td><input type="text" name="comments_hmis_105_section_10"></td> --}}
+            <td>{{ $key+1 }}</td>
+            <td>{{  $filedReport->report->name }}</td>
+            <td>{{  $filedReport->filling_score }}</td>
+            {{-- <td><input type="text" wire:model="comments_hmis_105_section_10"></td> --}}
         </tr>
-        <tr>
-            <td>2</td>
-            <td>HMIS Lab 024 Bimonthly Report & Order Calculation Form for HIV Test Kits (Last 2 order cycles)</td>
-            <td><select name="hmis_lab_024">
-                <option value="">Select</option>
-                <option value="1">Yes</option>
-                <option value="0">No</option>
-            </select>
-            </td>
-            <td><input type="text" name="comments_hmis_lab_024"></td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>HMIS 025 Laboratory Order Form (Last 2 order cycles)</td>
-            <td><select name="hmis_lab_024">
-                <option value="">Select</option>
-                <option value="1">Yes</option>
-                <option value="0">No</option>
-            </select>
-            </td>
-            <td><input type="text" name="comments_hmis_lab_024"></td>
-        </tr>
-        <tr>
-            <td>4</td>
-            <td>HMIS PHAR 020 Requisition & Issue vouchers (Last 2 weeks)</td>
-            <td><select name="hmis_lab_024">
-                <option value="">Select</option>
-                <option value="1">Yes</option>
-                <option value="0">No</option>
-            </select>
-            </td>
-            <td><input type="text" name="comments_hmis_lab_024"></td>
-        </tr>
+        @endforeach
+       
         <!-- Add more rows for other items as needed -->
     </tbody>
 </table>
-
+<div class="mb-3">
+    <label for="">Filing of Reports omment</label>
+    <textarea class="form-control" wire:model="reports_filling_comments"></textarea>
+</div>
 <p>
     <strong>Score:</strong> Sum of 4 divided by 4: _______
     <strong>Percentage:</strong> _______%
 </p>
+
+    <div class="col-12">
+        @php
+            $limsFields = [
+        'visit_id',
+        'hmis_105_outpatient_report',
+        'hmis_105_previous_months',
+        'lis_availability_score',
+        'lis_availability_percentage',
+        'lis_availability_comments',
+        't_reports_submitted_to_district',
+        't_reports_submitted_on_time',
+        'timeliness_score',
+        'timeliness_percentage',
+        'timeliness_comments',            
+        'hmis_section_6_complete',
+        'hmis_section_10_complete',
+        'completeness_score',
+        'completeness_percentage',
+        'lis_tools_comments',
+        'total_availability_sum',
+        'total_availability_percentage',
+        'total_inuse_sum',
+        'total_inuse_percentage',
+        'availability_inuse_sum',
+        'availability_inuse_percentage',
+        'hmis_105_report_comments',
+        'hmis_105_report_score',
+        'hmis_105_report_percentage',
+        'lab_data_usage_comments',
+        'lab_data_usage_score',
+        'lab_data_usage_percentage',
+        'reports_filling_comments',
+        'reports_filling_score',
+        'reports_filling_percentage',
+    ];
+        @endphp
+
+        @foreach ($limsFields as $limsField)
+            @error($limsField)
+                <div class="text-danger text-small">{{ $message }}</div>
+            @enderror
+        @endforeach
+
+    </div>
+@include('livewire.facility.visits.inc.new-data-collection-score-modal')
+@include('livewire.facility.visits.inc.new-data-collection-usage-modal')
+@include('livewire.facility.visits.inc.new-report-filing-modal')
