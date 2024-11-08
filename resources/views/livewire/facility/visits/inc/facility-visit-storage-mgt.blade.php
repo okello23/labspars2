@@ -413,6 +413,7 @@
 
 <!-- Storage Practices Section -->
 <h3>12. Storage Practices of Laboratory Reagents</h3>
+<div class="table-responsive-sm">
 <table>
     <thead>
         <tr>
@@ -517,6 +518,7 @@
         </tr>
     </tbody>
 </table>
+</div>
 {{-- <button class="btn btn-success" wire:click ='saveStoragePractices'> Save</button> --}}
 
 <p>

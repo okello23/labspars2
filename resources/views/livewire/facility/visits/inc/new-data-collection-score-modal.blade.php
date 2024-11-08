@@ -31,7 +31,7 @@
                                     <option  value="">Select</option>
                                     <option value="1">Yes</option>
                                   <option value="0">No</option>
-                                  <option value="3">N/A</option>
+                                  <option value="2">N/A</option>
                                 </select>
                                 @error('dct_availability_score')
                                     <div class="text-danger text-small">{{ $message }}</div>
@@ -44,7 +44,7 @@
                                     <option  value="">Select</option>
                                     <option value="1">Yes</option>
                                   <option value="0">No</option>
-                                  <option value="3">N/A</option>
+                                  <option value="2">N/A</option>
                               </select>
                                 @error('dct_usage_score')
                                     <div class="text-danger text-small">{{ $message }}</div>

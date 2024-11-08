@@ -47,7 +47,7 @@
                   <span>LSS Data Entry</span></a>
                   <ul>
                     <li><a href="{{ route('facility-visits') }}">Facility Visits</a></li>
-                    <li><a href="#">Submitted Forms</a></li>
+                    {{-- <li><a href="#">Submitted Forms</a></li> --}}
               </ul>
             </li>
 
@@ -75,7 +75,7 @@
                       <li><a href="{{ route('test-category')}}">Test Categories</a></li>
                       <li><a href="{{ route('store-types')}}">Storage Types</a></li>
                       <li><a href="{{ route('lab_platforms')}}">Lab Platforms</a></li>
-                      {{-- <li><a href="{{ route('product-types')}}">Products</a></li> --}}
+                      <li><a href="{{ route('product-types')}}">Stock Products</a></li>
                       <li><a href="{{ route('districts') }}">Districts</a></li>
                       <li><a hr ef="{{ route('health-facilities') }}">Health Facilities</a></li>
                       <li><a href="{{ route('health-sub-districts') }}">Health Sub Districts</a></li>
