@@ -27,11 +27,13 @@
                         <td>{{ $supervised_person->contact }}</td>
                         <td>{{ $supervised_person->email }}</td>
                         <td>
-                            <button wire:click="editData({{ $supervised_person->id }})"
+                            {{-- <button wire:click="editData({{ $supervised_person->id }})"
                                 class="action-ico btn btn-sm btn-success mx-1" data-toggle="modal"
                                 data-target="#personalModal">
                                 <i class="fa fa-edit"></i>
-                            </button>
+                            </button> --}}
+                            <a href="javascript:void(0)" wire:click="confirmDelete({{ $supervised_person->id }}, '{{ addslashes(get_class($supervised_person)) }}')" class="btn btn-sm btn-danger mx-1 fa fa-trash"></a>
+
                         </td>
                     </tr>
                 @empty
@@ -149,11 +151,12 @@
                         <td>{{ $supervisor->contact }}</td>
                         <td>{{ $supervisor->email }}</td>
                         <td>
-                            <button wire:click="editSupervisor({{ $supervisor->id }})"
+                            {{-- <button wire:click="editSupervisor({{ $supervisor->id }})"
                                 class="action-ico btn btn-sm btn-success mx-1" data-toggle="modal"
                                 data-target="#supervisorModal">
                                 <i class="fa fa-edit"></i>
-                            </button>
+                            </button> --}}
+                            <a href="javascript:void(0)" wire:click="confirmDelete({{ $supervisor->id }}, '{{ addslashes(get_class($supervisor)) }}')" class="btn btn-sm btn-danger mx-1 fa fa-trash"></a>
                         </td>
                     </tr>
                 @empty
@@ -265,11 +268,15 @@
                         <td>{{ $mainStorage->storageType?->name }}</td>
                         <td title="{{ $mainStorage->comment }}">{{ Str::words($mainStorage->comment, 30, '...') }}
                         </td>
-                        <td><button wire:click="editStorage({{ $mainStorage->id }})"
+                        <td>
+                            {{-- <button wire:click="editStorage({{ $mainStorage->id }})"
                                 class="action-ico btn btn-sm btn-success mx-1" data-toggle="modal"
                                 data-target="#storageModal">
                                 <i class="fa fa-edit"></i>
-                            </button></td>
+                            </button> --}}
+                            <a href="javascript:void(0)" wire:click="confirmDelete({{ $mainStorage->id }}, '{{ addslashes(get_class($mainStorage)) }}')" class="btn btn-sm btn-danger mx-1 fa fa-trash"></a>
+
+                        </td>
                     </tr>
                 @empty
                     <tr>
@@ -304,11 +311,14 @@
                         <td>{{ $otherStorage->storageType?->name }}</td>
                         <td title="{{ $otherStorage->comment }}">{{ Str::words($otherStorage->comment, 30, '...') }}
                         </td>
-                        <td><button wire:click="editStorage({{ $otherStorage->id }})"
+                        <td>
+                            {{-- <button wire:click="editStorage({{ $otherStorage->id }})"
                                 class="action-ico btn btn-sm btn-success mx-1" data-toggle="modal"
                                 data-target="#storageModal">
                                 <i class="fa fa-edit"></i>
-                            </button></td>
+                            </button> --}}
+                            <a href="javascript:void(0)" wire:click="confirmDelete({{ $otherStorage->id }}, '{{ addslashes(get_class($otherStorage)) }}')" class="btn btn-sm btn-danger mx-1 fa fa-trash"></a>
+                        </td>
                     </tr>
                 @empty
                     <tr>
@@ -353,11 +363,13 @@
                         <td>{{ $cardStorage->storageType?->name }}</td>
                         <td title="{{ $cardStorage->comment }}">{{ Str::words($cardStorage->comment, 30, '...') }}
                         </td>
-                        <td><button wire:click="editStorage({{ $cardStorage->id }})"
-                                class="action-ico btn btn-sm btn-success mx-1" data-toggle="modal"
+                        <td>
+                            {{-- <button wire:click="editStorage({{ $cardStorage->id }})"
+                                class="action-ico btn btn-sm btn-success mx-1 fa fa-edit" data-toggle="modal"
                                 data-target="#storageModal">
-                                <i class="fa fa-edit"></i>
-                            </button></td>
+                            </button> --}}
+                            <a href="javascript:void(0)" wire:click="confirmDelete({{ $cardStorage->id }}, '{{ addslashes(get_class($cardStorage)) }}')" class="btn btn-sm btn-danger mx-1 fa fa-trash"></a>
+                        </td>
                     </tr>
                 @empty
                     <tr>

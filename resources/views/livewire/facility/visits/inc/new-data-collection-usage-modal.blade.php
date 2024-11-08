@@ -45,7 +45,15 @@
                                 @error('updated_last_quarter')
                                     <div class="text-danger text-small">{{ $message }}</div>
                                 @enderror
-                            </div>                                         
+                            </div>    
+                            <div class="mb-3 col-md-12">
+                                <label for="updated_last_quarter" class="form-label required">Comment</label>
+                                <textarea id="lab_data_usage_comment" class="form-control" wire:model.lazy='lab_data_usage_comment' required ></textarea>
+                                   
+                                @error('lab_data_usage_comment')
+                                    <div class="text-danger text-small">{{ $message }}</div>
+                                @enderror
+                            </div>                                     
                            
                         </div>
                     </div>
