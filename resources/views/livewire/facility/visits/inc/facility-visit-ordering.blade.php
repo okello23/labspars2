@@ -179,10 +179,8 @@
                     <td>{{ $review->quantity_received ?? 'N/A' }}</td>
                     <td>{{ $review->fulfillment_rate }}</td>
                     <td>
-                        <button wire:click="deleteOrderItem({{ $review->id }})"
-                            class="action-ico btn btn-sm btn-danger mx-1" >
-                            <i class="fa fa-trash"></i>
-                        </button>
+                        <a href="javascript:void(0)" wire:click="confirmDelete({{ $review->id }}, '{{ addslashes(get_class($review)) }}')" class="text-danger float-right fa fa-trash"></a>
+
                     </td>
                 </tr>
             @empty
@@ -264,7 +262,6 @@
                     </tr>
                 </tbody>
             </table>
-
             <div class="col-12">
                 @php
                     $orderFields = [

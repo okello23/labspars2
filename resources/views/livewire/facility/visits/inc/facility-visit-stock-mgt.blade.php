@@ -146,7 +146,8 @@
                         {{ $storageItem->elmis_balance_matches }}
                     </td>
                     <td>
-                        <a class="text-danger float-right fa fa-trash"></a>
+                        {{-- @livewire('partials.status-component', ['model' => $folder, 'field' => 'is_active'], key($folder->id)) --}}
+                        <a href="javascript:void(0)" wire:click="confirmDelete({{ $storageItem->id }}, '{{ addslashes(get_class($storageItem)) }}')" class="text-danger float-right fa fa-trash"></a>
                     </td>
                 </tr>
             @endforeach

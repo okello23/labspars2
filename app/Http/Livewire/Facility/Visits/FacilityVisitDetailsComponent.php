@@ -32,6 +32,7 @@ use App\Models\Settings\LisDataCollectionTool;
 use App\Models\Settings\Reagent;
 use App\Models\Settings\StockItem;
 use App\Models\Settings\TestingCategory;
+use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;
 
 class FacilityVisitDetailsComponent extends Component
@@ -405,9 +406,37 @@ class FacilityVisitDetailsComponent extends Component
         $this->resetInputs();
         $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Record successfully added!']);
     }
-
+            public $supervised_count =0;
+            public $supervisors_count =0;
+            public $supply_storages_count =0;
     public function firstStepSubmit()
     {
+        // dd($this->supervised_count);
+
+        if($this->supervised_count<1){
+             $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'warning',
+                'message' => 'Oops! You can not proceed!',
+                'text' => 'At least enter more than one record in the Persons Supervised table!',
+            ]);
+            return;
+        }
+        if($this->supervisors_count==0){
+             $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'warning',
+                'message' => 'Oops! You can not proceed!',
+                'text' => 'At least enter more than one record in the supervisors table!',
+            ]);
+            return;
+        }
+        if($this->supply_storages_count<3){
+             $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'warning',
+                'message' => 'Oops! You can not proceed!',
+                'text' => 'At least enter more than one record in each supply storage table!',
+            ]);
+            return;
+        }
         $this->validate([
             'consumption_reconciliation' => 'required|string',
         ]);
@@ -1044,7 +1073,7 @@ class FacilityVisitDetailsComponent extends Component
             } else {
                 $correct_filling_score = 0;
             }
-            $correct_filling_percentage = round($stock_card_score * 100);
+            $correct_filling_percentage = round($correct_filling_score * 100);
 
             //--------PHYSICAL AGREES-------------
             if ($storageItem->balance_matches_physical == 1) {
@@ -1116,6 +1145,7 @@ class FacilityVisitDetailsComponent extends Component
         $this->saveStkMgtScore();
 
     }
+
     // Method to store data in the database
     public function saveStkMgtScore()
     {
@@ -1572,12 +1602,50 @@ class FacilityVisitDetailsComponent extends Component
             'elmis_installed',
             'elmis_quantity',
             'elmis_balance_matches',
+            'recordId',
+            'model',
         ]);
     }
 
     public function close()
     {
         $this->resetInputs();
+    }
+
+    public $recordId;
+    public $model;
+
+    // Set the record ID and model to delete
+    public function confirmDelete($id, $model)
+    {
+        $this->recordId = $id;
+        $this->model = app($model); // Dynamically instantiate the model
+    }
+
+    // Generic delete method
+    public function deleteRecord()
+    {
+        if ($this->recordId && $this->model) {
+            try {
+                $this->model->find($this->recordId)->delete();
+
+                // Show success alert
+                $this->dispatchBrowserEvent('alert', [
+                    'type' => 'success',
+                    'message' => 'Record deleted successfully!',
+                ]);
+
+                // Reset the fields after deletion
+                $this->reset(['recordId', 'model']);
+
+            } catch (\Throwable $th) {
+                // Show failure alert
+                $this->dispatchBrowserEvent('alert', [
+                    'type' => 'warning',
+                    'message' => 'Record cannot be deleted!',
+                ]);
+            }
+        }
     }
 
     public function render()
@@ -1601,11 +1669,15 @@ class FacilityVisitDetailsComponent extends Component
         $data['filedReports'] = collect([]);
         $data['stockItems'] = collect([]);
         $data['services'] = collect([]);
-        $data['stockStatus'] = collect([]);
+        $data['stockStatuses'] = collect([]);
         if ($this->step == 1) {
             $data['supervised_persons'] = FvPersonsSupervised::where('visit_id', $this->active_visit->id)->get();
             $data['supervisors'] = FvSupervisor::where('visit_id', $this->active_visit->id)->get();
             $data['supply_storages'] = FvStorageManagement::where('visit_id', $this->active_visit->id)->with('storageType')->get();
+
+            $this->supervised_count = $data['supervised_persons']->count();
+            $this->supervisors_count = $data['supervisors']->count();
+            $this->supply_storages_count = $data['supply_storages']->count();
         }
         if ($this->step == 2) {
             $data['test_types'] = TestingCategory::where(['is_active' => true])->get();
@@ -1630,7 +1702,7 @@ class FacilityVisitDetailsComponent extends Component
             $data['lisLabDataUsages'] = FvLisLabDataUse::where('visit_id', $this->active_visit->id)->get();
             $data['filedReports'] = FvReportFilling::where('visit_id', $this->active_visit->id)->with('report')->get();
             $data['services'] = FvCompServiceStatisticsAcc::where('visit_id', $this->active_visit->id)->get();
-            $data['stockStatus'] = FvCompStockStatusAcc::where('visit_id', $this->active_visit->id)->with('stkItem')->get();
+            $data['stockStatuses'] = FvCompStockStatusAcc::where('visit_id', $this->active_visit->id)->with('stkItem')->get();
         }
         $data['storageTypes'] = FvStorageType::where('is_active', true)->get();
 

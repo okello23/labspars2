@@ -26,7 +26,9 @@
                 <td>
                     {{ $dcToolScore->dct_usage_score }}
                 </td>
-                <td></td>
+                <td>
+                        <a href="javascript:void(0)" wire:click="confirmDelete({{ $dcToolScore->id }}, '{{ addslashes(get_class($dcToolScore)) }}')" class="text-danger float-right fa fa-trash"></a>
+                </td>
             </tr>
         @empty
             <tr>
@@ -199,7 +201,7 @@
                 <th   colspan="2">Stock Status</th>
                 <th colspan="3">Reported in HMIS 105</th>
                 <th colspan="3">Actual (recounted) in stock card/book</th>
-                <th>Do the report and stock card/book data agree? (1/0/NA)</th>
+                <th></th>
             </tr>
             <tr>
                 <th></th>
@@ -211,21 +213,30 @@
                 <th>Quantity consumed</th>
                 <th>No. Of days out of stock</th>
                 <th>Stock on hand</th>
-                <th></th>
+                <th>Do the report and stock card/book data agree? (1/0/NA)</th>
             </tr>
         </thead>
         <tbody>
+            @forelse ($stockStatuses as $key=>$stockStatus)
             <tr>
-                <td>1. Determine HIV Screening test, tests</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>{{ $key+1 }} {{ $stockStatus->stkItem->name }}</td>
+                <td>{{ $stockStatus->c_reports_available }}</td>
+                <td>{{ $stockStatus->chmis_qty_consumed }}</td>
+                <td>{{ $stockStatus->chmis_days_out_of_stock }}</td>
+                <td>{{ $stockStatus->chmis_Stock_on_hand }}</td>
+                <td>{{ $stockStatus->csc_qty_consumed }}</td>
+                <td>{{ $stockStatus->csc_days_out_of_stock }}</td>
+                <td>{{ $stockStatus->csc_Stock_on_hand }}</td>
+                <td>{{ $stockStatus->c_report_sc_agree }}
+                        <a href="javascript:void(0)" wire:click="confirmDelete({{ $stockStatus->id }}, '{{ addslashes(get_class($stockStatus)) }}')" class="text-danger float-right fa fa-trash"></a>
+                </td>
             </tr>
+            @empty
+            <tr>
+                <td colspan="9">No records yet</td>
+            </tr>
+            @endforelse
+           
         </tbody>
     </table>
     <!-- Section 24: Use of Laboratory Data -->
@@ -253,7 +264,9 @@
                     <td>{{ $service->service_statistics_available }}</td>
                     <td>{{ $service->hims_tests_reported }}</td>
                     <td>{{ $service->lab_reg_tests_reported }}</td>
-                    <td>{{ $service->hims_lab_tests_balance }}</td>
+                    <td>{{ $service->hims_lab_tests_balance }}
+                        <a href="javascript:void(0)" wire:click="confirmDelete({{ $service->id }}, '{{ addslashes(get_class($service)) }}')" class="text-danger float-right fa fa-trash"></a>
+                    </td>
                 </tr>
             @empty
                 <tr>
@@ -285,7 +298,9 @@
                     <td>{{ $lisLabDataUsage->item_name }}</td>
                     <td>{{ $lisLabDataUsage->is_available }}</td>
                     <td>{{ $lisLabDataUsage->updated_last_quarter }}</td>
-                    <td>{{ $lisLabDataUsage->comments }}</td>
+                    <td>{{ $lisLabDataUsage->comments }}
+                        <a href="javascript:void(0)" wire:click="confirmDelete({{ $lisLabDataUsage->id }}, '{{ addslashes(get_class($lisLabDataUsage)) }}')" class="text-danger float-right fa fa-trash"></a>
+                    </td>
                 </tr>
             @empty
                 <tr>
@@ -322,7 +337,9 @@
                 <tr>
                     <td>{{ $key + 1 }}</td>
                     <td>{{ $filedReport->report->name }}</td>
-                    <td>{{ $filedReport->filling_score }}</td>
+                    <td>{{ $filedReport->filling_score }}
+                        <a href="javascript:void(0)" wire:click="confirmDelete({{ $filedReport->id }}, '{{ addslashes(get_class($filedReport)) }}')" class="text-danger float-right fa fa-trash"></a>
+                    </td>
                     {{-- <td><input type="text" wire:model="comments_hmis_105_section_10"></td> --}}
                 </tr>
             @endforeach
