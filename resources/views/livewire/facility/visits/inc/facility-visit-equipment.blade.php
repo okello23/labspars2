@@ -281,7 +281,7 @@
                        </tr>
                    </thead>
                    <tbody>
-                       @forelse ($utilizations->where('equipment_type','Heamatology') as $hutilization)
+                       @forelse ($utilizations->where('equipment_type','Hematology') as $hutilization)
                            <tr>
                                <td>{{ $hutilization->equipment_name }}({{ $hutilization->equipment_type }})</td>
                                <td>{{ $hutilization->through_put }}</td>
