@@ -13,16 +13,7 @@
 
           <x-table-utilities>
             <div class="md-3">
-              <div class="mb-1  col-md-12">
-                <label for="result_type" class="form-label">Region</label>
-                <select class="form-control" wire:model="region_id">
-                  <option value="">All</option>
-                  <option value="1">Central</option>
-                  <option value="4">Eastern</option>
-                  <option value="3">Northern</option>
-                  <option value="2">Western</option>
-                </select>
-              </div>
+             
             </div>
 
           </x-table-utilities>
