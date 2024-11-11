@@ -191,7 +191,7 @@ class FacilityVisitsComponent extends Component
     public function render()
     {
         $data['visits'] = $this->filterFacilities()
-            ->with(['facility', 'facility.healthSubDistrict', 'facility.healthSubDistrict.district', 'facility.healthSubDistrict.district.region'])
+            ->with(['facility', 'facility.healthSubDistrict', 'facility.healthSubDistrict.district', 'facility.healthSubDistrict.district.region','createdBy'])
             ->orderBy($this->orderBy, $this->orderAsc ? 'asc' : 'desc')
             ->paginate($this->perPage);
         $data['facilities'] = Facility::all();

@@ -3,6 +3,11 @@
         <div class="card-content">
             <div class="card-header">
                 @include('livewire.facility.visits.inc.visit-header')
+                {{-- <button wire:click="editData({{ $active_visit->id }})"
+                    class="action-ico btn btn-sm btn-success mx-1" data-toggle="modal"
+                    data-target="#addUpdateRecord">
+                    <i class="fa fa-edit"></i>
+                </button> --}}
             </div> <!-- end card header -->
             <div class="card-body">
 
@@ -182,7 +187,7 @@
                     </div>
                 </div>
             @include('livewire.partials.delete')
-
+               {{-- @include('livewire.facility.visits.inc.new-facility-visit') --}}
             </div>
         </div>
     </div>
