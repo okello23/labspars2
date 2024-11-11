@@ -74,9 +74,23 @@ class FacilityVisitDetailsComponent extends Component
             ->with(['facility', 'facility.healthSubDistrict', 'facility.healthSubDistrict.district', 'facility.healthSubDistrict.district.region'])->first();
         $this->consumption_reconciliation = $this->active_visit->consumption_reconciliation ?? null;
         $this->use_stock_cards = $this->active_visit->use_stock_cards ?? 0;
-        if (!$this->step) {
+        $stage = $this->active_visit->stage;
+        if ($stage=='Lab Information' ) {
+            $this->step = 1;
+        }elseif ($stage == 'Stock Mgt') {
+            $this->step = 2;
+        } elseif ($stage == 'Storage Mgt') {
+            $this->step = 3;
+        } elseif ($stage == 'Order Mgt') {
+            $this->step = 4;
+        } elseif ($stage == 'Lab Equipment') {
+            $this->step = 5;
+        } elseif ($stage == 'LIMS') {
+            $this->step = 6;
+        }else{
             $this->step = 1;
         }
+
     }
 
     public function storePersonal()
@@ -747,7 +761,7 @@ class FacilityVisitDetailsComponent extends Component
         $this->adherence_percentage = $adherence->adherence_percentage ?? null;
         $this->annual_procurement_plan = $adherence->annual_procurement_plan ?? null;
         $this->procurement_plan_comments = $adherence->procurement_plan_comments ?? null;
-        $this->active_visit->update(['stage'=>'Ordering Mgt']);
+        $this->active_visit->update(['stage'=>'Order Mgt']);
     }
 
     public function fourthStepSubmit()
@@ -1402,7 +1416,8 @@ class FacilityVisitDetailsComponent extends Component
                 'reports_filling_percentage' => $this->reports_filling_percentage,
             ]);
         $this->resetInputs();
-        $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Record successfully added!']);
+        $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Record successfully submitted!']);
+        $this->active_visit->update(['stage'=>'Completed','status'=>'Submitted']);
         return redirect()->signedRoute('facility-visit_view', $this->active_visit->visit_code);
     }
 
