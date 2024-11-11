@@ -86,7 +86,7 @@
                             <hr>
                         </div>
                         <div class="table-responsive">
-                            <table id="datableButton" class="table table-striped table-bordered mb-0 w-100 sortable">
+                            <table id="datableButton" class="table table-striped table-sm table-bordered mb-0 w-100 sortable">
                                 <thead>
                                     <tr>
                                         <th>No</th>
@@ -120,7 +120,7 @@
                                             <td>{{ $facilityvisit->facility->healthSubDistrict?->district->region?->name}}</td>
                                             <td>{{ $facilityvisit->createdBy->name }}</td>
                                             <td>{{ $facilityvisit->stage }}</td>
-                                            <td>{{ $facilityvisit->status }}</td>
+                                            <td><span class="badge badge-primary">{{ $facilityvisit->status }}</span></td>
                                             <td>
                                                
                                                 <a href="{{ URL::signedRoute('facility-visit_view', $facilityvisit->visit_code) }}"
