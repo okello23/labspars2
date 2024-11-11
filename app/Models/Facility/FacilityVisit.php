@@ -2,6 +2,7 @@
 
 namespace App\Models\Facility;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -21,11 +22,18 @@ class FacilityVisit extends Model
         'date_of_next_visit',
         'consumption_reconciliation',
         'use_stock_cards',
+        'stage',
+        'status',
     ];
 
     public function facility()
     {
         return $this->belongsTo(Facility::class, 'facility_id', 'id');
+    }
+    
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by', 'id');
     }
 
     public static function boot()

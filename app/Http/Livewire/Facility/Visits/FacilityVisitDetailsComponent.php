@@ -429,7 +429,7 @@ class FacilityVisitDetailsComponent extends Component
             ]);
             return;
         }
-        if($this->supply_storages_count<3){
+        if($this->supply_storages_count<1){
              $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'warning',
                 'message' => 'Oops! You can not proceed!',
@@ -441,6 +441,7 @@ class FacilityVisitDetailsComponent extends Component
             'consumption_reconciliation' => 'required|string',
         ]);
         $this->active_visit->consumption_reconciliation = $this->consumption_reconciliation;
+        $this->active_visit->stage = 'Stock Mgt';
         $this->active_visit->update();
         $this->step = 2;
 
@@ -517,6 +518,7 @@ class FacilityVisitDetailsComponent extends Component
         $this->main_store_opening_date = $StoragePractices->main_store_opening_date ?? null;
         $this->lab_store_opening_date = $StoragePractices->lab_store_opening_date ?? null;
         $this->practices_comments = $StoragePractices->practices_comments ?? null;
+        $this->active_visit->stage->update(['stage'=>'Storage Mgt']);
 
     }
 
@@ -745,6 +747,7 @@ class FacilityVisitDetailsComponent extends Component
         $this->adherence_percentage = $adherence->adherence_percentage ?? null;
         $this->annual_procurement_plan = $adherence->annual_procurement_plan ?? null;
         $this->procurement_plan_comments = $adherence->procurement_plan_comments ?? null;
+        $this->active_visit->stage->update(['stage'=>'Ordering Mgt']);
     }
 
     public function fourthStepSubmit()
@@ -764,6 +767,7 @@ class FacilityVisitDetailsComponent extends Component
         $this->equipment_percentage = $equipmentMgt->equipment_percentage ?? null;
         $this->equipment_mgt_comments = $equipmentMgt->equipment_mgt_comments ?? null;
         $this->equipment_maintenance_comment = $equipmentMgt->equipment_maintenance_comment ?? null;
+        $this->active_visit->stage->update(['stage'=>'Lab Equipment']);
 
     }
 
@@ -1235,6 +1239,7 @@ class FacilityVisitDetailsComponent extends Component
             ]);
         $this->step = 6;
         $this->loadLimsData();
+        $this->active_visit->stage->update(['stage'=>'LIMS']);
     }
 
     public $tool_id;
