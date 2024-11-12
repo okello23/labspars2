@@ -1541,8 +1541,10 @@ class FacilityVisitDetailsComponent extends Component
         if ($num == 1) {
             $this->step = 1;
         } elseif ($num == 2) {
+            $this->step = 2;
             $this->firstStepSubmit();
         } elseif ($num == 3) {
+            $this->step = 3;
             $this->secondStepSubmit();
         } elseif ($num == 4) {
             $this->step = 4;
