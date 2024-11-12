@@ -260,7 +260,7 @@
        </div>
        <div class ="Heamatology">
            <a class="action-ico mx-1 mb-1 btn btn-sm btn-success" data-toggle="modal" data-target="#addequipmentUtilization"
-               wire:click="$set('equipment_type','Heamatology')">
+               wire:click="$set('equipment_type','Hematology')">
                Add Heamatology Equipment</a>
            <div class="table-responsive-sm">
                <table class="table-sm">
@@ -281,7 +281,7 @@
                        </tr>
                    </thead>
                    <tbody>
-                       @forelse ($utilizations->where('equipment_type','Heamatology') as $hutilization)
+                       @forelse ($utilizations->where('equipment_type','Hematology') as $hutilization)
                            <tr>
                                <td>{{ $hutilization->equipment_name }}({{ $hutilization->equipment_type }})</td>
                                <td>{{ $hutilization->through_put }}</td>
