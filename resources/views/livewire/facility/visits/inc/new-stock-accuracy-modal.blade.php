@@ -7,7 +7,7 @@
                 <form   wire:submit.prevent="saveStockAccuracy" >
                     <div class="modal-body">
                         <div class="row">
-                             <div class="mb-3 col-md-12">
+                             <div class="mb-3 col-md-4">
                                 <label for="station_id" class="form-label required"> Data collection tool</label>
                                 <select class="form-control selectr" id="stock_item_id"
                                     wire:model='stock_item_id'>
@@ -37,24 +37,21 @@
                                 @enderror
                             </div>      
                             <div class="mb-3 col-md-4">
-                                <label for="chmis_qty_consumed" class="form-label required">No of tests as recorded in lab register in that month
-                                    </label>
+                                <label for="chmis_qty_consumed" class="form-label required">HMIS Quantity consumed</label>
                                 <input type="number" id="hims_tests_reported" wire:model='chmis_qty_consumed' class="form-control" required>
                                 @error('chmis_qty_consumed')
                                     <div class="text-danger text-small">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="mb-3 col-md-4">
-                                <label for="chmis_days_out_of_stock" class="form-label required">No of tests as recorded in lab register in that month
-                                    </label>
+                                <label for="chmis_days_out_of_stock" class="form-label required"> HMIS Out of stock Days</label>
                                 <input type="number" id="hims_tests_reported" wire:model='chmis_days_out_of_stock' class="form-control" required>
                                 @error('chmis_days_out_of_stock')
                                     <div class="text-danger text-small">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="mb-3 col-md-4">
-                                <label for="chmis_Stock_on_hand" class="form-label required">No of tests as recorded in lab register in that month
-                                    </label>
+                                <label for="chmis_Stock_on_hand" class="form-label required">HMIS Stock on hand</label>
                                 <input type="number" id="hims_tests_reported" wire:model='chmis_Stock_on_hand' class="form-control" required>
                                 @error('chmis_Stock_on_hand')
                                     <div class="text-danger text-small">{{ $message }}</div>
@@ -63,7 +60,7 @@
 
 
                             <div class="mb-3 col-md-4">
-                                <label for="csc_qty_consumed" class="form-label required">No of tests as recorded in lab register in that month
+                                <label for="csc_qty_consumed" class="form-label required">SC Quantity consumed
                                     </label>
                                 <input type="number" id="hims_tests_reported" wire:model='csc_qty_consumed' class="form-control" required>
                                 @error('csc_qty_consumed')
@@ -71,7 +68,7 @@
                                 @enderror
                             </div>
                             <div class="mb-3 col-md-4">
-                                <label for="csc_days_out_of_stock" class="form-label required">No of tests as recorded in lab register in that month
+                                <label for="csc_days_out_of_stock" class="form-label required">SC Out of stock Days
                                     </label>
                                 <input type="number" id="hims_tests_reported" wire:model='csc_days_out_of_stock' class="form-control" required>
                                 @error('csc_days_out_of_stock')
@@ -79,7 +76,7 @@
                                 @enderror
                             </div>
                             <div class="mb-3 col-md-4">
-                                <label for="csc_Stock_on_hand" class="form-label required">No of tests as recorded in lab register in that month
+                                <label for="csc_Stock_on_hand" class="form-label required">SC Stock on hand
                                     </label>
                                 <input type="number" id="csc_Stock_on_hand" wire:model='csc_Stock_on_hand' class="form-control" required>
                                 @error('csc_Stock_on_hand')
@@ -87,8 +84,8 @@
                                 @enderror
                             </div>
 
-                            <div class="mb-3 col-md-6">
-                                <label for="dct_usage_score" class="form-label required">Report SC data agree?</label>
+                            <div class="mb-3 col-md-4">
+                                <label for="dct_usage_score" class="form-label required">HMIS Report SC data agree?</label>
                                 <select id="c_report_sc_agree" class="form-control"  required 
                                     wire:model.lazy="c_report_sc_agree">
                                     <option  value="">Select</option>
