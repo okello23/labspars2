@@ -112,8 +112,8 @@
     <h4>Review of Recent Order Form</h4>
     <label class="form-label required">Is there a standard test menu at the laboratory facility?</label>
     <select class="form-control" wire:model.lazy="test_menu_available">
-        <option value="yes">Yes</option>
-        <option value="no">No</option>
+        <option value="1">Yes</option>
+        <option value="0">No</option>
     </select>
     <form wire:submit.prevent="saveOrderReview()">
         <div class="row">

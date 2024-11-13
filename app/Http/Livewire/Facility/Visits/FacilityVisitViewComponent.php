@@ -11,6 +11,7 @@ use App\Models\Settings\FilledReport;
 use App\Models\Facility\FacilityVisit;
 use App\Models\Facility\FvStorageType;
 use App\Models\Settings\TestingCategory;
+use App\Models\Facility\Visits\FvAdherence;
 use App\Models\Settings\FvLisDataToolScore;
 use App\Models\Facility\FvPersonsSupervised;
 use App\Models\Facility\Visits\FvOrderReview;
@@ -18,12 +19,20 @@ use App\Models\Settings\LisDataCollectionTool;
 use App\Models\Facility\Visits\FvLisHmisReport;
 use App\Models\Facility\Visits\FvLisLabDataUse;
 use App\Models\Facility\Visits\FvReportFilling;
+use App\Models\Facility\Visits\FvStockMgtScore;
+use App\Models\Facility\Visits\FvOrderManagement;
 use App\Models\Facility\Visits\FvStockManagement;
+use App\Models\Facility\Visits\FvHygieneManagement;
 use App\Models\Facility\Visits\FvStorageManagement;
 use App\Models\Facility\Visits\FvCompStockStatusAcc;
+use App\Models\Facility\Visits\FvEquipmentManagement;
 use App\Models\Facility\Visits\FvEquipmentUtilization;
+use App\Models\Facility\Visits\FvCleanlinessManagement;
 use App\Models\Facility\Visits\FvEquipmentFunctionality;
+use App\Models\Facility\Visits\FvStorageSystemManagement;
 use App\Models\Facility\Visits\FvCompServiceStatisticsAcc;
+use App\Models\Facility\Visits\FvStoragePracticeManagement;
+use App\Models\Facility\Visits\FvStorageConditionManagement;
 
 class FacilityVisitViewComponent extends Component
 {
@@ -35,9 +44,8 @@ class FacilityVisitViewComponent extends Component
 
     public $use_stock_cards;
 
-    public $consumption_reconciliation;
-    public $limsData;
-
+    public $consumption_reconciliation,$stock_mgt_comments;
+    public $limsData, $stkScores,$cleanliness,$hygiene,$condition,$system,$StoragePractices,$adherence,$ordering,$equipmentMgt;
     public function mount($code)
     {
         $this->code = $code;
@@ -46,7 +54,21 @@ class FacilityVisitViewComponent extends Component
         $this->consumption_reconciliation = $this->active_visit->consumption_reconciliation ?? null;
         $this->use_stock_cards = $this->active_visit->use_stock_cards ?? 0;
         $this->limsData = FvLisHmisReport::where('visit_id', $this->active_visit->id)->first();
+        // firstStepSubmit
+        $this->stkScores = FvStockMgtScore::where('visit_id', $this->active_visit->id)->first();
 
+        // secondStepSubmit
+        $this->cleanliness = FvCleanlinessManagement::where('visit_id', $this->active_visit->id)->first();
+        $this->hygiene = FvHygieneManagement::where('visit_id', $this->active_visit->id)->first();
+        $this->condition = FvStorageConditionManagement::where('visit_id', $this->active_visit->id)->first();
+        $this->system = FvStorageSystemManagement::where('visit_id', $this->active_visit->id)->first();
+        $this->StoragePractices = FvStoragePracticeManagement::where('visit_id', $this->active_visit->id)->first();
+        // thirdStepSubmit
+        $this->adherence = FvAdherence::where('visit_id', $this->active_visit->id)->first();
+        $this->ordering = FvOrderManagement::where('visit_id', $this->active_visit->id)->first();
+        // fourthStepSubmit
+        $this->equipmentMgt = FvEquipmentManagement::where('visit_id', $this->active_visit->id)->first();
+        // fifthStepSubmit
     }
    
 
