@@ -179,3 +179,9 @@
             <a target="_blank" href="{{ route('facility-visit_print', $active_visit->visit_code) }}" class=" btn btn-sm btn-info fa fa-print"></a>
         </div>
        
+        <script type='text/php'>
+            if (isset($pdf))
+            {
+                $pdf->page_text(40, $pdf->get_height() - 30, "{PAGE_NUM} of {PAGE_COUNT}", null, 12, array(0,0,0));
+            }
+        </script>
