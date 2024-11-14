@@ -132,7 +132,7 @@
 
     <!-- Comments Section -->
     <h6>Comments</h6>
-    <p>{{ $stock_mgt_comments }}</p>
+    <p>{{ $stkScores?->stock_mgt_comments }}</p>
 
     <!-- Score Summary Section -->
     {{-- <button class="btn btn-success" wire:click='calculateScored'>Cal</button> --}}

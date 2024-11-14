@@ -11,6 +11,7 @@ use App\Http\Livewire\Settings\HealthSubDistrictsComponent;
 use App\Http\Livewire\Dashboard\MainDashboardComponent;
 use App\Http\Livewire\UserManagement\UserProfileComponent;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\GeneralController;
 use App\Http\Livewire\Facility\FacilityComponent;
 use App\Http\Livewire\Facility\Visits\FacilityVisitDetailsComponent;
 use App\Http\Livewire\Facility\Visits\FacilityVisitsComponent;
@@ -69,6 +70,7 @@ Route::group(['middleware' => ['auth', 'password_expired', 'suspended_user']], f
         Route::get('visits', FacilityVisitsComponent::class)->name('facility-visits');
         Route::get('visit/{code}/details', FacilityVisitDetailsComponent::class)->name('facility-visit_details');
         Route::get('visit/{code}/view', FacilityVisitViewComponent::class)->name('facility-visit_view');
+        Route::get('visit/{code}/print', [GeneralController::class,'generateVisit'])->name('facility-visit_print');
       });
       require __DIR__.'/user_mgt.php';
     });
