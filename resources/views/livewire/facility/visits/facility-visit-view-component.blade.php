@@ -7,7 +7,7 @@
         <div class="card-body">
             <div>
                 <h4>Persons Supervised</h4>
-                <table class="table" style="width: 100%">
+                <table style="width: 100%">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -42,7 +42,7 @@
             <!-- Supervisors -->
             <div>
                 <h4>Supervisors</h4>
-                <table class="table" style="width: 100%">
+                <table style="width: 100%">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -75,7 +75,7 @@
             <div>
                 <h4>Laboratory Supply Storage</h4>
                 <h5>D1: Where are Laboratory supplies MAINLY stored in the facility?</h5>
-                <table class="table" style="width: 100%">
+                <table style="width: 100%">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -103,7 +103,7 @@
                 </table>
         
                 <h5>D2: Where ELSE are Laboratory supplies stored in the facility?</h5>
-                <table class="table" style="width: 100%">
+                <table style="width: 100%">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -141,7 +141,7 @@
                         value="0"></label>
         
                 <h5>D4: Where are stock cards kept in the facility?</h5>
-                <table class="table" style="width: 100%">
+                <table style="width: 100%">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -169,7 +169,22 @@
                 </table>        
                 <h5>D5: If stock cards are kept in multiple places, how is the consumption reconciled with the main
                     store/stock card?</h5>
-                <textarea name="reconciliation_comments" wire:model.lazy='consumption_reconciliation' class="form-control"></textarea>
+                
+                    <p>{{ $consumption_reconciliation }}</p>
             </div>
+            <hr>
+            @include('livewire.facility.visits.report.facility-visit-stock-mgt')
+            @include('livewire.facility.visits.report.facility-visit-storage-mgt')
+            @include('livewire.facility.visits.report.facility-visit-ordering')
+            @include('livewire.facility.visits.report.facility-visit-equipment')
+            @include('livewire.facility.visits.report.facility-visit-lims')
+
+            <a target="_blank" href="{{ route('facility-visit_print', $active_visit->visit_code) }}" class=" btn btn-sm btn-info fa fa-print"></a>
         </div>
        
+        <script type='text/php'>
+            if (isset($pdf))
+            {
+                $pdf->page_text(40, $pdf->get_height() - 30, "{PAGE_NUM} of {PAGE_COUNT}", null, 12, array(0,0,0));
+            }
+        </script>
