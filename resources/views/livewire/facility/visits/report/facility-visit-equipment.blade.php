@@ -16,27 +16,16 @@
                    <tr>
                        <td>Is the Laboratory Equipment Inventory Log (HMIS Lab 20) available? </td>
                        <td>
-                           <select class="form-control" wire:model="inventory_log_available" required>
-                               <option value="">select</option>
-                               <option value="1">Yes</option>
-                               <option value="0">No</option>
-                           </select>
-                           @error('inventory_log_available')
-                               <div class="text-danger text-small">{{ $message }}</div>
-                           @enderror
+                        {{ checkYesNoNA($equipmentMgt?->inventory_log_available) }}
                        </td>
                    </tr>
                    <tr>
                        <td>b) Did the facility submit the last order to the warehouse electronically?</td>
                        <td>
-                           <select class="form-control" wire:model="inventory_log_updated">
-                               <option value="">select</option>
-                               <option value="1">Yes</option>
-                               <option value="0">No</option>
-                           </select>
+                        {{ checkYesNoNA($equipmentMgt?->inventory_log_updated) }}
                        </td>
                        <td colspan="2">
-                           <textarea class="form-control" type="text" wire:model="equipment_maintenance_comment"></textarea>
+                        <p>{{ $equipmentMgt?->equipment_maintenance_comment }}</p>
                        </td>
                    </tr>
                </tbody>
@@ -61,13 +50,9 @@
                        <td>1</td>
                        <td>Is relevant major equipment service information readily available in the laboratory?</td>
                        <td>
-                           <select class="form-control" wire:model.lazy="service_info_available">
-                               <option value="">select</option>
-                               <option value="1">Yes</option>
-                               <option value="0">No</option>
-                           </select>
+                        {{ checkYesNoNA($equipmentMgt?->service_info_available) }}
                        </td>
-                       <td><input type="text" name="comments_1"></td>
+                       {{-- <td><input type="text" name="comments_1"></td> --}}
                    </tr>
                    <tr>
                        <td>2</td>
@@ -75,37 +60,27 @@
                            logs?
                        </td>
                        <td>
-                           <select class="form-control" wire:model.lazy="equipment_serviced">
-                               <option value="">select</option>
-                               <option value="1">Yes</option>
-                               <option value="0">No</option>
-                           </select>
+                        {{ checkYesNoNA($equipmentMgt?->equipment_serviced) }}
+
                        </td>
                    </tr>
                    <tr>
                        <td>3</td>
                        <td>Is internal quality control (IQC) performed for major equipment?</td>
                        <td>
-                           <select class="form-control" wire:model.lazy="iqc_performed">
-                               <option value="">select</option>
-                               <option value="1">Yes</option>
-                               <option value="0">No</option>
-                           </select>
+                        {{ checkYesNoNA($equipmentMgt?->iqc_performed) }}
                        </td>
                    </tr>
                    <tr>
                        <td>4</td>
                        <td>Are the manufacturers' operator manuals for major equipment readily available?</td>
                        <td>
-                           <select class="form-control" wire:model.lazy="operator_manuals_available">
-                               <option value="">select</option>
-                               <option value="1">Yes</option>
-                               <option value="0">No</option>
-                           </select>
+                        {{ checkYesNoNA($equipmentMgt?->operator_manuals_available) }}
+
                        </td>
-                       <td rowspan="3">
-                           <textarea class="form-control" wire:model.lazy="equipment_mgt_comments"></textarea>
-                       </td>
+                       <td rowspan="4">
+                        <p>{{ $equipmentMgt?->equipment_mgt_comments }}</p>
+                        </td>
                    </tr>
                </tbody>
            </table>
@@ -115,10 +90,6 @@
        <!-- Section 18: Equipment Functionality -->
        <h4 class="section-title">18. Equipment Functionality</h4>
 
-       <button class="action-ico btn btn-sm btn-success mx-1" data-toggle="modal"
-           data-target="#addequipmentFunctionality">
-           Add New
-       </button>
        <label>Has the laboratory provided uninterrupted testing services with no disruptions due to equipment
            downtime?</label>
        {{-- <select wire:model="uninterrupted_services">
@@ -151,7 +122,6 @@
                            <td>{{ $functionality->nonfunctional_reagents }}</td>
                            <td>{{ $functionality->other_factors }}</td>
                            <td>{{ $functionality->response_time }}
-                            <a href="javascript:void(0)" wire:click="confirmDelete({{ $functionality->id }}, '{{ addslashes(get_class($functionality)) }}')" class="text-danger float-right fa fa-trash"></a>
                            </td>
                        </tr>
                    @empty
@@ -165,9 +135,7 @@
        </div>
        <!-- Section 19: Equipment Utilization -->
        <h4 class="section-title">19. Equipment Utilization for Chemistry, Hematology, and CD4 Platforms
-        <a class="action-ico mx-1 btn btn-sm btn-success" data-toggle="modal" data-target="#addequipmentUtilization"
-               wire:click="$set('equipment_type','CD4')">
-               Add CD4 Equipment</a>
+    
        </h4>
        <div class ="cd4">           
            <div class="table-responsive-sm">
@@ -200,8 +168,7 @@
                                <td>{{ $eutilization->greater_score }}</td>
                                <td>{{ $eutilization->capacity }}</td>
                                <td>{{ $eutilization->final_score }}
-                                <a href="javascript:void(0)" wire:click="confirmDelete({{ $eutilization->id }}, '{{ addslashes(get_class($eutilization)) }}')" class="text-danger float-right fa fa-trash"></a>
-
+                               
                                </td>
                            </tr>
                        @empty
@@ -213,9 +180,6 @@
            </div>
        </div>
        <div class ="Chemistry">
-           <a class="action-ico mx-1 btn btn-sm btn-success mb-2" data-toggle="modal" data-target="#addequipmentUtilization"
-               wire:click="$set('equipment_type','Chemistry')">
-               Add Chemistry Equipment</a>
            <div class="table-responsive-sm">
                <table class="table-sm">
                    <thead>
@@ -246,7 +210,6 @@
                                <td>{{ $cutilization->greater_score }}</td>
                                <td>{{ $cutilization->capacity }}</td>
                                <td>{{ $cutilization->final_score }}
-                                <a href="javascript:void(0)" wire:click="confirmDelete({{ $cutilization->id }}, '{{ addslashes(get_class($cutilization)) }}')" class="text-danger float-right fa fa-trash"></a>
 
                                </td>
                            </tr>
@@ -259,9 +222,6 @@
            </div>
        </div>
        <div class ="Heamatology">
-           <a class="action-ico mx-1 mb-1 btn btn-sm btn-success" data-toggle="modal" data-target="#addequipmentUtilization"
-               wire:click="$set('equipment_type','Hematology')">
-               Add Heamatology Equipment</a>
            <div class="table-responsive-sm">
                <table class="table-sm">
                    <thead>
@@ -292,9 +252,7 @@
                                <td>{{ $hutilization->greater_score }}</td>
                                <td>{{ $hutilization->capacity }}</td>
                                <td>{{ $hutilization->final_score }}
-                                <a href="javascript:void(0)" wire:click="confirmDelete({{ $hutilization->id }}, '{{ addslashes(get_class($hutilization)) }}')" class="text-danger float-right fa fa-trash"></a>
-
-                               </td>
+                              </td>
                            </tr>
                        @empty
                            <td colspan="9">No Heamatology record entered</td>
@@ -304,29 +262,4 @@
                </table>
            </div>
        </div>
-       @php
-           $fields = [
-               'visit_id',
-               'inventory_log_available',
-               'inventory_log_updated',
-               'service_info_available',
-               'equipment_serviced',
-               'iqc_performed',
-               'operator_manuals_available',
-               'equipment_inv_score',
-               'equipment_inv_percentage',
-               'equipment_score',
-               'equipment_percentage',
-               'equipment_mgt_comments',
-               'equipment_maintenance_comment',
-           ];
-       @endphp
-
-       @foreach ($fields as $field)
-           @error($field)
-               <div class="text-danger text-small">{{ $message }}</div>
-           @enderror
-       @endforeach
-       @include('livewire.facility.visits.inc.new-eqt-fuctionalty-modal')
-       @include('livewire.facility.visits.inc.new-eqt-utilization-modal')
    </div>

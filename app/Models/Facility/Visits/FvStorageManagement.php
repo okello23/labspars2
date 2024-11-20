@@ -26,6 +26,7 @@ class FvStorageManagement extends Model
     }
 
     protected $fillable = [
+        'visit_id',
         'other',
         'comment',
         'storage_type_id',

@@ -2,8 +2,6 @@
 
 <!-- Section 20: Availability & Use of Laboratory Data Collection Tools -->
 <h2>20. Availability & Use of Laboratory Data Collection Tools wire:
-    <a class="action-ico mx-1 btn btn-sm btn-success" data-toggle="modal" data-target="#addeDataCollectionToolScore">
-        Add scores</a>
 </h2>
 <table class="table-sm">
     <thead>
@@ -192,8 +190,7 @@
 </p>
 <!-- Section 24: Use of Laboratory Data -->
 <h4>b) Check the accuracy of the last HMIS 105 report (Yes=1/ No=0):
-    <a class="action-ico mx-1 btn btn-sm btn-success" data-toggle="modal" data-target="#satockAccuracyModal">
-        Add HMIS 105 accuracy</a>
+
     </h3>
     <table class="table-sm">
         <thead>
@@ -228,8 +225,7 @@
                 <td>{{ $stockStatus->csc_days_out_of_stock }}</td>
                 <td>{{ $stockStatus->csc_Stock_on_hand }}</td>
                 <td>{{ $stockStatus->c_report_sc_agree }}
-                        <a href="javascript:void(0)" wire:click="confirmDelete({{ $stockStatus->id }}, '{{ addslashes(get_class($stockStatus)) }}')" class="text-danger float-right fa fa-trash"></a>
-                </td>
+                 </td>
             </tr>
             @empty
             <tr>
@@ -241,8 +237,6 @@
     </table>
     <!-- Section 24: Use of Laboratory Data -->
     <h3>c) Check the accuracy of the last HMIS 105 report (Yes=1/ No=0):
-        <a class="action-ico mx-1 btn btn-sm btn-success" data-toggle="modal" data-target="#addeAccuracyModal">
-            Add accuracy</a>
     </h3>
     <table class="table-sm">
         <thead>
@@ -265,7 +259,6 @@
                     <td>{{ $service->hims_tests_reported }}</td>
                     <td>{{ $service->lab_reg_tests_reported }}</td>
                     <td>{{ $service->hims_lab_tests_balance }}
-                        <a href="javascript:void(0)" wire:click="confirmDelete({{ $service->id }}, '{{ addslashes(get_class($service)) }}')" class="text-danger float-right fa fa-trash"></a>
                     </td>
                 </tr>
             @empty
@@ -278,8 +271,6 @@
 
     <!-- Section 24: Use of Laboratory Data -->
     <h2>24. Use of Laboratory Data
-        <a class="action-ico mx-1 btn btn-sm btn-success" data-toggle="modal" data-target="#addeDataUsageModal">
-            Add scores</a>
     </h2>
     <table class="table-sm">
         <thead>
@@ -299,7 +290,6 @@
                     <td>{{ $lisLabDataUsage->is_available }}</td>
                     <td>{{ $lisLabDataUsage->updated_last_quarter }}</td>
                     <td>{{ $lisLabDataUsage->comments }}
-                        <a href="javascript:void(0)" wire:click="confirmDelete({{ $lisLabDataUsage->id }}, '{{ addslashes(get_class($lisLabDataUsage)) }}')" class="text-danger float-right fa fa-trash"></a>
                     </td>
                 </tr>
             @empty
@@ -311,7 +301,8 @@
     </table>
     <div class="mb-3">
         <label for="">Use of Laboratory Data Comment</label>
-        <textarea class="form-control" wire:model="lab_data_usage_comments"></textarea>
+        <p>{{ $limsData?->lab_data_usage_comments }}</p>
+
     </div>
     <p>
         <strong>Score:</strong> Sum of 2 divided by 2: _______
@@ -320,8 +311,6 @@
 
     <!-- Section 25: Filing of Reports -->
     <h2>25. Filing of Reports
-        <a class="action-ico mx-1 btn btn-sm btn-success" data-toggle="modal" data-target="#addeReortFillingModal">
-            Add</a>
     </h2>
     <table class="table-sm">
         <thead>
@@ -338,7 +327,6 @@
                     <td>{{ $key + 1 }}</td>
                     <td>{{ $filedReport->report->name }}</td>
                     <td>{{ $filedReport->filling_score }}
-                        <a href="javascript:void(0)" wire:click="confirmDelete({{ $filedReport->id }}, '{{ addslashes(get_class($filedReport)) }}')" class="text-danger float-right fa fa-trash"></a>
                     </td>
                     {{-- <td><input type="text" wire:model="comments_hmis_105_section_10"></td> --}}
                 </tr>
@@ -349,59 +337,9 @@
     </table>
     <div class="mb-3">
         <label for="">Filing of Reports omment</label>
-        <textarea class="form-control" wire:model="reports_filling_comments"></textarea>
+        <p>{{ $limsData?->reports_filling_comments }}</p>
     </div>
     <p>
         <strong>Score:</strong> Sum of 4 divided by 4: _______
         <strong>Percentage:</strong> _______%
     </p>
-
-    <div class="col-12">
-        @php
-            $limsFields = [
-                'visit_id',
-                'hmis_105_outpatient_report',
-                'hmis_105_previous_months',
-                'lis_availability_score',
-                'lis_availability_percentage',
-                'lis_availability_comments',
-                't_reports_submitted_to_district',
-                't_reports_submitted_on_time',
-                'timeliness_score',
-                'timeliness_percentage',
-                'timeliness_comments',
-                'hmis_section_6_complete',
-                'hmis_section_10_complete',
-                'completeness_score',
-                'completeness_percentage',
-                'lis_tools_comments',
-                'total_availability_sum',
-                'total_availability_percentage',
-                'total_inuse_sum',
-                'total_inuse_percentage',
-                'availability_inuse_sum',
-                'availability_inuse_percentage',
-                'hmis_105_report_comments',
-                'hmis_105_report_score',
-                'hmis_105_report_percentage',
-                'lab_data_usage_comments',
-                'lab_data_usage_score',
-                'lab_data_usage_percentage',
-                'reports_filling_comments',
-                'reports_filling_score',
-                'reports_filling_percentage',
-            ];
-        @endphp
-
-        @foreach ($limsFields as $limsField)
-            @error($limsField)
-                <div class="text-danger text-small">{{ $message }}</div>
-            @enderror
-        @endforeach
-
-    </div>
-    @include('livewire.facility.visits.inc.new-data-collection-score-modal')
-    @include('livewire.facility.visits.inc.new-data-collection-usage-modal')
-    @include('livewire.facility.visits.inc.new-report-filing-modal')
-    @include('livewire.facility.visits.inc.new-service-accuracy-modal')
-    @include('livewire.facility.visits.inc.new-stock-accuracy-modal')
