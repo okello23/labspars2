@@ -10,6 +10,7 @@
         "akaunting/laravel-apexcharts": "^3.0",
         "asantibanez/livewire-charts": "^2.5",
         "barryvdh/laravel-dompdf": "^2.0",
+        "barryvdh/laravel-snappy": "^1.0",
         "doctrine/dbal": "^3.6",
         "guzzlehttp/guzzle": "^7.7",
         "intervention/image": "^2.7",
@@ -50,7 +51,7 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
- 
+             "app/Helpers/helpers.php"
      
         ]
     },
