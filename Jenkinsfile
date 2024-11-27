@@ -64,14 +64,14 @@ services:
   app:
     image: labsparsdockerimg:${GIT_COMMIT_SHORT}
     ports:
-      - "5051:80"
+      - "5051:8080"
     volumes:
-      - .:/var/www/html
+      - .:/var/www/html/labspars
     environment:
       APP_ENV: local
       APP_KEY: "base64:ySxZVnws0cWt6eb8iSgrvn0mqHv71YwaBA1zGWXNS2w="
       DB_CONNECTION: mysql
-      DB_HOST: localhost
+      DB_HOST: db
       DB_PORT: 3306
       DB_DATABASE: labspars
       DB_USERNAME: ben
