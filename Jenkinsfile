@@ -33,17 +33,17 @@ RUN apt-get update && apt-get install -y \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Set working directory
-WORKDIR /var/www/html
+WORKDIR /var/www/html/labspars
 
 # Copy application files
-COPY . /var/www/html
+COPY . /var/www/html/labspars
 
 # Install dependencies
 RUN composer install --no-interaction --no-dev --optimize-autoloader
 
 # Set permissions
-RUN chown -R www-data:www-data /var/www/html/storage
-RUN chown -R www-data:www-data /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html/labspars/storage
+RUN chown -R www-data:www-data /var/www/html/labspars/bootstrap/cache
 '''
             }
         }
