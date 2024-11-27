@@ -41,10 +41,11 @@ COPY . /var/www/html/labspars
 # Install dependencies
 RUN composer install --no-interaction --no-dev --optimize-autoloader
 
-# Set permissions
+# Set permissions on storage and cache directories
 RUN chown -R www-data:www-data /var/www/html/labspars/storage
 RUN chown -R www-data:www-data /var/www/html/labspars/bootstrap/cache
-RUN chmod -R 777 /var/www/html/labspars
+RUN chmod -R 775 /var/www/html/labspars/storage
+RUN chmod -R 775 /var/www/html/labspars/bootstrap/cache
 '''
             }
         }
