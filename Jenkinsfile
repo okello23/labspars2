@@ -64,7 +64,7 @@ services:
   app:
     image: labsparsdockerimg:${GIT_COMMIT_SHORT}
     ports:
-      - "8080:80"
+      - "8081:8080"
     volumes:
       - .:/var/www/html
     environment:
