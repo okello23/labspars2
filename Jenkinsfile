@@ -15,7 +15,7 @@ pipeline {
         stage('Create Dockerfile') {
             steps {
                 writeFile file: 'Dockerfile', text: '''
-FROM php:7.4-fpm
+FROM php:8.1-fpm
 
 # Install required extensions and dependencies
 RUN apt-get update && apt-get install -y \
