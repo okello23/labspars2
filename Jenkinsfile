@@ -64,7 +64,7 @@ services:
   app:
     image: labsparsdockerimg:${GIT_COMMIT_SHORT}
     ports:
-      - "5051:8080"
+      - "5051:8098"
     volumes:
       - .:/var/www/html/labspars
     environment:
