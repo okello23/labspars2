@@ -42,8 +42,9 @@ COPY . /var/www/html
 RUN composer install --no-interaction --no-dev --optimize-autoloader
 
 # Set permissions
-RUN chown -R www-data:www-data /var/www/html/storage
-RUN chown -R www-data:www-data /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html/labspars/storage
+RUN chown -R www-data:www-data /var/www/html/labspars
+RUN chown -R www-data:www-data /var/www/html/labspars/bootstrap/cache
 '''
             }
         }
