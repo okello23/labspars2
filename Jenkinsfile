@@ -50,7 +50,7 @@ RUN chown -R www-data:www-data /var/www/html/bootstrap/cache
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t labSparsDockerImg:${env.GIT_COMMIT_SHORT} ."
+                sh "docker build -t labsparsdockerimg:${env.GIT_COMMIT_SHORT} ."
             }
         }
 
@@ -62,7 +62,7 @@ version: '3.8'
 
 services:
   app:
-    image: labSparsDockerImg:${GIT_COMMIT_SHORT}
+    image: labsparsdockerimg:${GIT_COMMIT_SHORT}
     ports:
       - "8080:80"
     volumes:
