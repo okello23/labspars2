@@ -58,7 +58,7 @@ RUN chown -R www-data:www-data /var/www/html/bootstrap/cache
             steps {
                 // Create Docker Compose file dynamically
                 writeFile file: 'docker-compose.yml', text: '''
-version: '3.8'
+version: '1.25'
 
 services:
   app:
