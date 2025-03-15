@@ -1,4 +1,5 @@
     <style>
+
         body {
             font-family: Arial, sans-serif;
         }
@@ -7,17 +8,18 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            font-size: 12px; /* Reduce font size */
         }
 
         table,
         th,
         td {
-            border: 1px solid rgb(23, 54, 228);
+            border: 1px solid rgb(54, 83, 248);
         }
 
         th,
         td {
-            padding: 8px;
+            padding: 4px 8px; /* Reduce padding to make the table more compact */
             text-align: left;
         }
 

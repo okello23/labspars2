@@ -5,44 +5,13 @@
     <strong>I. STOCK MANAGEMENT</strong><br>
     Availability of reagents and correct filling of stock cards, stock books, etc. Complete the table below as per the
     instructions.
-    <a class="action-ico mx-1 btn btn-sm btn-success" data-toggle="modal" data-target="#addeStkMgtAvailabilityModal">
-        Add new</a>
 </p>
-@php
-    $fields = [
-        'reagent_id',
-        'test_performed',
-        'item_available',
-        'stock_card_available',
-        'physical_count_done',
-        'stock_card_correct',
-        'balance_on_card',
-        'physical_count',
-        'balance_matches_physical',
-        'last_issues',
-        'out_of_stock_days',
-        'amc_on_card',
-        'amc_calculated',
-        'amc_calculated_matches',
-        'elmis_installed',
-        'elmis_quantity',
-        'elmis_balance_matches',
-    ];
-@endphp
-
-@foreach ($fields as $field)
-    @error($field)
-        <div class="text-danger text-small">{{ $message }}</div>
-    @enderror
-@endforeach
-
 <!-- Stock Management Table -->
 
 <div class="table-responsive">
     <table class="table-sm table-striped sortable">
         <thead>
             <tr>
-                <th>Testing Category</th>
                 <th>Reagent</th>
                 <th>Test Performed?</th>
                 <th>Item Available?</th>
@@ -60,7 +29,6 @@
                 <th>ELIMS Installed?</th>
                 <th>ELMIS/EMR Qty</th>
                 <th>ELMIS Malance Matches</th>
-                <th></th>
             </tr>
         </thead>
 
@@ -73,11 +41,8 @@
             @endphp
             @foreach ($storageMgts as $storageItem)
                 <tr>
-                    <td title="	Testing Category">
-                        {{ $storageItem->reagent?->category?->name ?? 'N/A' }}
-                    </td>
                     <td title="Reagent & Unit size">
-                        {{ $storageItem->reagent->name ?? 'N/A' }}
+                        {{ $storageItem->reagent->name ?? 'N/A' }} <small>({{ $storageItem->reagent?->category?->name }})</small>
                     </td>
                     <td>
                         {{ $storageItem->test_performed }}
@@ -145,10 +110,6 @@
 
                         {{ $storageItem->elmis_balance_matches }}
                     </td>
-                    <td>
-                        {{-- @livewire('partials.status-component', ['model' => $folder, 'field' => 'is_active'], key($folder->id)) --}}
-                        <a href="javascript:void(0)" wire:click="confirmDelete({{ $storageItem->id }}, '{{ addslashes(get_class($storageItem)) }}')" class="text-danger float-right fa fa-trash"></a>
-                    </td>
                 </tr>
             @endforeach
             <!-- Repeat similar rows for other reagents (R3 to R23) -->
@@ -171,32 +132,8 @@
 
     <!-- Comments Section -->
     <h6>Comments</h6>
-    <textarea wire:model.lazy="stock_mgt_comments" class="form-control" placehlider="Add comments here..."></textarea>
+    <p>{{ $stkScores?->stock_mgt_comments }}</p>
 
-    @php
-        $scoreconditionsFields = [
-            'visit_id',
-            'availability_score',
-            'availability_percentage',
-            'stock_card_score',
-            'stock_card_percentage',
-            'correct_filling_score',
-            'correct_filling_percentage',
-            'physical_agrees_score',
-            'physical_agrees_percentage',
-            'amc_well_calculated_score',
-            'amc_well_calculated_percentage',
-            'emr_usage_score',
-            'emr_usage_percentage',
-            'stock_mgt_comments',
-        ];
-    @endphp
-
-    @foreach ($scoreconditionsFields as $conditionsField)
-        @error($conditionsField)
-            <div class="text-danger text-small">{{ $message }}</div>
-        @enderror
-    @endforeach
     <!-- Score Summary Section -->
     {{-- <button class="btn btn-success" wire:click='calculateScored'>Cal</button> --}}
     <h3>Score Summary</h3>
@@ -214,54 +151,53 @@
                 <td>1. Availability of reagents</td>
                 <td>
 
-                    {{ $availability_score }}
+                    {{ $stkScores?->availability_score }}
                 </td>
-                <td>{{ $availability_percentage }}%
+                <td>{{ $stkScores?->availability_percentage }}%
                     {{-- <input type="number" wire:model.lazy="availability_percentage"> --}}
                 </td>
             </tr>
             <tr>
                 <td>2. Stock card availability</td>
                 <td>
-                    {{ $stock_card_score }}
+                    {{ $stkScores?->stock_card_score }}
                 </td>
                 <td>
 
-                    {{ $stock_card_percentage }}%
+                    {{ $stkScores?->stock_card_percentage }}%
                 </td>
             </tr>
             <tr>
                 <td>3. Correct filling of stock card</td>
                 <td>
-                    {{ $correct_filling_score }}
+                    {{ $stkScores?->correct_filling_score }}
                 </td>
-                <td>{{ $correct_filling_percentage }}%</td>
+                <td>{{ $stkScores?->correct_filling_percentage }}%</td>
             </tr>
 
             <tr>
                 <td>4. Does physical count agree with stock card balance? </td>
                 <td>
-                    {{ $physical_agrees_score }}
+                    {{ $stkScores?->physical_agrees_score }}
                 </td>
-                <td>{{ $physical_agrees_percentage }}%</td>
+                <td>{{ $stkScores?->physical_agrees_percentage }}%</td>
             </tr>
             <tr>
                 <td>5. Is AMC in the stock card correctly calculated </td>
                 <td>
-                    {{ $amc_well_calculated_score }}
+                    {{ $stkScores?->amc_well_calculated_score }}
                 </td>
                 <td>
-                    {{ $amc_well_calculated_percentage }}%
+                    {{ $stkScores?->amc_well_calculated_percentage }}%
                 </td>
             </tr>
             <tr>
                 <td>6. Is the ELMIS/EMR correctly used and updated?</td>
                 <td>
-                    {{ $emr_usage_score }}
+                    {{ $stkScores?->emr_usage_score }}
                 </td>
-                <td>{{ $emr_usage_percentage }}%</td>
+                <td>{{ $stkScores?->emr_usage_percentage }}%</td>
             </tr>
             <!-- Add more rows for other indicators as needed -->
         </tbody>
     </table>
-    @include('livewire.facility.visits.inc.new-stk-mgt-reagents-modal')
