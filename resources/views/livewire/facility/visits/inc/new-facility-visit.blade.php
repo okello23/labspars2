@@ -7,7 +7,21 @@
                 <form  @if ($toggleForm) wire:submit.prevent="updatevalue" @else wire:submit.prevent="storevalue" @endif >
                     <div class="modal-body">
                         <div class="row">
-                            <div class="mb-3 col-md-5">
+                        <div class="mb-3 col-md-4">
+                                <label for="district_id" class="form-label required">District</label>
+                                <select class="form-control selectr" id="district_id"
+                                    wire:model.lazy='district_id'>
+                                    <option selected value="">Select</option>
+                                    @foreach ($districts as $value)
+                                        <option value='{{ $value->id }}'>{{ $value->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('facility_id')
+                                    <div class="text-danger text-small">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3 col-md-4">
                                 <label for="station_id" class="form-label required">Facility</label>
                                 <select class="form-control selectr" id="facility_id"
                                     wire:model.lazy='facility_id'>
@@ -20,6 +34,11 @@
                                     <div class="text-danger text-small">{{ $message }}</div>
                                 @enderror
                             </div>
+                            <div class="mb-3 col-md-4">
+                                <label for="facility_level" class="form-label required">Level</label>
+                                <input type='text' class="form-control" wire:model.defer='facility_level' readonly>
+                            </div>
+
                             <div class="mb-3 col-md-3">
                                 <label for="name" class="form-label required">Visit Number</label>
                                 <input type="text" id="visit_number" class="form-control" name="visit_number" required
@@ -28,7 +47,7 @@
                                     <div class="text-danger text-small">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <div class="mb-3 col-md-4">
+                            <div class="mb-3 col-md-5">
                                 <label for="in_charge_name" class="form-label required">In Charge Name</label>
                                 <input type="text" id="in_charge_name" class="form-control" name="in_charge_name" required
                                     wire:model.defer="in_charge_name">
@@ -36,12 +55,12 @@
                                     <div class="text-danger text-small">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-4">
                                 <label>In Charge Contact</label>
                                 <input type="text" class="form-control" wire:model="in_charge_contact">
                                 @error('in_charge_contact') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
-                            <div class="mb-3 col-md-3">
+                            <div class="mb-3 col-md-4">
                                 <label for="in_charge_name" class="form-label required">Responsible LSS</label>
                                 <input type="text" id="in_charge_name" class="form-control" name="responsible_lss_name" required
                                     wire:model.defer="responsible_lss_name">
@@ -49,12 +68,12 @@
                                     <div class="text-danger text-small">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-4">
                                 <label>Date Of Visit</label>
                                 <input type="date" class="form-control" max="{{ date('Y-m-d') }}" wire:model="date_of_visit">
                                 @error('date_of_visit') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-4">
                                 <label>Date Of Next Visit</label>
                                 <input type="date" class="form-control" min="{{ date('Y-m-d') }}" wire:model="date_of_next_visit">
                                 @error('date_of_next_visit') <span class="text-danger">{{ $message }}</span> @enderror

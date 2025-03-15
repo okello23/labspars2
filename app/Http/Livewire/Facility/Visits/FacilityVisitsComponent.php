@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Facility\Visits;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\District;
 use App\Models\Facility\Facility;
 use App\Models\Facility\FacilityVisit;
 
@@ -48,6 +49,12 @@ class FacilityVisitsComponent extends Component
     public $responsible_lss_name;
 
     public $facility_id;
+
+    public $facilities = [];
+
+    public $district_id;
+
+    public $facility_level;    
 
     public $use_stock_cards;
 
@@ -95,6 +102,22 @@ class FacilityVisitsComponent extends Component
 
     }
 
+    public function updatedDistrictId($id)
+    {
+        $this->facilities = Facility::whereHas('healthSubDistrict.district', function ($query) use ($id) {
+            $query->where('id', $id);
+        })->get();
+
+        $this->facility_level = '';
+
+    }
+
+    public function updatedFacilityId($id)
+    {
+        $facility = Facility::where('id', $id)->first();
+        $this->facility_level = $facility ? $facility->level : null;
+
+    }
     public function editData(FacilityVisit $visit)
     {
         $this->edit_id = $visit->id;
@@ -194,7 +217,8 @@ class FacilityVisitsComponent extends Component
             ->with(['facility', 'facility.healthSubDistrict', 'facility.healthSubDistrict.district', 'facility.healthSubDistrict.district.region','createdBy'])
             ->orderBy($this->orderBy, $this->orderAsc ? 'asc' : 'desc')
             ->paginate($this->perPage);
-        $data['facilities'] = Facility::all();
+        // $data['facilities'] = Facility::all();
+        $data['districts'] = District::all();
 
         return view('livewire.facility.visits.facility-visits-component', $data);
     }
