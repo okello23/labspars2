@@ -257,9 +257,9 @@
             <tr>
                 <td>6. Is the ELMIS/EMR correctly used and updated?</td>
                 <td>
-                    {{ $emr_usage_score }}
+                    {{ $emr_usage_score == 0 ? 'NA' : $emr_usage_score }} 
                 </td>
-                <td>{{ $emr_usage_percentage }}%</td>
+                <td>{{ $emr_usage_percentage == 0 ? 'NA' : $emr_usage_percentage . '%' }} </td>
             </tr>
             <!-- Add more rows for other indicators as needed -->
         </tbody>

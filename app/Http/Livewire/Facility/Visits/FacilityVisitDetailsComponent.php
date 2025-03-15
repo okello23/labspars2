@@ -143,7 +143,7 @@ class FacilityVisitDetailsComponent extends Component
     {
         $this->validate([
             'name' => 'nullable|string',
-            'comment' => 'required|string',
+            // 'comment' => 'required|string',
             'storage_type' => 'required|string',
             'storage_type_id' => 'required|integer',
 
@@ -961,7 +961,7 @@ class FacilityVisitDetailsComponent extends Component
             'amc_calculated_matches' => 'required',
             'elmis_installed' => 'required',
             'elmis_quantity' => 'integer',
-            'elmis_balance_matches' => 'required',
+            'elmis_balance_matches' => 'required_if:elmis_installed,1',
         ]);
 
         // Save the data to the database
