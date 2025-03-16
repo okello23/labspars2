@@ -3,18 +3,19 @@
 
     <!-- Section 13: Reorder Level Calculation -->
     <div class="section-title">13. Reorder Level Calculation</div>
-    <h3>8. Cleanliness of the Laboratory and Storage Facilities</h3>
     <table>
         <thead>
             <tr>
-                <th>Area</th>
+                <th>#</th>
+                <th>Indicator</th>
                 <th>Score</th>
                 <th>Comments</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>a) Are copies (soft or hard) of last 2 complete order cycles filed and stored? </td>
+                <td>a)</td>
+                <td>Are copies (soft or hard) of last 2 complete order cycles filed and stored? </td>
                 <td>
                     <select class="form-control" wire:model.lazy="cycles_filed_stored" required>
                         <option value="">select</option>
@@ -26,6 +27,7 @@
                         <div class="text-danger text-small">{{ $message }}</div>
                     @enderror
                 </td>
+
                 <td>
                     <textarea class="form-control" type="text" wire:model.lazy='cycles_filed_comments'></textarea>
                     @error('cycles_filed_comments')
@@ -35,7 +37,9 @@
 
             </tr>
             <tr>
-                <td>b) Did the facility submit the last order to the warehouse electronically?</td>
+
+            <td>b)</td>
+                <td> Did the facility submit the last order to the warehouse electronically?</td>
                 <td><select class="form-control" wire:model.lazy="electronic_submission">
                         <option value="">select</option>
                         <option value="1">Yes</option>
@@ -43,7 +47,7 @@
                         <option value="2">N/A</option>
                     </select>
                 </td>
-                <td rowspan="4">
+                <td>
                     <textarea class="form-control" type="text" wire:model.lazy='electronic_submission_comments'
                         wire:model.lazy="electronic_submission_comments"></textarea>
                 </td>
@@ -53,13 +57,18 @@
     <table>
         <thead>
             <tr>
-                <th>
-
-                </th>
+                <th>#</th>
+                <th>Responses</th>
+                <th>Score</th>
             </tr>
-        </thead>
-    </table>
-    <div class="row">
+            <tr>
+                <td>c)</td>
+                <td style="word-break: break-word; white-space: normal;">
+  <i><small>Review an order form from the most recent order cycle to check whether the person knows how to
+  calculate the quantity to order. Let the person show you how to calculate the quantity to order for
+  the selected reagents/test kit</small></i><br>
+
+  <div class="row">
         <div class="col-md-2">
             <label class="form-label required">Stock on Hand (SOH):</label>
             <input class="form-control" type="number" wire:model.lazy="soh">
@@ -76,51 +85,54 @@
             <label class="form-label required">Adjusted AMC:</label>
             <input class="form-control" type="number" wire:model.lazy="adjusted_amc">
         </div>
-        <div class="col-md-4">
+        <div class="col-md-2">
 
-            <label class="form-label required">Maximum Quantity (Adjusted AMC x 4):</label>
-            <input class="form-control" type="number" wire:model.lazy="max_quantity">
+            <label class="form-label required">Maximum Qty:</label>
+            <input class="form-control" type="number" wire:model.lazy="max_quantity" title="Formular: Adjusted AMC x 4">
         </div>
-        <div class="col-md-6">
-            <label class="form-label required">Quantity to Order (Maximum stock - Stock on hand):</label>
-            <input class="form-control" type="number" wire:model.lazy="quantity_to_order">
+        <div class="col-md-2">
+            <label class="form-label required">Qty to Order:</label>
+            <input class="form-control" type="number" wire:model.lazy="quantity_to_order" title="Formular: Quantity to order = Maximum stock – Stock on hand">
         </div>
-        <div class="col-md-6">
+</div>
+</td>
 
-            <label class="form-label required">Score 1 if quantity to order is correct otherwise 0 or NR</label>
-            <select class="form-control" wire:model.lazy="qty_to_order_score">
-                <option value="">Select</option>
-                <option value="1">1</option>
-                <option value="0">0</option>
-                <option value="2">N/A</option>
-            </select>
-        </div>
-        {{-- <div class="col-md-2">
-            <button class="btn btn-success" wire:click ='saveHygiene'> Save</button>
-        </div> --}}
-    </div>
+<td>
+<div class="col-md-12">
 
+<label class="form-label required">Score 1 if qty to order is correct otherwise 0 or NR</label>
+<select class="form-control" wire:model.lazy="qty_to_order_score">
+    <option value="">Select</option>
+    <option value="1">1</option>
+    <option value="0">0</option>
+    <option value="2">N/A</option>
+</select>
+</div>
+</td>
+</tr>
 
-
-
-
-
-
-
-
-    <!-- Section 13c: Order Review -->
-    <h4>Review of Recent Order Form</h4>
-    <label class="form-label required">Is there a standard test menu at the laboratory facility?</label>
+<tr>
+    <td>d)</td>
+<td>
+<label class="form-label required">Is there a standard test menu at the laboratory facility?</label>
     <select class="form-control" wire:model.lazy="test_menu_available">
+        <option value=""></option>
         <option value="1">Yes</option>
         <option value="0">No</option>
-    </select>
-    <form wire:submit.prevent="saveOrderReview()">
+    </select></td>
+</tr>
+
+<tr>
+    <td>e)</td>
+<td style="word-break: break-word; white-space: normal;">
+  <i><small>Review the orders and delivery notes from the most recent order cycle and complete the table below
+  based on the first 5 items assessed under Stock Management</small></i><br>
+  <form wire:submit.prevent="saveOrderReview()">
         <div class="row">
             <div class="col-md-5">
                 <label for="order_item_id">Item Name:</label>
-                <select class="form-control" id="order_item_id" wire:model="order_item_id">
-                    <option value="">selcet</option>
+                <select class="form-control" id="order_item_id" wire:model="order_item_id" required>
+                    <option value="">select</option>
                     @foreach ($orderItems as $item)
                         <option value="{{ $item->id }}">{{ $item->name }}</option>
                     @endforeach
@@ -130,14 +142,14 @@
                 @enderror
             </div>
             <div class="col-md-2">
-                <label for="quantity">Quantity Ordered</label>
+                <label for="quantity">Qty Ordered</label>
                 <input type="number" step='any' required class="form-control" wire:model="quantity_ordered">
                 @error('quantity_ordered')
                     <div class="text-danger text-small">{{ $message }}</div>
                 @enderror
             </div>
             <div class="col-md-2">
-                <label for="unit_cost">Quantity Received:</label>
+                <label for="unit_cost">Qty Received:</label>
                 <input type="number" step="any" required class="form-control" wire:model="quantity_received">
                 @error('quantity_received')
                     <div class="text-danger text-small">{{ $message }}</div>
@@ -152,12 +164,12 @@
                 @enderror
             </div>
             <div class="col-1 pt-4 text-end">
-                <button class="btn btn-success" type="submit">Save Item</button>
+                <button class="btn btn-success fas fa fa-plus" type="submit"></button>
             </div>
         </div>
     </form>
     <!-- Order Fulfillment Table -->
-    <h4>Order Fulfillment Review</h4>
+    <h4></h4>
     <table>
         <thead>
             <tr>
@@ -183,17 +195,35 @@
 
                     </td>
                 </tr>
-            @empty
+                @empty
                 <tr>
                     <td class="text-center" colspan="5">No orders and delivery reviews for the notes from the most
                         recent order cycle</td>
-                </tr>
-            @endforelse
-        </tbody>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+    </td>
+</tr>
+       </thead>
     </table>
-
-    <!-- Section 14: Adherence to Ordering Procedures -->
+        {{-- <div class="col-md-2">
+            <button class="btn btn-success" wire:click ='saveHygiene'> Save</button>
+        </div> --}}
+    </div>
+ 
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>as</th>
+                <th></th>
+        </tr>
+        </thead>
+        </table>
+       <!-- Section 14: Adherence to Ordering Procedures -->
     <div class="section-title">14. Adherence to Ordering Procedures</div>
+    
     <div class="row">
         <div class="col-md-2">
             <label class="form-label required">Ordering Schedule Deadline:</label>
