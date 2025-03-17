@@ -27,6 +27,7 @@ class LabPlatform extends Model
     protected $fillable = [
         'name',
         'type',
+        'manufacturer',
         'is_active',
     ];
 
