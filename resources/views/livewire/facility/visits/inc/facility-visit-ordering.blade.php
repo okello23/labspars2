@@ -94,7 +94,7 @@
             <label class="form-label required">Qty to Order:</label>
             <input class="form-control" type="number" wire:model.lazy="quantity_to_order" title="Formular: Quantity to order = Maximum stock – Stock on hand">
         </div>
-</div>
+    </div>
 </td>
 
 <td>
@@ -119,7 +119,8 @@
         <option value=""></option>
         <option value="1">Yes</option>
         <option value="0">No</option>
-    </select></td>
+    </select>
+</td>
 </tr>
 
 <tr>
@@ -207,20 +208,8 @@
 </tr>
        </thead>
     </table>
-        {{-- <div class="col-md-2">
-            <button class="btn btn-success" wire:click ='saveHygiene'> Save</button>
-        </div> --}}
-    </div>
- 
-    <table>
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>as</th>
-                <th></th>
-        </tr>
-        </thead>
-        </table>
+
+
        <!-- Section 14: Adherence to Ordering Procedures -->
     <div class="section-title">14. Adherence to Ordering Procedures</div>
     
@@ -257,6 +246,8 @@
                 <option value="0">No</option>
             </select>
         </div>
+
+        
         <div class="col-md-12">
             <!-- Section 15: Procurement Plan -->
             <div class="section-title">15. Availability of Current Annual Laboratory Procurement Plan</div>
@@ -331,4 +322,5 @@
             </div>
         </div>
 
+    </div>
     </div>

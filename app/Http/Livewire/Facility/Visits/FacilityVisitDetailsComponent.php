@@ -809,11 +809,11 @@ class FacilityVisitDetailsComponent extends Component
             'equipment_name' => 'required',
             'equipment_type' => 'required',
             'functional' => 'required',
-            'downtime' => 'required',
-            'nonfunctional_hw' => 'required',
-            'nonfunctional_reagents' => 'required',
-            'other_factors' => 'required',
-            'response_time' => 'required',
+            'downtime' => 'required_if:functional,0',
+            'nonfunctional_hw' => 'required_if:functional,0',
+            'nonfunctional_reagents' => 'required_if:functional,0',
+            'other_factors' => 'required_if:functional,0',
+            'response_time' => 'required_if:functional,0',
         ]);
         $add = FvEquipmentFunctionality::updateOrCreate(
             ['visit_id' => $this->active_visit->id,
@@ -825,9 +825,9 @@ class FacilityVisitDetailsComponent extends Component
                 'equipment_type' => $this->equipment_type,
                 'functional' => $this->functional,
                 'downtime' => $this->downtime,
-                'nonfunctional_hw' => $this->nonfunctional_hw,
-                'nonfunctional_reagents' => $this->nonfunctional_reagents,
-                'other_factors' => $this->other_factors,
+                'nonfunctional_hw' => $this->nonfunctional_hw ?? false,
+                'nonfunctional_reagents' => $this->nonfunctional_reagents ?? false,
+                'other_factors' => $this->other_factors ?? false,
                 'response_time' => $this->response_time,
             ]);
         $this->dispatchBrowserEvent('close-modal');
