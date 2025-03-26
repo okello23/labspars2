@@ -27,7 +27,9 @@
                     {{ $dcToolScore->dct_usage_score }}
                 </td>
                 <td>
-                        <a href="javascript:void(0)" wire:click="confirmDelete({{ $dcToolScore->id }}, '{{ addslashes(get_class($dcToolScore)) }}')" class="text-danger float-right fa fa-trash"></a>
+                    <a href="javascript:void(0)"
+                        wire:click="confirmDelete({{ $dcToolScore->id }}, '{{ addslashes(get_class($dcToolScore)) }}')"
+                        class="text-danger float-right fa fa-trash"></a>
                 </td>
             </tr>
         @empty
@@ -60,6 +62,8 @@
 
 <!-- Section 21: Availability of HMIS 105 Reports -->
 <h2>21. Availability of HMIS 105 Reports</h2>
+<small>Check for availability of the specified form and score 1=Yes (if available and seen 0=No (not available or not
+    seen)</small>
 <table class="table-sm">
     <thead>
         <tr>
@@ -109,6 +113,8 @@
 
 <!-- Section 22: Timeliness of HMIS 105 Reports -->
 <h2>22. Timeliness of HMIS 105 Reports</h2>
+<small>Please check the dates the reports for the previous month were submitted, if submitted on time score 1 otherwise
+    0 (NB: Timely reporting means; 5th, 7th and 14th for facility, HSD and district respectively)</small>
 <table class="table-sm">
     <thead>
         <tr>
@@ -156,6 +162,11 @@
 
 <!-- Section 23: Completeness and Accuracy of HMIS 105 Report -->
 <h2>23. Completeness and Accuracy of HMIS 105 Report</h2>
+Date report was filled (use last report not more than 2 months ago): <input type="date"
+    wire:model="last_report_filling_date" id="last_report_filling_date">
+<small>Note: for this indicator, an average of the score in parts a, b & c contribute to the final score!</small>
+<b>a) Completeness of the HMIS 105 report</b>
+
 <table class="table-sm">
     <thead>
         <tr>
@@ -218,32 +229,34 @@
         </thead>
         <tbody>
             @forelse ($stockStatuses as $key=>$stockStatus)
-            <tr>
-                <td>{{ $key+1 }} {{ $stockStatus->stkItem->name }}</td>
-                <td>{{ $stockStatus->c_reports_available }}</td>
-                <td>{{ $stockStatus->chmis_qty_consumed }}</td>
-                <td>{{ $stockStatus->chmis_days_out_of_stock }}</td>
-                <td>{{ $stockStatus->chmis_Stock_on_hand }}</td>
-                <td>{{ $stockStatus->csc_qty_consumed }}</td>
-                <td>{{ $stockStatus->csc_days_out_of_stock }}</td>
-                <td>{{ $stockStatus->csc_Stock_on_hand }}</td>
-                <td>{{ $stockStatus->c_report_sc_agree }}
-                        <a href="javascript:void(0)" wire:click="confirmDelete({{ $stockStatus->id }}, '{{ addslashes(get_class($stockStatus)) }}')" class="text-danger float-right fa fa-trash"></a>
-                </td>
-            </tr>
+                <tr>
+                    <td>{{ $key + 1 }} {{ $stockStatus->stkItem->name }}</td>
+                    <td>{{ $stockStatus->c_reports_available }}</td>
+                    <td>{{ $stockStatus->chmis_qty_consumed }}</td>
+                    <td>{{ $stockStatus->chmis_days_out_of_stock }}</td>
+                    <td>{{ $stockStatus->chmis_Stock_on_hand }}</td>
+                    <td>{{ $stockStatus->csc_qty_consumed }}</td>
+                    <td>{{ $stockStatus->csc_days_out_of_stock }}</td>
+                    <td>{{ $stockStatus->csc_Stock_on_hand }}</td>
+                    <td>{{ $stockStatus->c_report_sc_agree }}
+                        <a href="javascript:void(0)"
+                            wire:click="confirmDelete({{ $stockStatus->id }}, '{{ addslashes(get_class($stockStatus)) }}')"
+                            class="text-danger float-right fa fa-trash"></a>
+                    </td>
+                </tr>
             @empty
-            <tr>
-                <td colspan="9">No records yet</td>
-            </tr>
+                <tr>
+                    <td colspan="9">No records yet</td>
+                </tr>
             @endforelse
-           
+
         </tbody>
     </table>
     <!-- Section 24: Use of Laboratory Data -->
-    <h3>c) Check the accuracy of the last HMIS 105 report (Yes=1/ No=0):
+    <h4>c) Check the accuracy of the last HMIS 105 report (Yes=1/ No=0):
         <a class="action-ico mx-1 btn btn-sm btn-success" data-toggle="modal" data-target="#addeAccuracyModal">
             Add accuracy</a>
-    </h3>
+    </h4>
     <table class="table-sm">
         <thead>
             <tr>
@@ -265,7 +278,9 @@
                     <td>{{ $service->hims_tests_reported }}</td>
                     <td>{{ $service->lab_reg_tests_reported }}</td>
                     <td>{{ $service->hims_lab_tests_balance }}
-                        <a href="javascript:void(0)" wire:click="confirmDelete({{ $service->id }}, '{{ addslashes(get_class($service)) }}')" class="text-danger float-right fa fa-trash"></a>
+                        <a href="javascript:void(0)"
+                            wire:click="confirmDelete({{ $service->id }}, '{{ addslashes(get_class($service)) }}')"
+                            class="text-danger float-right fa fa-trash"></a>
                     </td>
                 </tr>
             @empty
@@ -281,6 +296,9 @@
         <a class="action-ico mx-1 btn btn-sm btn-success" data-toggle="modal" data-target="#addeDataUsageModal">
             Add scores</a>
     </h2>
+    <small>Check for the presence of any of the laboratory monthly statistics displayed either in table/graph/chart
+        or map. Any display of the above statistics in the past 3 months, is awarded a score of 1 otherwise
+        0</small>
     <table class="table-sm">
         <thead>
             <tr>
@@ -299,7 +317,9 @@
                     <td>{{ $lisLabDataUsage->is_available }}</td>
                     <td>{{ $lisLabDataUsage->updated_last_quarter }}</td>
                     <td>{{ $lisLabDataUsage->comments }}
-                        <a href="javascript:void(0)" wire:click="confirmDelete({{ $lisLabDataUsage->id }}, '{{ addslashes(get_class($lisLabDataUsage)) }}')" class="text-danger float-right fa fa-trash"></a>
+                        <a href="javascript:void(0)"
+                            wire:click="confirmDelete({{ $lisLabDataUsage->id }}, '{{ addslashes(get_class($lisLabDataUsage)) }}')"
+                            class="text-danger float-right fa fa-trash"></a>
                     </td>
                 </tr>
             @empty
@@ -323,6 +343,20 @@
         <a class="action-ico mx-1 btn btn-sm btn-success" data-toggle="modal" data-target="#addeReortFillingModal">
             Add</a>
     </h2>
+    <small>
+        Assessor: Ask to see a copy of the previous month, score 1 if seen otherwise 0
+        <ol>
+            <li>For HMIS 105 (Section 10) monthly reports should have the name of the health facility, the date
+                completed, tests performed, </li>
+            <li>For HMIS Lab 024 Bimonthly Report & Order Calculation Form for HIV Test Kits; Number of kits at the
+                beginning of report period, totals received, totals used, quantity required and summaries of tests by
+                purpose.</li>
+            <li>For HMIS 025 Laboratory Order Form, in addition to the facility name, you require the total value of
+                quantities ordered.
+            <li>For HMIS PHAR 020 Requisition & Issue vouchers: Check for quantity consumed, quantity on hand, quantity
+                required, requesting and authorising officer details, </li>
+            <ol>
+    </small>
     <table class="table-sm">
         <thead>
             <tr>
@@ -338,7 +372,9 @@
                     <td>{{ $key + 1 }}</td>
                     <td>{{ $filedReport->report->name }}</td>
                     <td>{{ $filedReport->filling_score }}
-                        <a href="javascript:void(0)" wire:click="confirmDelete({{ $filedReport->id }}, '{{ addslashes(get_class($filedReport)) }}')" class="text-danger float-right fa fa-trash"></a>
+                        <a href="javascript:void(0)"
+                            wire:click="confirmDelete({{ $filedReport->id }}, '{{ addslashes(get_class($filedReport)) }}')"
+                            class="text-danger float-right fa fa-trash"></a>
                     </td>
                     {{-- <td><input type="text" wire:model="comments_hmis_105_section_10"></td> --}}
                 </tr>
