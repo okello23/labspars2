@@ -267,7 +267,7 @@
         </table>
 
 <!-- Section 15: Procurement Plan -->
-    <div class="section-title">15. Availability of Current Annual Laboratory Procurement Plan</div>
+     <div class="section-title">15. Availability of Current Annual Laboratory Procurement Plan</div>
     <table>
         <thead>
             <tr>
