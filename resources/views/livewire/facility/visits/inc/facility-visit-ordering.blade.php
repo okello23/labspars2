@@ -54,6 +54,7 @@
             </tr>
         </tbody>
     </table>
+
     <table>
         <thead>
             <tr>
@@ -220,92 +221,81 @@
             </tr>
         </thead>
     </table>
-    {{-- <div class="col-md-2">
-            <button class="btn btn-success" wire:click ='saveHygiene'> Save</button>
-        </div> --}}
-</div>
 
-<table>
-    <thead>
-        <tr>
-            <th>#</th>
-            <th>as</th>
-            <th></th>
-        </tr>
-    </thead>
-</table>
-<!-- Section 14: Adherence to Ordering Procedures -->
-<div class="section-title">14. Adherence to Ordering Procedures</div>
-
-<div class="row">
-    <div class="col-md-2">
-        <label class="form-label required">Ordering Schedule Deadline:</label>
-        <input class="form-control" type="date" wire:model="ordering_schedule_deadline">
-    </div>
-    <div class="col-md-2">
-        <label class="form-label required">Actual Date of Ordering:</label>
-        <input class="form-control" type="date" wire:model="actual_ordering_date">
-    </div>
-    <div class="col-md-2">
-        <label class="form-label required">Was ordering timely?</label>
-        <select class="form-control" wire:model="ordering_timely">
-            <option value="">select</option>
-            <option value="1">Yes</option>
-            <option value="0">No</option>
-        </select>
-    </div>
-    <div class="col-md-2">
-        <label class="form-label required">Delivery Schedule Deadline:</label>
-        <input class="form-control" type="date" wire:model.lazy="delivery_schedule_deadline">
-    </div>
-    <div class="col-md-2">
-        <label class="form-label required">Date of Delivery from Warehouse:</label>
-        <input class="form-control" type="date" wire:model.lazy="delivery_date">
-    </div>
-    <div class="col-md-2">
-        <label class="form-label required">Was delivery on schedule?</label>
-        <select class="form-control" wire:model="delivery_on_time">
-            <option value="">select</option>
-            <option value="1">Yes</option>
-            <option value="0">No</option>
-        </select>
-    </div>
-    <div class="col-md-12">
-        <!-- Section 15: Procurement Plan -->
-        <div class="section-title">15. Availability of Current Annual Laboratory Procurement Plan</div>
+        <div class="section-title">14. Adherence to Ordering Procedures</div>
         <table>
-            <thead>
-                <tr>
-                    <th>Area</th>
-                    <th>Score</th>
-                    <th>Comments</th>
-                </tr>
-            </thead>
             <tbody>
                 <tr>
-                    <td>Is the Annual Procurement Plan available? </td>
-                    <td>
-                        <select class="form-control" wire:model.lazy="annual_procurement_plan" required>
-                            <option value="">select</option>
-                            <option value="1">Yes</option>
-                            <option value="0">No</option>
-                            <option value="2">N/A</option>
-                        </select>
-                        @error('annual_procurement_plan')
-                            <div class="text-danger text-small">{{ $message }}</div>
-                        @enderror
+                    <td colspan="12"><!-- Section 14: Adherence to Ordering Procedures -->
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label class="form-label required">Ordering Schedule Deadline:</label>
+                                <input class="form-control" type="date" wire:model="ordering_schedule_deadline">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label required">Actual Date of Ordering:</label>
+                                <input class="form-control" type="date" wire:model="actual_ordering_date">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label required">Was ordering timely?</label>
+                                <select class="form-control" wire:model="ordering_timely">
+                                    <option value="">select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label required">Delivery Schedule Deadline:</label>
+                                <input class="form-control" type="date" wire:model.lazy="delivery_schedule_deadline">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label required">Date of Delivery from Warehouse:</label>
+                                <input class="form-control" type="date" wire:model.lazy="delivery_date">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label required">Was delivery on schedule?</label>
+                                <select class="form-control" wire:model="delivery_on_time">
+                                    <option value="">select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </div>
+                        </div>
                     </td>
-                    <td>
-                        <textarea class="form-control" type="text" wire:model.lazy='procurement_plan_comments'></textarea>
-                        @error('procurement_plan_comments')
-                            <div class="text-danger text-small">{{ $message }}</div>
-                        @enderror
-                    </td>
-
                 </tr>
             </tbody>
         </table>
-        <div class="col-12">
+
+<!-- Section 15: Procurement Plan -->
+     <div class="section-title">15. Availability of Current Annual Laboratory Procurement Plan</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Area</th>
+                <th>Score</th>
+                <th>Comments</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td>Is the Annual Procurement Plan available? </td>
+                <td>
+                <select class="form-control" wire:model.lazy="annual_procurement_plan" required>
+                    <option value="">select</option>
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                    <option value="2">N/A</option>
+                </select>
+                @error('annual_procurement_plan')<div class="text-danger text-small">{{ $message }}</div>@enderror</td>
+                <td>
+                <textarea class="form-control" type="text" wire:model.lazy='procurement_plan_comments'></textarea>
+                @error('procurement_plan_comments')<div class="text-danger text-small">{{ $message }}</div>@enderror</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="col-12">
             @php
                 $orderFields = [
                     'cycles_filed_comments',
@@ -343,5 +333,3 @@
 
         </div>
     </div>
-
-</div>

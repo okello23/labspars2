@@ -7,13 +7,15 @@
            <table class="table-sm">
                <thead>
                    <tr>
-                       <th>Area</th>
+                    <th>No.</th>
+                       <th>Responses</th>
                        <th>Score</th>
                        <th>Comments</th>
                    </tr>
                </thead>
                <tbody>
                    <tr>
+                    <td>1</td>
                        <td>Is the Laboratory Equipment Inventory Log (HMIS Lab 20) available? </td>
                        <td>
                            <select class="form-control" wire:model="inventory_log_available" required>
@@ -27,7 +29,8 @@
                        </td>
                    </tr>
                    <tr>
-                       <td>b) Did the facility submit the last order to the warehouse electronically?</td>
+                    <td>2</td>
+                       <td>Has the Laboratory Inventory Log been updated in the last 1 calendar year (Check the Log was updated in the last 1 year  (yes= 1, No=0)</td>
                        <td>
                            <select class="form-control" wire:model="inventory_log_updated">
                                <option value="">select</option>
