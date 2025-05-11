@@ -581,7 +581,7 @@ class FacilityVisitDetailsComponent extends Component
     public function secondStepSubmit($nxt = 1)
     {
         $this->validate([
-            'stock_mgt_comments' => 'required|string',
+            'stock_mgt_comments' => 'nullable|string',
         ]);
         $this->calculateScored();
         $this->step = 3;
