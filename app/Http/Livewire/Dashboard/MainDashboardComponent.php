@@ -48,45 +48,49 @@ class MainDashboardComponent extends Component
     {
         $this->loadDashboardData();
     }
-
+    public function refresh()
+    {
+        return redirect(request()->header('Referer'));
+    }
     public function query()
     {
-        return FacilityVisit::query()
-            ->with(['facility.healthSubDistrict.district.region']);
-    }
-    public function loadDashboardData()
-    {
+        $data = FacilityVisit::query()
+            ->with(['facility.healthSubDistrict.district.region'])
 
+            ->when($this->selectedRegion, function ($query) {
+                $query->whereHas('facility.healthSubDistrict.district', function ($q) {
+                    $q->where('region_id', $this->selectedRegion);
+                });
+            })
+
+            ->when($this->selectedDistrict, function ($query) {
+                $query->whereHas('facility.healthSubDistrict', function ($q) {
+                    $q->where('district_id', $this->selectedDistrict);
+                });
+            });
         // Apply date filters
         switch ($this->dateRange) {
             case 'today':
-                $this->query()->whereDate('date_of_visit', Carbon::today());
+                $data->whereDate('date_of_visit', Carbon::today());
                 break;
             case 'week':
-                $this->query()->whereBetween('date_of_visit', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+                $data->whereBetween('date_of_visit', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
                 break;
             case 'month':
-                $this->query()->whereBetween('date_of_visit', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()]);
+                $data->whereBetween('date_of_visit', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()]);
                 break;
             case 'custom':
                 if ($this->customStartDate && $this->customEndDate) {
-                    $this->query()->whereBetween('date_of_visit', [$this->customStartDate, $this->customEndDate]);
+                    $data->whereBetween('date_of_visit', [$this->customStartDate, $this->customEndDate]);
                 }
                 break;
         }
-
+        return $data;
         // Region and District filters
-        if ($this->selectedRegion) {
-            $this->query()->whereHas('facility.healthSubDistrict.district', function ($q) {
-                $q->where('region_id', $this->selectedRegion);
-            });
-        }
 
-        if ($this->selectedDistrict) {
-            $this->query()->whereHas('facility.healthSubDistrict', function ($q) {
-                $q->where('district_id', $this->selectedDistrict);
-            });
-        }
+    }
+    public function loadDashboardData()
+    {
 
         // Basic Statistics
         $this->totalVisits     = $this->query()->count();

@@ -68,6 +68,7 @@ class FacilityVisitDetailsComponent extends Component
 
     public function mount($code)
     {
+
         $this->code         = $code;
         $this->active_visit = FacilityVisit::where('visit_code', $code)
             ->with(['facility', 'facility.healthSubDistrict', 'facility.healthSubDistrict.district', 'facility.healthSubDistrict.district.region'])->first();
@@ -93,6 +94,10 @@ class FacilityVisitDetailsComponent extends Component
         } else {
             $this->step = 1;
         }
+
+        $this->loadStkMgtScore();
+        $this->loadStorageMgt();
+        $this->loadOrdering();
 
     }
 
@@ -1826,10 +1831,6 @@ class FacilityVisitDetailsComponent extends Component
 
     public function render()
     {
-
-        $this->loadStkMgtScore();
-        $this->loadStorageMgt();
-        $this->loadOrdering();
 
         $data['supervised_persons']  = collect([]);
         $data['supervisors']         = collect([]);

@@ -53,8 +53,8 @@
                 </div>
                 <div class="btn-group mb-3">
 
-                    <button type="button" class="btn btn-default"><i class="fa fa-send"></i> <span
-                            class="hidden-md">Report</span></button>
+                    <button type="button" wire:click="refresh()" class="btn btn-default"><i class="fa fa-refresh"></i>
+                        <span class="hidden-md">Load</span></button>
                     <button type="button" class="btn btn-default"><i class="fa fa-file-pdf-o"></i> <span
                             class="hidden-md">Export</span></button>
                 </div>
@@ -72,7 +72,7 @@
                 <div class="stat-value text-blue-600">{{ number_format($totalVisits) }}</div>
                 <div class="stat-label">Total Visits</div>
                 <div class="absolute top-2 right-2">
-                    <i class="fas fa-hospital-user text-blue-200 text-3xl"></i>
+                    <i class="fa fa-book text-blue text-3xl"></i>
                 </div>
             </div>
         </div>
@@ -83,7 +83,7 @@
                 <div class="stat-value text-yellow-600">{{ number_format($pendingVisits) }}</div>
                 <div class="stat-label">Pending Visits</div>
                 <div class="absolute top-2 right-2">
-                    <i class="fas fa-clock text-yellow-200 text-3xl"></i>
+                    <i class="fa fa-map text-yellow text-3xl"></i>
                 </div>
             </div>
         </div>
@@ -94,7 +94,7 @@
                 <div class="stat-value text-green-600">{{ number_format($completedVisits) }}</div>
                 <div class="stat-label">Completed Visits</div>
                 <div class="absolute top-2 right-2">
-                    <i class="fas fa-check-circle text-green-200 text-3xl"></i>
+                    <i class="fa fa-check-circle text-green text-3xl"></i>
                 </div>
             </div>
         </div>
@@ -107,7 +107,7 @@
                 </div>
                 <div class="stat-label">Facility Coverage</div>
                 <div class="absolute top-2 right-2">
-                    <i class="fas fa-building text-purple-200 text-3xl"></i>
+                    <i class="fa fa-building text-purple text-3xl"></i>
                 </div>
             </div>
         </div>
@@ -124,7 +124,7 @@
     </div>
 
     <!-- Charts Section -->
-    <div class="row">
+    <div class="row" wire:ignore>
         <!-- Visit Trends Chart -->
         <div class="col-lg-6 col-md-6">
             <div class="card">
