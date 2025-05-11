@@ -22,6 +22,19 @@ class FvEquipmentUtilization extends Model
         'final_score', 
         'visit_id'
    ];
+
+   protected $casts = [
+    'nonfunctional_hw' => 'boolean',
+    'nonfunctional_reagents' => 'boolean',
+    'other_factors' => 'boolean',
+];
+
+protected $attributes = [
+    'nonfunctional_hw' => false,
+    'nonfunctional_reagents' => false,
+    'other_factors' => false,
+];
+
 }
 
 

@@ -662,16 +662,16 @@ class FacilityVisitDetailsComponent extends Component
         $this->main_store_opening_date           = $StoragePractices->main_store_opening_date ?? null;
         $this->lab_store_opening_date            = $StoragePractices->lab_store_opening_date ?? null;
         $this->practices_comments                = $StoragePractices->practices_comments ?? null;
-        $this->main_opened_bottles_have_lids     = $StoragePractices?->main_opened_bottles_have_lids;
-        $this->lab_opened_bottles_have_lids      = $StoragePractices?->lab_opened_bottles_have_lids;
-        $this->main_chemicals_properly_labelled  = $StoragePractices?->main_chemicals_properly_labelled;
-        $this->lab_chemicals_properly_labelled   = $StoragePractices?->lab_chemicals_properly_labelled;
-        $this->main_flammables_stored_safely     = $StoragePractices?->main_flammables_stored_safely;
-        $this->lab_flammables_stored_safely      = $StoragePractices?->lab_flammables_stored_safely;
-        $this->main_corrosives_separated         = $StoragePractices?->main_corrosives_separated;
-        $this->lab_corrosives_separated          = $StoragePractices?->lab_corrosives_separated;
-        $this->main_safety_data_sheets_available = $StoragePractices?->main_safety_data_sheets_available;
-        $this->lab_safety_data_sheets_available  = $StoragePractices?->lab_safety_data_sheets_available;
+        $this->main_opened_bottles_have_lids     = $StoragePractices->main_opened_bottles_have_lids ?? null;
+        $this->lab_opened_bottles_have_lids      = $StoragePractices->lab_opened_bottles_have_lids ?? null;
+        $this->main_chemicals_properly_labelled  = $StoragePractices->main_chemicals_properly_labelled ?? null;
+        $this->lab_chemicals_properly_labelled   = $StoragePractices->lab_chemicals_properly_labelled ?? null;
+        $this->main_flammables_stored_safely     = $StoragePractices->main_flammables_stored_safely ?? null;
+        $this->lab_flammables_stored_safely      = $StoragePractices->lab_flammables_stored_safely ?? null;
+        $this->main_corrosives_separated         = $StoragePractices->main_corrosives_separated ?? null;
+        $this->lab_corrosives_separated          = $StoragePractices->lab_corrosives_separated ?? null;
+        $this->main_safety_data_sheets_available = $StoragePractices->main_safety_data_sheets_available ?? null;
+        $this->lab_safety_data_sheets_available  = $StoragePractices->lab_safety_data_sheets_available ?? null;
     }
 
     public $cycles_filed_stored;
@@ -958,11 +958,11 @@ class FacilityVisitDetailsComponent extends Component
             'equipment_name'         => 'required',
             'equipment_type'         => 'required',
             'functional'             => 'required',
-            'downtime'               => 'required',
-            'nonfunctional_hw'       => 'required',
-            'nonfunctional_reagents' => 'required',
-            'other_factors'          => 'required',
-            'response_time'          => 'required',
+            'downtime'               => 'required_if:functional,0',
+            'nonfunctional_hw'       => 'required_if:functional,0',
+            'nonfunctional_reagents' => 'required_if:functional,0',
+            'other_factors'          => 'required_if:functional,0',
+            'response_time'          => 'required_if:functional,0',
         ]);
         $add = FvEquipmentFunctionality::updateOrCreate(
             ['visit_id'    => $this->active_visit->id,
@@ -974,9 +974,9 @@ class FacilityVisitDetailsComponent extends Component
                 'equipment_type'         => $this->equipment_type,
                 'functional'             => $this->functional,
                 'downtime'               => $this->downtime,
-                'nonfunctional_hw'       => $this->nonfunctional_hw,
-                'nonfunctional_reagents' => $this->nonfunctional_reagents,
-                'other_factors'          => $this->other_factors,
+                'nonfunctional_hw'       => $this->nonfunctional_hw ?? false,
+                'nonfunctional_reagents' => $this->nonfunctional_reagents ?? false,
+                'other_factors'          => $this->other_factors ?? false,
                 'response_time'          => $this->response_time,
             ]);
         $this->dispatchBrowserEvent('close-modal');
