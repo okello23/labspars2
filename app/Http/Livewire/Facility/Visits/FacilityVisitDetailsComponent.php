@@ -551,9 +551,15 @@ class FacilityVisitDetailsComponent extends Component
         $this->active_visit->consumption_reconciliation = $this->consumption_reconciliation;
         $this->active_visit->stage                      = 'Stock Mgt';
         $this->active_visit->update();
+        $this->loadStkMgtScore();
         if ($nxt) {
             $this->step = 2;
         }
+
+    }
+
+    public function loadStkMgtScore()
+    {
         $stkScores = FvStockMgtScore::where('visit_id', $this->active_visit->id)->first();
         // dd($stkScores);
         $this->availability_score             = $stkScores->availability_score ?? null;
@@ -569,11 +575,6 @@ class FacilityVisitDetailsComponent extends Component
         $this->emr_usage_score                = $stkScores->emr_usage_score ?? null;
         $this->emr_usage_percentage           = $stkScores->emr_usage_percentage ?? null;
         $this->stock_mgt_comments             = $stkScores->stock_mgt_comments ?? null;
-
-    }
-
-    public function loadStorage()
-    {
 
     }
 
@@ -661,16 +662,16 @@ class FacilityVisitDetailsComponent extends Component
         $this->main_store_opening_date           = $StoragePractices->main_store_opening_date ?? null;
         $this->lab_store_opening_date            = $StoragePractices->lab_store_opening_date ?? null;
         $this->practices_comments                = $StoragePractices->practices_comments ?? null;
-        $this->main_opened_bottles_have_lids     = $StoragePractices->main_opened_bottles_have_lids;
-        $this->lab_opened_bottles_have_lids      = $StoragePractices->lab_opened_bottles_have_lids;
-        $this->main_chemicals_properly_labelled  = $StoragePractices->main_chemicals_properly_labelled;
-        $this->lab_chemicals_properly_labelled   = $StoragePractices->lab_chemicals_properly_labelled;
-        $this->main_flammables_stored_safely     = $StoragePractices->main_flammables_stored_safely;
-        $this->lab_flammables_stored_safely      = $StoragePractices->lab_flammables_stored_safely;
-        $this->main_corrosives_separated         = $StoragePractices->main_corrosives_separated;
-        $this->lab_corrosives_separated          = $StoragePractices->lab_corrosives_separated;
-        $this->main_safety_data_sheets_available = $StoragePractices->main_safety_data_sheets_available;
-        $this->lab_safety_data_sheets_available  = $StoragePractices->lab_safety_data_sheets_available;
+        $this->main_opened_bottles_have_lids     = $StoragePractices?->main_opened_bottles_have_lids;
+        $this->lab_opened_bottles_have_lids      = $StoragePractices?->lab_opened_bottles_have_lids;
+        $this->main_chemicals_properly_labelled  = $StoragePractices?->main_chemicals_properly_labelled;
+        $this->lab_chemicals_properly_labelled   = $StoragePractices?->lab_chemicals_properly_labelled;
+        $this->main_flammables_stored_safely     = $StoragePractices?->main_flammables_stored_safely;
+        $this->lab_flammables_stored_safely      = $StoragePractices?->lab_flammables_stored_safely;
+        $this->main_corrosives_separated         = $StoragePractices?->main_corrosives_separated;
+        $this->lab_corrosives_separated          = $StoragePractices?->lab_corrosives_separated;
+        $this->main_safety_data_sheets_available = $StoragePractices?->main_safety_data_sheets_available;
+        $this->lab_safety_data_sheets_available  = $StoragePractices?->lab_safety_data_sheets_available;
     }
 
     public $cycles_filed_stored;
@@ -869,9 +870,18 @@ class FacilityVisitDetailsComponent extends Component
         $this->saveStoragePractices();
         $this->saveHygiene();
         $this->saveCleanliness();
+        $this->loadOrdering();
         if ($nxt) {
             $this->step = 4;
         }
+
+        if ($nxt) {
+            $this->active_visit->update(['stage' => 'Order Mgt']);
+        }
+    }
+
+    public function loadOrdering()
+    {
         $ordering = FvOrderManagement::where('visit_id', $this->active_visit->id)->first();
 
         $this->cycles_filed_stored            = $ordering->cycles_filed_stored ?? null;
@@ -900,11 +910,7 @@ class FacilityVisitDetailsComponent extends Component
         $this->adherence_percentage       = $adherence->adherence_percentage ?? null;
         $this->annual_procurement_plan    = $adherence->annual_procurement_plan ?? null;
         $this->procurement_plan_comments  = $adherence->procurement_plan_comments ?? null;
-        if ($nxt) {
-            $this->active_visit->update(['stage' => 'Order Mgt']);
-        }
     }
-
     public function fourthStepSubmit($nxt = 1)
     {
 
@@ -1820,7 +1826,10 @@ class FacilityVisitDetailsComponent extends Component
 
     public function render()
     {
+
+        $this->loadStkMgtScore();
         $this->loadStorageMgt();
+        $this->loadOrdering();
 
         $data['supervised_persons']  = collect([]);
         $data['supervisors']         = collect([]);

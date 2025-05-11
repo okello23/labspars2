@@ -27,14 +27,9 @@ return new class extends Migration
             $table->text('practices_comments')->nullable();
 
             $table->boolean('opened_bottles_have_lids')->nullable();
-            $table->boolean('opened_bottles_have_lids')->nullable();
-            $table->boolean('chemicals_properly_labelled')->nullable();
             $table->boolean('chemicals_properly_labelled')->nullable();
             $table->boolean('flammables_stored_safely')->nullable();
-            $table->boolean('flammables_stored_safely')->nullable();
             $table->boolean('corrosives_separated')->nullable();
-            $table->boolean('corrosives_separated')->nullable();
-            $table->boolean('safety_data_sheets_available')->nullable();
             $table->boolean('safety_data_sheets_available')->nullable();
             $table->timestamps();
         });
