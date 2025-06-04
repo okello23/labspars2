@@ -12,9 +12,9 @@
     </thead>
     <tbody>
         <tr>
-            <td>The Lab store is clean and tidy</td>
+            <td>a) The Lab store is clean and tidy</td>
             <td>
-                <select class="form-control" wire:model.defer.defer='lab_store_clean' name="lab_store_clean">
+                <select class="form-control" wire:model.lazy='lab_store_clean' name="lab_store_clean">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -24,8 +24,8 @@
 
         </tr>
         <tr>
-            <td>The Main store is clean and tidy</td>
-            <td><select class="form-control" wire:model.defer='main_store_clean' name="main_store_clean">
+            <td>b) The Main store is clean and tidy</td>
+            <td><select class="form-control" wire:model.lazy='main_store_clean' name="main_store_clean">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -45,8 +45,8 @@
             </td>
         </tr>
         <tr>
-            <td>The Laboratory is clean and tidy</td>
-            <td><select class="form-control" wire:model.defer='laboratory_clean' name="laboratory_clean">
+            <td>c) The Laboratory is clean and tidy</td>
+            <td><select class="form-control" wire:model.lazy='laboratory_clean' name="laboratory_clean">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -60,9 +60,9 @@
     </tbody>
 </table>
 {{-- <button class="btn btn-success" wire:click ='saveCleanliness'> Save</button> --}}
-<p>
-    <strong>Score:</strong> Sum of scores for (a+b+c) divided by 3 minus NA = ______
-    <strong>Percentage:</strong> __________
+<p class="text-info">
+    <strong>Score:</strong> Sum of scores for (a+b+c) divided by 3 minus NA = <u> {{ $score ?? 'N/A' }} </u>
+    <strong>Percentage:</strong> <u> {{ $percentage !== null ? $percentage . '%' : 'N/A' }} </u>
 </p>
 
 <!-- Hygiene Section -->
@@ -79,10 +79,10 @@
     </thead>
     <tbody>
         <tr>
-            <td>Is there running water in the lab?</td>
+            <td>a) Is there running water in the lab?</td>
             <td>
 
-                <select class="form-control" wire:model.defer='running_water'>
+                <select class="form-control" wire:model.lazy='running_water'>
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -91,8 +91,8 @@
             </td>
         </tr>
         <tr>
-            <td>Is the hand washing area separate from the staining area?</td>
-            <td> <select class="form-control" wire:model.defer='hand_washing_separate'>
+            <td>b) Is the hand washing area separate from the staining area?</td>
+            <td> <select class="form-control" wire:model.lazy='hand_washing_separate'>
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -101,8 +101,8 @@
             </td>
         </tr>
         <tr>
-            <td>Is the hand washing facility accessible, hygienic, and functioning?</td>
-            <td> <select class="form-control" wire:model.defer='hand_washing_facility'>
+            <td>c) Is the hand washing facility accessible, hygienic, and functioning?</td>
+            <td> <select class="form-control" wire:model.lazy='hand_washing_facility'>
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -111,8 +111,8 @@
             </td>
         </tr>
         <tr>
-            <td>Is the drainage system of suitable standards?</td>
-            <td> <select class="form-control" wire:model.defer='drainage_system'>
+            <td>d) Is the drainage system of suitable standards?</td>
+            <td> <select class="form-control" wire:model.lazy='drainage_system'>
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -141,8 +141,8 @@
             </td>
         </tr>
         <tr>
-            <td>Is there soap for hand washing?</td>
-            <td> <select class="form-control" wire:model.defer='soap_available'>
+            <td>e) Is there soap for hand washing?</td>
+            <td> <select class="form-control" wire:model.lazy='soap_available'>
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -158,9 +158,9 @@
 </table>
 {{-- <button class="btn btn-success" wire:click ='saveHygiene'> Save</button> --}}
 
-<p>
-    <strong>Score:</strong> Sum of scores (a to d) divided by 5 minus NA = ______
-    <strong>Percentage:</strong> __________
+<p class="text-info">
+    <strong>Score:</strong> Sum of scores (a to e) divided by 5 minus NA = <u> {{ $hygiene_score ?? 'N/A' }} </u>
+    <strong>Percentage:</strong> <u> {{ $hygiene_percentage !== null ? $hygiene_percentage . '%' : 'N/A' }} </u>
 </p>
 
 <!-- Storage System Section -->
@@ -178,33 +178,15 @@
     </thead>
     <tbody>
         <tr>
-            <td>Are there shelves, pallets, and cabinets for storage?</td>
-            <td><select class="form-control" wire:model.defer="main_store_shelves">
+            <td>a) Are there shelves, pallets, and cabinets for storage?</td>
+            <td><select class="form-control" wire:model.lazy="main_store_shelves">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td><select class="form-control" wire:model.defer="lab_store_shelves">
-                    <option value="">select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                    <option value="2">N/A</option>
-                </select>
-            </td>
-
-        </tr>
-        <tr>
-            <td>Are reagents stored on shelves or in cabinets?</td>
-            <td><select class="form-control" wire:model.defer="main_store_reagents">
-                    <option value="">select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                    <option value="2">N/A</option>
-                </select>
-            </td>
-            <td><select class="form-control" wire:model.defer="lab_store_reagents">
+            <td><select class="form-control" wire:model.lazy="lab_store_shelves">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -214,15 +196,15 @@
 
         </tr>
         <tr>
-            <td>Are stock cards kept next to the reagents on the shelves?</td>
-            <td><select class="form-control" wire:model.defer="main_store_stock_cards">
+            <td>b) Are reagents stored on shelves or in cabinets?</td>
+            <td><select class="form-control" wire:model.lazy="main_store_reagents">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td><select class="form-control" wire:model.defer="lab_store_stock_cards">
+            <td><select class="form-control" wire:model.lazy="lab_store_reagents">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -232,15 +214,33 @@
 
         </tr>
         <tr>
-            <td>Are lab reagents stored systematically (alphabetic, usage form)?</td>
-            <td><select class="form-control" wire:model.defer="main_store_systematic">
+            <td>c) Are stock cards kept next to the reagents on the shelves?</td>
+            <td><select class="form-control" wire:model.lazy="main_store_stock_cards">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td><select class="form-control" wire:model.defer="lab_store_systematic">
+            <td><select class="form-control" wire:model.lazy="lab_store_stock_cards">
+                    <option value="">select</option>
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                    <option value="2">N/A</option>
+                </select>
+            </td>
+
+        </tr>
+        <tr>
+            <td>d) Are lab reagents stored systematically (alphabetic, usage form)?</td>
+            <td><select class="form-control" wire:model.lazy="main_store_systematic">
+                    <option value="">select</option>
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                    <option value="2">N/A</option>
+                </select>
+            </td>
+            <td><select class="form-control" wire:model.lazy="lab_store_systematic">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -271,16 +271,17 @@
                 @endforeach
             </td>
         </tr>
+
         <tr>
-            <td>Are the shelves and cabinets labeled?</td>
-            <td><select class="form-control" wire:model.defer="main_store_labeled">
+            <td>e) Are the shelves and cabinets labeled?</td>
+            <td><select class="form-control" wire:model.lazy="main_store_labeled">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td><select class="form-control" wire:model.defer="lab_store_labeled">
+            <td><select class="form-control" wire:model.lazy="lab_store_labeled">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -295,10 +296,21 @@
 </table>
 {{-- <button class="btn btn-success" wire:click ='saveSystemStorage'> Save</button> --}}
 
-<p>
-    <strong>Score:</strong> Sum of scores (a to e) divided by 5 minus NA = ______
-    <strong>Percentage:</strong> __________
+<p class="text-info">
+    <strong>Score: Main store:</strong> The sum of scores (a to e) yes (1) divided by 5:  <u> {{ $system_for_main_storage_score ?? 'N/A' }} </u>
+    <strong>Percentage:</strong> {{ $system_for_main_storage_percentage !== null ? $system_for_main_storage_percentage . '%' : 'N/A' }} </u>
 </p>
+
+<p class="text-info">
+    <strong>Score: Lab Store</strong> The sum of scores (a to e) yes (1) divided by 5:  <u> {{ $system_for_lab_storage_score ?? 'N/A' }} </u>
+    <strong>Percentage:</strong> {{ $system_for_lab_storage_percentage !== null ? $system_for_lab_storage_percentage . '%' : 'N/A' }} 
+</p>
+
+<p class="text-info">
+    Sum of main store score results + Lab score results minus NA:  <u> {{ $system_for_main_storage_total + $system_for_lab_storage_total ?? 'N/A' }} </u>
+    <strong>Percentage:</strong> {{ $system_for_storage_percentage !== null ? $system_for_storage_percentage . '%' : 'N/A' }} 
+</p>
+
 
 <!-- Storage Conditions Section -->
 <h3>11. Storage Conditions for Laboratory Supplies/Reagents</h3>
@@ -316,14 +328,14 @@
     <tbody>
         <tr>
             <td>a) No signs of pests/harmful insects/rodents</td>
-            <td><select class="form-control" wire:model.defer="main_store_pests">
+            <td><select class="form-control" wire:model.lazy="main_store_pests">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td><select class="form-control" wire:model.defer="lab_store_pests">
+            <td><select class="form-control" wire:model.lazy="lab_store_pests">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -374,14 +386,14 @@
         </tr>
         <tr>
             <td>b) Are supplies protected from direct sunlight?</td>
-            <td><select class="form-control" wire:model.defer="main_store_sunlight">
+            <td><select class="form-control" wire:model.lazy="main_store_sunlight">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td><select class="form-control" wire:model.defer="lab_store_sunlight">
+            <td><select class="form-control" wire:model.lazy="lab_store_sunlight">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -391,14 +403,14 @@
         </tr>
         <tr>
             <td>c) Is the temperature of the storage room monitored?</td>
-            <td><select class="form-control" wire:model.defer="main_store_temperature">
+            <td><select class="form-control" wire:model.lazy="main_store_temperature">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td><select class="form-control" wire:model.defer="lab_store_temperature">
+            <td><select class="form-control" wire:model.lazy="lab_store_temperature">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -408,14 +420,14 @@
         </tr>
         <tr>
             <td>d) Can the temperature of the storeroom be regulated ?</td>
-            <td><select class="form-control" wire:model.defer="main_temperature_regulated">
+            <td><select class="form-control" wire:model.lazy="main_temperature_regulated">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td><select class="form-control" wire:model.defer="lab_temperature_regulated">
+            <td><select class="form-control" wire:model.lazy="lab_temperature_regulated">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -425,14 +437,14 @@
         </tr>
         <tr>
             <td>e) Roof is maintained in good condition to avoid water penetration?</td>
-            <td><select class="form-control" wire:model.defer="main_roof_condition">
+            <td><select class="form-control" wire:model.lazy="main_roof_condition">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td><select class="form-control" wire:model.defer="lab_roof_condition">
+            <td><select class="form-control" wire:model.lazy="lab_roof_condition">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -442,14 +454,14 @@
         </tr>
         <tr>
             <td>f) Is storage space sufficient and adequate?</td>
-            <td><select class="form-control" wire:model.defer="main_sufficient_storage_space">
+            <td><select class="form-control" wire:model.lazy="main_sufficient_storage_space">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td><select class="form-control" wire:model.defer="lab_sufficient_storage_space">
+            <td><select class="form-control" wire:model.lazy="lab_sufficient_storage_space">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -459,14 +471,14 @@
         </tr>
         <tr>
             <td>g. Is the storeroom lockable and access restricted to authorized personnel?</td>
-            <td><select class="form-control" wire:model.defer="main_store_lockable">
+            <td><select class="form-control" wire:model.lazy="main_store_lockable">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td><select class="form-control" wire:model.defer="lab_store_lockable">
+            <td><select class="form-control" wire:model.lazy="lab_store_lockable">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -480,14 +492,14 @@
         <tr>
             <td>h) Fire safety equipment is available and accessible (any items for promotion of fire safety should be
                 considered)</td>
-            <td><select class="form-control" wire:model.defer="main_fire_safety_equipment_available">
+            <td><select class="form-control" wire:model.lazy="main_fire_safety_equipment_available">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td><select class="form-control" wire:model.defer="lab_fire_safety_equipment_available">
+            <td><select class="form-control" wire:model.lazy="lab_fire_safety_equipment_available">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -497,14 +509,14 @@
         </tr>
         <tr>
             <td>i) Is there a functioning system for cold storage (Refrigerator/Freezer)?</td>
-            <td><select class="form-control" wire:model.defer="main_cold_storage_functional">
+            <td><select class="form-control" wire:model.lazy="main_cold_storage_functional">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td><select class="form-control" wire:model.defer="lab_cold_storage_functional">
+            <td><select class="form-control" wire:model.lazy="lab_cold_storage_functional">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -514,14 +526,14 @@
         </tr>
         <tr>
             <td>j) Is the refrigerator/freezer kept in a well-ventilated space? </td>
-            <td><select class="form-control" wire:model.defer="main_fridge_well_ventilated">
+            <td><select class="form-control" wire:model.lazy="main_fridge_well_ventilated">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td><select class="form-control" wire:model.defer="lab_fridge_well_ventilated">
+            <td><select class="form-control" wire:model.lazy="lab_fridge_well_ventilated">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -531,14 +543,14 @@
         </tr>
         <tr>
             <td>k) If yes, are only reagents stored in the refrigerator – no food or beverage?</td>
-            <td><select class="form-control" wire:model.defer="main_fridge_used_for_reagents_only">
+            <td><select class="form-control" wire:model.lazy="main_fridge_used_for_reagents_only">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td><select class="form-control" wire:model.defer="lab_fridge_used_for_reagents_only">
+            <td><select class="form-control" wire:model.lazy="lab_fridge_used_for_reagents_only">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -548,14 +560,14 @@
         </tr>
         <tr>
             <td>l) Are the containers in the refrigerator securely capped or properly covered?</td>
-            <td><select class="form-control" wire:model.defer="main_containers_securely_capped">
+            <td><select class="form-control" wire:model.lazy="main_containers_securely_capped">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td><select class="form-control" wire:model.defer="lab_containers_securely_capped">
+            <td><select class="form-control" wire:model.lazy="lab_containers_securely_capped">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -565,14 +577,14 @@
         </tr>
         <tr>
             <td>m) Is the temperature of the refrigerator monitored daily?</td>
-            <td><select class="form-control" wire:model.defer="main_fridge_temperature_monitored">
+            <td><select class="form-control" wire:model.lazy="main_fridge_temperature_monitored">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td><select class="form-control" wire:model.defer="lab_fridge_temperature_monitored">
+            <td><select class="form-control" wire:model.lazy="lab_fridge_temperature_monitored">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -582,14 +594,14 @@
         </tr>
         <tr>
             <td>n) Boxes are not directly on the floor in the store</td>
-            <td><select class="form-control" wire:model.defer="main_boxes_not_on_floor">
+            <td><select class="form-control" wire:model.lazy="main_boxes_not_on_floor">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                     <option value="2">N/A</option>
                 </select>
             </td>
-            <td><select class="form-control" wire:model.defer="lab_boxes_not_on_floor">
+            <td><select class="form-control" wire:model.lazy="lab_boxes_not_on_floor">
                     <option value="">select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
@@ -605,11 +617,22 @@
 </table>
 {{-- <button class="btn btn-success" wire:click ='saveStorageCondition'> Save</button> --}}
 
-
-<p>
-    <strong>Score:</strong> Sum of scores (a to l) divided by 14 minus NA = ______
-    <strong>Percentage:</strong> __________
+<p class="text-info">
+    <strong>Score: Main store:</strong>Main store: the sum of a) to l) yes (1) divided by 14:	  <u> {{ $main_storage_condition_score ?? 'N/A' }} </u>
+    <strong>Percentage:</strong> {{ $main_storage_condition_percentage !== null ? $main_storage_condition_percentage . '%' : 'N/A' }} </u>
 </p>
+
+<p class="text-info">
+    <strong>Score: Lab Store</strong> Lab store: the sum of a) to l) yes (1) divided by 14:  <u> {{ $lab_storage_condition_score ?? 'N/A' }} </u>
+    <strong>Percentage:</strong> {{ $lab_storage_condition_percentage !== null ? $lab_storage_condition_percentage . '%' : 'N/A' }} 
+</p>
+
+<p class="text-info">
+    Sum of main score results + Lab score results minus NA:  <u> {{ $this->main_storage_condition_total + $this->lab_storage_condition_total ?? 'N/A' }} </u>
+    <strong>Percentage:</strong> {{ $storage_condition_percentage !== null ? $storage_condition_percentage . '%' : 'N/A' }} 
+</p>
+
+
 
 <!-- Storage Practices Section -->
 <h3>12. Storage Practices of Laboratory Reagents</h3>
@@ -626,14 +649,14 @@
         <tbody>
             <tr>
                 <td>a) Is there a record for expired reagents?</td>
-                <td><select class="form-control" wire:model.defer="main_store_expired_record">
+                <td><select class="form-control" wire:model.lazy="main_store_expired_record">
                         <option value="">select</option>
                         <option value="1">Yes</option>
                         <option value="0">No</option>
                         <option value="2">N/A</option>
                     </select>
                 </td>
-                <td><select class="form-control" wire:model.defer="lab_store_expired_record">
+                <td><select class="form-control" wire:model.lazy="lab_store_expired_record">
                         <option value="">select</option>
                         <option value="1">Yes</option>
                         <option value="0">No</option>
@@ -674,14 +697,14 @@
             </tr>
             <tr>
                 <td>b) Is there a place to store expired reagents separately?</td>
-                <td><select class="form-control" wire:model.defer="main_store_expired_separate">
+                <td><select class="form-control" wire:model.lazy="main_store_expired_separate">
                         <option value="">select</option>
                         <option value="1">Yes</option>
                         <option value="0">No</option>
                         <option value="2">N/A</option>
                     </select>
                 </td>
-                <td><select class="form-control" wire:model.defer="lab_store_expired_separate">
+                <td><select class="form-control" wire:model.lazy="lab_store_expired_separate">
                         <option value="">select</option>
                         <option value="1">Yes</option>
                         <option value="0">No</option>
@@ -691,14 +714,14 @@
             </tr>
             <tr>
                 <td>c) Is FEFO adhered to?</td>
-                <td><select class="form-control" wire:model.defer="main_store_fefo">
+                <td><select class="form-control" wire:model.lazy="main_store_fefo">
                         <option value="">select</option>
                         <option value="1">Yes</option>
                         <option value="0">No</option>
                         <option value="2">N/A</option>
                     </select>
                 </td>
-                <td><select class="form-control" wire:model.defer="lab_store_fefo">
+                <td><select class="form-control" wire:model.lazy="lab_store_fefo">
                         <option value="">select</option>
                         <option value="1">Yes</option>
                         <option value="0">No</option>
@@ -708,14 +731,14 @@
             </tr>
             <tr>
                 <td>d) Are reagent bottles/kits labeled with the date of opening?</td>
-                <td><select class="form-control" wire:model.defer="main_store_opening_date">
+                <td><select class="form-control" wire:model.lazy="main_store_opening_date">
                         <option value="">select</option>
                         <option value="1">Yes</option>
                         <option value="0">No</option>
                         <option value="2">N/A</option>
                     </select>
                 </td>
-                <td><select class="form-control" wire:model.defer="lab_store_opening_date">
+                <td><select class="form-control" wire:model.lazy="lab_store_opening_date">
                         <option value="">select</option>
                         <option value="1">Yes</option>
                         <option value="0">No</option>
@@ -726,14 +749,14 @@
 
             <tr>
                 <td>e) Do all bottles that have been opened have a lid on? </td>
-                <td><select class="form-control" wire:model.defer="main_opened_bottles_have_lids">
+                <td><select class="form-control" wire:model.lazy="main_opened_bottles_have_lids">
                         <option value="">select</option>
                         <option value="1">Yes</option>
                         <option value="0">No</option>
                         <option value="2">N/A</option>
                     </select>
                 </td>
-                <td><select class="form-control" wire:model.defer="lab_opened_bottles_have_lids">
+                <td><select class="form-control" wire:model.lazy="lab_opened_bottles_have_lids">
                         <option value="">select</option>
                         <option value="1">Yes</option>
                         <option value="0">No</option>
@@ -743,14 +766,14 @@
             </tr>
             <tr>
                 <td>f) Are chemicals labelled with the chemical’s name and with hazard markings? </td>
-                <td><select class="form-control" wire:model.defer="main_chemicals_properly_labelled">
+                <td><select class="form-control" wire:model.lazy="main_chemicals_properly_labelled">
                         <option value="">select</option>
                         <option value="1">Yes</option>
                         <option value="0">No</option>
                         <option value="2">N/A</option>
                     </select>
                 </td>
-                <td><select class="form-control" wire:model.defer="lab_chemicals_properly_labelled">
+                <td><select class="form-control" wire:model.lazy="lab_chemicals_properly_labelled">
                         <option value="">select</option>
                         <option value="1">Yes</option>
                         <option value="0">No</option>
@@ -761,14 +784,14 @@
             <tr>
                 <td>g) Are flammable chemicals stored out of sunlight and below their flashpoint, preferably in a steel
                     cabinet in a well-ventilated area </td>
-                <td><select class="form-control" wire:model.defer="main_flammables_stored_safely">
+                <td><select class="form-control" wire:model.lazy="main_flammables_stored_safely">
                         <option value="">select</option>
                         <option value="1">Yes</option>
                         <option value="0">No</option>
                         <option value="2">N/A</option>
                     </select>
                 </td>
-                <td><select class="form-control" wire:model.defer="lab_flammables_stored_safely">
+                <td><select class="form-control" wire:model.lazy="lab_flammables_stored_safely">
                         <option value="">select</option>
                         <option value="1">Yes</option>
                         <option value="0">No</option>
@@ -779,14 +802,14 @@
             <tr>
                 <td>h) Are flammable and corrosive agents stored on lower shelves or separated from one another
                     (preferably in a separate cabinet) </td>
-                <td><select class="form-control" wire:model.defer="main_corrosives_separated">
+                <td><select class="form-control" wire:model.lazy="main_corrosives_separated">
                         <option value="">select</option>
                         <option value="1">Yes</option>
                         <option value="0">No</option>
                         <option value="2">N/A</option>
                     </select>
                 </td>
-                <td><select class="form-control" wire:model.defer="lab_corrosives_separated">
+                <td><select class="form-control" wire:model.lazy="lab_corrosives_separated">
                         <option value="">select</option>
                         <option value="1">Yes</option>
                         <option value="0">No</option>
@@ -798,14 +821,14 @@
 
             <tr>
                 <td>i) Are Specific Material Safety Data Sheets available for all reagents in storage?</td>
-                <td><select class="form-control" wire:model.defer="main_safety_data_sheets_available">
+                <td><select class="form-control" wire:model.lazy="main_safety_data_sheets_available">
                         <option value="">select</option>
                         <option value="1">Yes</option>
                         <option value="0">No</option>
                         <option value="2">N/A</option>
                     </select>
                 </td>
-                <td><select class="form-control" wire:model.defer="lab_safety_data_sheets_available">
+                <td><select class="form-control" wire:model.lazy="lab_safety_data_sheets_available">
                         <option value="">select</option>
                         <option value="1">Yes</option>
                         <option value="0">No</option>
@@ -821,7 +844,18 @@
 </div>
 {{-- <button class="btn btn-success" wire:click ='saveStoragePractices'> Save</button> --}}
 
-<p>
-    <strong>Score:</strong> Sum of scores (a to i) divided by 9 minus NA = ______
-    <strong>Percentage:</strong> __________
+<p class="text-info">
+    <strong>Score: Main store:</strong>Main store: the sum of a) to i) yes (1) divided by 9:	  <u> {{ $main_storage_practice_score ?? 'N/A' }} </u>
+    <strong>Percentage:</strong> {{ $main_storage_practice_percentage !== null ? $main_storage_practice_percentage . '%' : 'N/A' }} </u>
 </p>
+
+<p class="text-info">
+    <strong>Score: Lab Store</strong> Lab store: the sum of a) to i) yes (1) divided by 9:  <u> {{ $lab_storage_practice_score ?? 'N/A' }} </u>
+    <strong>Percentage:</strong> {{ $lab_storage_practice_percentage !== null ? $lab_storage_practice_percentage . '%' : 'N/A' }} 
+</p>
+
+<p class="text-info">
+    Sum of main score results + Lab score results minus NA:  <u> {{ $this->main_storage_practice_total + $this->lab_storage_practice_total ?? 'N/A' }} </u>
+    <strong>Percentage:</strong> {{ $storage_practice_percentage !== null ? $storage_practice_percentage . '%' : 'N/A' }} 
+</p>
+
