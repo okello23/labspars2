@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Livewire\Facility\Visits;
 
+use Illuminate\Support\Str;
 use App\Models\Facility\FacilityVisit;
 use App\Models\Facility\FvPersonsSupervised;
 use App\Models\Facility\FvStorageType;
@@ -192,12 +193,397 @@ class FacilityVisitDetailsComponent extends Component
     }
 
     public $lab_store_clean;
-
     public $main_store_clean;
-
     public $laboratory_clean;
-
     public $cleanliness_comments;
+    public $score = null;
+    public $percentage = null;
+    public $hygiene_score = null;
+    public $hygiene_percentage = null;
+
+    public $system_for_lab_storage_score = null;
+    public $system_for_lab_storage_percentage = null;
+    public $system_for_main_storage_score = null;
+    public $system_for_main_storage_percentage = null;
+    public $system_for_main_storage_total = null;
+    public $system_for_lab_storage_total = null;
+    public $system_for_storage_percentage = null;
+
+    public $main_storage_condition_score = null;
+    public $main_storage_condition_percentage = null;
+    public $lab_storage_condition_score = null;
+    public $lab_storage_condition_percentage = null;
+    public $main_storage_condition_total = null;
+    public $lab_storage_condition_total = null;
+    public $storage_condition_total = null;
+    public $storage_condition_percentage = null;
+
+    public $main_storage_practice_score = null;
+    public $main_storage_practice_total = null;
+    public $main_storage_practice_percentage = null;
+
+    public $lab_storage_practice_score = null;
+    public $lab_storage_practice_percentage = null;
+    public $lab_storage_practice_total = null;
+    
+    public $storage_practice_total = null;
+    public $storage_practice_percentage = null;
+
+
+protected function getScoringFieldMap(): array
+{
+    $storage_practice_main_arr = [
+        'main_store_expired_record',
+        'main_store_expired_separate',
+        'main_store_fefo',
+        'main_store_opening_date',
+        'main_opened_bottles_have_lids',
+        'main_chemicals_properly_labelled',
+        'main_flammables_stored_safely',
+        'main_corrosives_separated',
+        'main_safety_data_sheets_available'
+    ];
+
+    $storage_practice_lab_arr = [
+        'lab_store_expired_record',
+        'lab_store_expired_separate',
+        'lab_store_fefo',
+        'lab_store_opening_date',
+        'lab_opened_bottles_have_lids',
+        'lab_chemicals_properly_labelled',
+        'lab_flammables_stored_safely',
+        'lab_corrosives_separated',
+        'lab_safety_data_sheets_available'
+    ];
+
+    $main_storage_condition_arr = [
+            'main_store_pests', 
+            'main_store_sunlight', 
+            'main_store_temperature', 
+            'main_temperature_regulated',
+            'main_roof_condition',
+            'main_sufficient_storage_space',
+            'main_store_lockable',
+            'main_fire_safety_equipment_available',
+            'main_cold_storage_functional',
+            'main_fridge_well_ventilated',
+            'main_fridge_used_for_reagents_only',
+            'main_containers_securely_capped',
+            'main_fridge_temperature_monitored',
+            'main_boxes_not_on_floor'
+    ];
+    $lab_storage_condition_arr = [
+            'lab_store_pests', 
+            'lab_store_sunlight', 
+            'lab_store_temperature', 
+            'lab_temperature_regulated',
+            'lab_roof_condition',
+            'lab_sufficient_storage_space',
+            'lab_store_lockable',
+            'lab_fire_safety_equipment_available',
+            'lab_cold_storage_functional',
+            'lab_fridge_well_ventilated',
+            'lab_fridge_used_for_reagents_only',
+            'lab_containers_securely_capped',
+            'lab_fridge_temperature_monitored',
+            'lab_boxes_not_on_floor'
+    ];
+    $main_storage_system_arr = [
+        'main_store_shelves',
+        'main_store_reagents',
+        'main_store_stock_cards',
+        'main_store_systematic',
+        'main_store_labeled'
+    ];
+    $lab_storage_system_arr = [
+        'lab_store_shelves',
+        'lab_store_labeled',
+        'lab_store_reagents',
+        'lab_store_systematic',
+        'lab_store_stock_cards'
+    ];
+
+    return [
+        'calculateCleanlinessScore' => [
+            'lab_store_clean', 'main_store_clean', 'laboratory_clean'
+        ],
+        'calculateHygieneScore' => [
+            'running_water', 'hand_washing_separate', 'hand_washing_facility', 'drainage_system', 'soap_available'
+        ],
+        'calculateSystemForLabStorageScore' => $lab_storage_system_arr,
+        'calculateSystemForMainStorageScore' => $main_storage_system_arr,
+        'calculateSumOfSystemStorageScore' => array_merge($main_storage_system_arr, $lab_storage_system_arr),
+
+        'calculateMainStorageConditionScore' => $main_storage_condition_arr,
+        'calculateLabStorageConditionScore' => $lab_storage_condition_arr,
+        'calculateStorageConditionScore' => array_merge($main_storage_condition_arr, $lab_storage_condition_arr),
+
+        'calculateStoragePracticeMainScore' => $storage_practice_main_arr,
+        'calculateStoragePracticeLabScore' => $storage_practice_lab_arr,
+        'calculateStoragePracticesScore' => array_merge($storage_practice_main_arr, $storage_practice_lab_arr),
+    ];
+}
+
+
+public function updated($propertyName)
+{
+    // Get the map of methods to fields
+    static $flipped_map = [];
+
+    // If the flipped map is empty, populate it
+    foreach ($this->getScoringFieldMap() as $method => $fields) {
+        // If the method is not already in the flipped map, flip the fields array ['lab_store_clean', 'main_store_clean'] becomes ['lab_store_clean' => 0, 'main_store_clean' => 1]
+
+        if (!isset($flipped_map[$method])) {
+            // Flip the fields array for quick lookup of property names for this method
+            $flipped_map[$method] = array_flip($fields); 
+        }
+        // Check if the property name exists in the flipped map for the current method
+        if (isset($flipped_map[$method][$propertyName])) {
+            // Call the method if the property name matches any field for that method
+            $this->$method();
+        }
+    }
+}
+
+public function calculateCleanlinessScore()
+{
+    list($score, $percentage, $sum) = calculate_score_metrics([
+        $this->lab_store_clean,
+        $this->main_store_clean,
+        $this->laboratory_clean,
+    ]);
+
+    $this->score = $score;
+    $this->percentage = $percentage;
+}
+
+public function calculateHygieneScore()
+{
+    list($score, $percentage, $sum) = calculate_score_metrics([
+        $this->running_water,
+        $this->hand_washing_separate,
+        $this->hand_washing_facility,
+        $this->drainage_system,
+        $this->soap_available,
+    ]);
+
+    $this->hygiene_score = $score;
+    $this->hygiene_percentage = $percentage;
+}
+
+
+public function calculateSystemForLabStorageScore()
+{
+    list($score, $percentage, $sum) = calculate_score_metrics([
+        $this->lab_store_shelves,
+        $this->lab_store_labeled,
+        $this->lab_store_reagents,
+        $this->lab_store_systematic,
+        $this->lab_store_stock_cards,
+    ]);
+
+    $this->system_for_lab_storage_score = $score;
+    $this->system_for_lab_storage_percentage = $percentage;
+    $this->system_for_lab_storage_total = $sum;
+}
+
+public function calculateSystemForMainStorageScore()
+{
+    list($score, $percentage, $sum) = calculate_score_metrics([
+        $this->main_store_shelves,
+        $this->main_store_reagents,
+        $this->main_store_stock_cards,
+        $this->main_store_systematic,
+        $this->main_store_labeled,
+    ]);
+
+    $this->system_for_main_storage_total = $sum;
+    $this->system_for_main_storage_score = $score;
+    $this->system_for_main_storage_percentage = $percentage;
+}
+
+public function calculateMainStorageConditionScore()
+{
+    list($score, $percentage, $sum) = calculate_score_metrics([
+        $this->main_store_pests,
+        $this->main_store_sunlight,
+        $this->main_store_temperature,
+        $this->main_temperature_regulated,
+        $this->main_roof_condition,
+        $this->main_sufficient_storage_space,
+        $this->main_store_lockable,
+        $this->main_fire_safety_equipment_available,
+        $this->main_cold_storage_functional,
+        $this->main_fridge_well_ventilated,
+        $this->main_fridge_used_for_reagents_only,
+        $this->main_containers_securely_capped,
+        $this->main_fridge_temperature_monitored,
+        $this->main_boxes_not_on_floor,
+    ]);
+
+    $this->main_storage_condition_total = $sum;
+    $this->main_storage_condition_score = $score;
+    $this->main_storage_condition_percentage = $percentage;
+}
+
+public function calculateLabStorageConditionScore()
+{
+    list($score, $percentage, $sum) = calculate_score_metrics([
+        $this->lab_store_pests,
+        $this->lab_store_sunlight,
+        $this->lab_store_temperature,
+        $this->lab_temperature_regulated,
+        $this->lab_roof_condition,
+        $this->lab_sufficient_storage_space,
+        $this->lab_store_lockable,
+        $this->lab_fire_safety_equipment_available,
+        $this->lab_cold_storage_functional,
+        $this->lab_fridge_well_ventilated,
+        $this->lab_fridge_used_for_reagents_only,
+        $this->lab_containers_securely_capped,
+        $this->lab_fridge_temperature_monitored,
+        $this->lab_boxes_not_on_floor,
+    ]);
+
+    $this->lab_storage_condition_total = $sum;
+    $this->lab_storage_condition_score = $score;
+    $this->lab_storage_condition_percentage = $percentage;
+}
+
+public function calculateSumOfSystemStorageScore()
+{
+    // Now just aggregate:
+    $this->system_for_storage_total = $this->system_for_main_storage_total + $this->system_for_lab_storage_total;
+
+    list($_, $this->system_for_storage_percentage, $__) = calculate_score_metrics([
+        $this->main_store_shelves,
+        $this->main_store_reagents,
+        $this->main_store_stock_cards,
+        $this->main_store_systematic,
+        $this->main_store_labeled,
+        $this->lab_store_shelves,
+        $this->lab_store_labeled,
+        $this->lab_store_reagents,
+        $this->lab_store_systematic,
+        $this->lab_store_stock_cards,
+    ]);
+}
+
+public function calculateStorageConditionScore()
+{
+    $fields = [
+        $this->main_store_pests,
+        $this->main_store_sunlight,
+        $this->main_store_temperature,
+        $this->main_temperature_regulated,
+        $this->main_roof_condition,
+        $this->main_sufficient_storage_space,
+        $this->main_store_lockable,
+        $this->main_fire_safety_equipment_available,
+        $this->main_cold_storage_functional,
+        $this->main_fridge_well_ventilated,
+        $this->main_fridge_used_for_reagents_only,
+        $this->main_containers_securely_capped,
+        $this->main_fridge_temperature_monitored,
+        $this->main_boxes_not_on_floor,
+        $this->lab_store_pests,
+        $this->lab_store_sunlight,
+        $this->lab_store_temperature,
+        $this->lab_temperature_regulated,
+        $this->lab_roof_condition,
+        $this->lab_sufficient_storage_space,
+        $this->lab_store_lockable,
+        $this->lab_fire_safety_equipment_available,
+        $this->lab_cold_storage_functional,
+        $this->lab_fridge_well_ventilated,
+        $this->lab_fridge_used_for_reagents_only,
+        $this->lab_containers_securely_capped,
+        $this->lab_fridge_temperature_monitored,
+        $this->lab_boxes_not_on_floor,
+    ];
+
+    list($score, $percentage, $sum) = calculate_score_metrics($fields);
+
+    // Store results
+    $this->storage_condition_total = $sum;
+    $this->storage_condition_score = $score;
+    $this->storage_condition_percentage = $percentage;
+}
+
+public function calculateStoragePracticeMainScore()
+{
+    $fields = [
+        $this->main_store_expired_record,
+        $this->main_store_expired_separate,
+        $this->main_store_fefo,
+        $this->main_store_opening_date,
+        $this->main_opened_bottles_have_lids,
+        $this->main_chemicals_properly_labelled,
+        $this->main_flammables_stored_safely,
+        $this->main_corrosives_separated,
+        $this->main_safety_data_sheets_available,
+    ];
+
+    list($score, $percentage, $sum) = calculate_score_metrics($fields);
+
+    $this->main_storage_practice_total = $sum;
+    $this->main_storage_practice_score = $score;
+    $this->main_storage_practice_percentage = $percentage;
+}
+
+public function calculateStoragePracticeLabScore()
+{
+    $fields = [
+        $this->lab_store_expired_record,
+        $this->lab_store_expired_separate,
+        $this->lab_store_fefo,
+        $this->lab_store_opening_date,
+        $this->lab_opened_bottles_have_lids,
+        $this->lab_chemicals_properly_labelled,
+        $this->lab_flammables_stored_safely,
+        $this->lab_corrosives_separated,
+        $this->lab_safety_data_sheets_available,
+    ];
+
+    list($score, $percentage, $sum) = calculate_score_metrics($fields);
+
+    $this->lab_storage_practice_total = $sum;
+    $this->lab_storage_practice_score = $score;
+    $this->lab_storage_practice_percentage = $percentage;
+}
+
+
+public function calculateStoragePracticesScore()
+{
+    $fields = [
+        $this->main_store_expired_record,
+        $this->lab_store_expired_record,
+        $this->main_store_expired_separate,
+        $this->lab_store_expired_separate,
+        $this->main_store_fefo,
+        $this->lab_store_fefo,
+        $this->main_store_opening_date,
+        $this->lab_store_opening_date,
+        $this->main_opened_bottles_have_lids,
+        $this->lab_opened_bottles_have_lids,
+        $this->main_chemicals_properly_labelled,
+        $this->lab_chemicals_properly_labelled,
+        $this->main_flammables_stored_safely,
+        $this->lab_flammables_stored_safely,
+        $this->main_corrosives_separated,
+        $this->lab_corrosives_separated,
+        $this->main_safety_data_sheets_available,
+        $this->lab_safety_data_sheets_available,
+    ];
+
+    list($score, $percentage, $sum) = calculate_score_metrics($fields);
+
+    // Store results
+    $this->storage_practice_percentage = $percentage;
+    $this->storage_practice_total = $sum;
+}
+
 
     public function saveCleanliness()
     {
