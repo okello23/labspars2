@@ -62,7 +62,7 @@
                                             @else
                                                 <x-button
                                                     class="btn btn-success nextBtn btn-lg float-right fa fa-arrow-circle-right"
-                                                    wire:click="firstStepSubmit">Next</x-button>
+                                                    wire:click="firstStepSubmit(1)">Next</x-button>
                                             @endif
                                         </div>
                                         <br><br>
@@ -80,7 +80,7 @@
                                             <div class="btn-group float-right" role="group">
                                                 <x-button
                                                     class="btn btn-success nextBtn btn-lg float-right fa fa-arrow-circle-right"
-                                                    wire:click="secondStepSubmit">Next</x-button>
+                                                    wire:click="secondStepSubmit(1)">Next</x-button>
                                             </div>
                                             <div class="btn-group" role="group">
                                                 <x-button
@@ -102,7 +102,7 @@
                                         <div class="container">
                                             <div class="btn-group float-right" role="group">
                                                 <x-button class="btn-success  nextBtn btn-lg fa fa-arrow-circle-right"
-                                                    wire:click="thirdStepSubmit">Next</x-button>
+                                                    wire:click="thirdStepSubmit(1)">Next</x-button>
                                             </div>
                                             <div class="btn-group" role="group">
                                                 <x-button
@@ -125,7 +125,7 @@
                                         <div class="container">
                                             <div class="btn-group float-right" role="group">
                                                 <x-button class="btn-success  nextBtn btn-lg fa fa-arrow-circle-right"
-                                                    wire:click="fourthStepSubmit">Next</x-button>
+                                                    wire:click="fourthStepSubmit(1)">Next</x-button>
                                             </div>
                                             <div class="btn-group" role="group">
                                                 <x-button
@@ -148,7 +148,7 @@
                                         <div class="container">
                                             <div class="btn-group float-right" role="group">
                                                 <x-button class="btn-success  nextBtn btn-lg fa fa-arrow-circle-right"
-                                                    wire:click="fifthStepSubmit">Next</x-button>
+                                                    wire:click="fifthStepSubmit(1)">Next</x-button>
                                             </div>
                                             <div class="btn-group" role="group">
                                                 <x-button
@@ -186,8 +186,8 @@
                         @endif
                     </div>
                 </div>
-            @include('livewire.partials.delete')
-               {{-- @include('livewire.facility.visits.inc.new-facility-visit') --}}
+                @include('livewire.partials.delete')
+                {{-- @include('livewire.facility.visits.inc.new-facility-visit') --}}
             </div>
         </div>
     </div>

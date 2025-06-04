@@ -124,7 +124,7 @@
                              @enderror
                          </div>
                          <div class="col-md-4 mb-3" title="Record the amount issued in the last 3 complete months.">
-                            <Label>Aamount issued in the last 3 complete month</Label>
+                            <Label>Amount issued in the last 3 complete month</Label>
                              <input type="number" min="0" step="any" class="form-control"
                                  wire:model.lazy="last_issues">
                              @error('last_issues')
@@ -183,6 +183,8 @@
                                  <div class="text-danger text-small">{{ $message }}</div>
                              @enderror
                          </div>
+
+                         @if($elmis_installed == 1)
                          <div class="col-md-4 mb-3"
                              title="Record the quantity as per the ELMIS/EMR. Write NR if not recorded.">
                              <label for="">Quantity as per the ELMIS/EMR</label>
@@ -204,8 +206,10 @@
                                  <div class="text-danger text-small">{{ $message }}</div>
                              @enderror
                          </div>
-                     </div>
-                 </div>
+                         @endif
+                        </div>
+                    </div>
+
                  <div class="modal-footer">
                      <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"
                          wire:click="close()">{{ __('close') }}</button>

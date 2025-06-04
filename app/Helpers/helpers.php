@@ -122,3 +122,26 @@ if (!function_exists('checkYesNoNA')) {
         return 'NA';
     }
 }
+
+if (!function_exists('calculate_score_metrics')) {
+    function calculate_score_metrics(array $values): array
+    {
+        $valid = array_filter($values, function ($v) {
+            return $v !== '' && $v !== '2';
+        });
+
+        $total = count($valid);
+        $sum = array_sum($valid); // Yes = 1, No = 0
+
+        if ($total === 0) {
+            return [null, null, 0];
+        }
+
+        $score = round($sum / $total, 2);
+        $percentage = round($score * 100, 2);
+
+        return [$score, $percentage, $sum, $total];
+    }
+}
+
+
