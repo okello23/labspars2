@@ -153,6 +153,7 @@
             </div> <!-- end card -->
         </div><!-- end col-->
     </div>
+    
     @include('livewire.facility.visits.inc.new-facility-visit')
     @push('scripts')
         <script>
