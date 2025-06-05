@@ -129,11 +129,46 @@
         <div class="col-lg-6 col-md-6">
             <div class="card">
                 <div class="header">
-                    <h4>Visit Trends (Last 12 Months)</h4>
+                    <h4>Spider Graph</h4>
                 </div>
                 <div class="body">
                     <div class="card-body">
-                        <div class="chart-container" id="visitTrendsChart"></div>
+                        <!-- <div class="chart-container" id="visitTrendsChart"></div> -->
+                         <div>
+    <canvas id="spiderChart" width="400" height="400"></canvas>
+</div>
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('spiderChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: @json($categories),
+                datasets: [{
+                    label: 'Score',
+                    data: @json($scores),
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    r: {
+                        suggestedMin: 0,
+                        suggestedMax: 5
+                    }
+                }
+            }
+        });
+    });
+</script>
+@endpush
+
                     </div>
                 </div>
             </div>
