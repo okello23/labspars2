@@ -228,88 +228,51 @@ class FacilityVisitDetailsComponent extends Component
     
     public $storage_practice_total = null;
     public $storage_practice_percentage = null;
-
+    
+    public $ordering_score = null;
+    public $ordering_percentage = null;
+    public $order_adherence_score = null;
+    public $order_adherence_percentage = null;
+    public $order_availability_score = null;
+    public $order_availability_percentage = null;
+    
+    public $equipment_maintenance_score = null;
+    public $equipment_maintenance_percentage = null;
+    public $equipment_mgt_plan_score = null;
+    public $equipment_mgt_plan_percentage = null;
 
 protected function getScoringFieldMap(): array
 {
-    $storage_practice_main_arr = [
-        'main_store_expired_record',
-        'main_store_expired_separate',
-        'main_store_fefo',
-        'main_store_opening_date',
-        'main_opened_bottles_have_lids',
-        'main_chemicals_properly_labelled',
-        'main_flammables_stored_safely',
-        'main_corrosives_separated',
-        'main_safety_data_sheets_available'
+    $storage_practice_main_arr = ['main_store_expired_record','main_store_expired_separate','main_store_fefo',
+    'main_store_opening_date','main_opened_bottles_have_lids','main_chemicals_properly_labelled',
+    'main_flammables_stored_safely','main_corrosives_separated','main_safety_data_sheets_available'
     ];
 
-    $storage_practice_lab_arr = [
-        'lab_store_expired_record',
-        'lab_store_expired_separate',
-        'lab_store_fefo',
-        'lab_store_opening_date',
-        'lab_opened_bottles_have_lids',
-        'lab_chemicals_properly_labelled',
-        'lab_flammables_stored_safely',
-        'lab_corrosives_separated',
-        'lab_safety_data_sheets_available'
+    $storage_practice_lab_arr = ['lab_store_expired_record','lab_store_expired_separate','lab_store_fefo',
+    'lab_store_opening_date','lab_opened_bottles_have_lids','lab_chemicals_properly_labelled',
+    'lab_flammables_stored_safely','lab_corrosives_separated','lab_safety_data_sheets_available'
     ];
 
-    $main_storage_condition_arr = [
-            'main_store_pests', 
-            'main_store_sunlight', 
-            'main_store_temperature', 
-            'main_temperature_regulated',
-            'main_roof_condition',
-            'main_sufficient_storage_space',
-            'main_store_lockable',
-            'main_fire_safety_equipment_available',
-            'main_cold_storage_functional',
-            'main_fridge_well_ventilated',
-            'main_fridge_used_for_reagents_only',
-            'main_containers_securely_capped',
-            'main_fridge_temperature_monitored',
-            'main_boxes_not_on_floor'
+    $main_storage_condition_arr = ['main_store_pests', 'main_store_sunlight', 'main_store_temperature', 
+    'main_temperature_regulated','main_roof_condition','main_sufficient_storage_space','main_store_lockable',
+    'main_fire_safety_equipment_available','main_cold_storage_functional','main_fridge_well_ventilated',
+    'main_fridge_used_for_reagents_only','main_containers_securely_capped','main_fridge_temperature_monitored','main_boxes_not_on_floor'
     ];
-    $lab_storage_condition_arr = [
-            'lab_store_pests', 
-            'lab_store_sunlight', 
-            'lab_store_temperature', 
-            'lab_temperature_regulated',
-            'lab_roof_condition',
-            'lab_sufficient_storage_space',
-            'lab_store_lockable',
-            'lab_fire_safety_equipment_available',
-            'lab_cold_storage_functional',
-            'lab_fridge_well_ventilated',
-            'lab_fridge_used_for_reagents_only',
-            'lab_containers_securely_capped',
-            'lab_fridge_temperature_monitored',
-            'lab_boxes_not_on_floor'
+
+    $lab_storage_condition_arr = ['lab_store_pests', 'lab_store_sunlight', 'lab_store_temperature', 'lab_temperature_regulated',
+    'lab_roof_condition','lab_sufficient_storage_space','lab_store_lockable','lab_fire_safety_equipment_available',
+    'lab_cold_storage_functional','lab_fridge_well_ventilated','lab_fridge_used_for_reagents_only',
+    'lab_containers_securely_capped','lab_fridge_temperature_monitored','lab_boxes_not_on_floor'
     ];
-    $main_storage_system_arr = [
-        'main_store_shelves',
-        'main_store_reagents',
-        'main_store_stock_cards',
-        'main_store_systematic',
-        'main_store_labeled'
-    ];
-    $lab_storage_system_arr = [
-        'lab_store_shelves',
-        'lab_store_labeled',
-        'lab_store_reagents',
-        'lab_store_systematic',
-        'lab_store_stock_cards'
-    ];
+
+    $main_storage_system_arr = ['main_store_shelves','main_store_reagents','main_store_stock_cards','main_store_systematic','main_store_labeled'];
+
+    $lab_storage_system_arr = ['lab_store_shelves','lab_store_labeled','lab_store_reagents','lab_store_systematic','lab_store_stock_cards'];
 
     return [
-        'calculateCleanlinessScore' => [
-            'lab_store_clean', 'main_store_clean', 'laboratory_clean'
-        ],
-        'calculateHygieneScore' => [
-            'running_water', 'hand_washing_separate', 'hand_washing_facility', 'drainage_system', 'soap_available'
-        ],
+        'calculateCleanlinessScore' => ['lab_store_clean', 'main_store_clean', 'laboratory_clean'],
+        'calculateHygieneScore' => ['running_water', 'hand_washing_separate', 'hand_washing_facility', 'drainage_system', 'soap_available'],
+
         'calculateSystemForLabStorageScore' => $lab_storage_system_arr,
         'calculateSystemForMainStorageScore' => $main_storage_system_arr,
         'calculateSumOfSystemStorageScore' => array_merge($main_storage_system_arr, $lab_storage_system_arr),
@@ -321,9 +284,15 @@ protected function getScoringFieldMap(): array
         'calculateStoragePracticeMainScore' => $storage_practice_main_arr,
         'calculateStoragePracticeLabScore' => $storage_practice_lab_arr,
         'calculateStoragePracticesScore' => array_merge($storage_practice_main_arr, $storage_practice_lab_arr),
+
+        'calculateOrderingScore' => ['cycles_filed_stored','electronic_submission','qty_to_order_score','test_menu_available'],
+        'calculateOrderAdherenceScore' => ['ordering_timely','delivery_on_time'],
+        'calculateOrderAvailabilityScore' => ['annual_procurement_plan'],
+
+        'calculateEquipmentMaintenanceScore' => ['inventory_log_available','inventory_log_updated'],
+        'calculateEquipmentMgtPlanScore' => ['service_info_available','equipment_serviced','iqc_performed','operator_manuals_available'],
     ];
 }
-
 
 public function updated($propertyName)
 {
@@ -344,6 +313,52 @@ public function updated($propertyName)
             $this->$method();
         }
     }
+}
+
+public function calculateOrderAdherenceScore()
+{
+    list($score, $percentage, $sum) = calculate_score_metrics([
+        $this->ordering_timely,
+        $this->delivery_on_time,
+    ]);
+
+    $this->order_adherence_score = $score;
+    $this->order_adherence_percentage = $percentage;
+}
+
+public function calculateEquipmentMaintenanceScore()
+{
+    list($score, $percentage, $sum) = calculate_score_metrics([
+        $this->inventory_log_available,
+        $this->inventory_log_updated,
+    ]);
+
+    $this->equipment_maintenance_score = $score;
+    $this->equipment_maintenance_percentage = $percentage;
+}
+
+public function calculateEquipmentMgtPlanScore()
+{
+    list($score, $percentage, $sum) = calculate_score_metrics([
+        $this->service_info_available,
+        $this->equipment_serviced,
+        $this->iqc_performed,
+        $this->operator_manuals_available,
+    ]);
+
+
+    $this->equipment_mgt_plan_score = $score;
+    $this->equipment_mgt_plan_percentage = $percentage;
+}
+
+public function calculateOrderAvailabilityScore()
+{
+    list($score, $percentage, $sum) = calculate_score_metrics([
+        $this->annual_procurement_plan,
+    ]);
+
+    $this->order_availability_score = $score;
+    $this->order_availability_percentage = $percentage;
 }
 
 public function calculateCleanlinessScore()
@@ -582,6 +597,19 @@ public function calculateStoragePracticesScore()
     // Store results
     $this->storage_practice_percentage = $percentage;
     $this->storage_practice_total = $sum;
+}
+
+public function calculateOrderingScore()
+{
+    list($score, $percentage, $sum) = calculate_score_metrics([
+        $this->cycles_filed_stored,
+        $this->electronic_submission,
+        $this->qty_to_order_score,
+        $this->test_menu_available,
+    ]);
+
+    $this->ordering_score = $score;
+    $this->ordering_percentage = $percentage;
 }
 
 

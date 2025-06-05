@@ -45,7 +45,10 @@
                </tbody>
            </table>
        </div>
-       <h4>Score: <span>(Sum of 1 & 2) / 2</span></h4>
+        <p class="text-info">
+    <strong>Score:</strong> Sum of 1 & 2 divided by 2 <u> {{ $equipment_maintenance_score ?? 'N/A' }} </u>
+    <strong>Percentage:</strong> {{ $equipment_maintenance_percentage !== null ? $equipment_maintenance_percentage . '%' : 'N/A' }} </u>
+</p>
 
        <!-- Section 17: Equipment Management Plan -->
        <h4 class="section-title">17. Equipment Management Plan to Ensure Functionality</h4>
@@ -114,6 +117,10 @@
            </table>
        </div>
        <h4>Score: Sum (1 to 4)</h4>
+            <p class="text-info">
+    <strong>Score:</strong> Sum of 1 & 4 <u> {{ $equipment_mgt_plan_score ?? 'N/A' }} </u>
+    <strong>Percentage:</strong> {{ $equipment_mgt_plan_percentage !== null ? $equipment_mgt_plan_percentage . '%' : 'N/A' }} </u>
+</p>
 
        <!-- Section 18: Equipment Functionality -->
        <h4 class="section-title">18. Equipment Functionality</h4>

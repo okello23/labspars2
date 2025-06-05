@@ -112,7 +112,7 @@
                             <option value="">Select</option>
                             <option value="1">1</option>
                             <option value="0">0</option>
-                            <option value="2">N/A</option>
+                            <option value="2">NR</option>
                         </select>
                     </div>
                 </td>
@@ -193,6 +193,10 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @php
+                                $totalRate = 0;
+                                $count = 0;
+                            @endphp
 
                             @forelse ($reviews as $key => $review)
                                 <tr>
@@ -200,6 +204,15 @@
                                     <td>{{ $review->reagent->name ?? 'N/A' }}</td>
                                     <td>{{ $review->quantity_ordered ?? 'N/A' }}</td>
                                     <td>{{ $review->quantity_received ?? 'N/A' }}</td>
+                                    @php
+                                        $rate = ($review->quantity_ordered > 0 && $review->quantity_received !== null)
+                                        ? ($review->quantity_received / $review->quantity_ordered) * 100
+                                        : 0;
+                                        $totalRate += $rate;
+                                        $count++;
+                                        @endphp
+                                    <!-- <td>{{ number_format($rate, 2) }}%</td> -->
+
                                     <td>{{ $review->fulfillment_rate }}</td>
                                     <td>
                                         <a href="javascript:void(0)"
@@ -210,17 +223,29 @@
                                 </tr>
                             @empty
                                 <tr>
+                                    
                                     <td class="text-center" colspan="5">No orders and delivery reviews for the
                                         notes from the most
                                         recent order cycle</td>
                                 </tr>
                             @endforelse
+                           <tr>
+                                    <td colspan="4" style="text-align: right;"><strong>Average Order Fulfillment Rate</strong></td>
+                                     <td style="background-color: #d3d3d3;">
+                                        <strong>{{ $count > 0 ? number_format($totalRate / $count, 2) . '%' : 'N/A' }}</strong>
+                                    </td>
+                                    <td style="background-color: #d3d3d3;"></td>
+                            </tr>
                         </tbody>
                     </table>
                 </td>
             </tr>
         </thead>
     </table>
+    <p class="text-info">
+    <strong>Score:</strong> The sum of item ((a+b+c+d)/4)):  <u> {{ $ordering_score ?? 'N/A' }} </u>
+    <strong>Percentage:</strong> {{ $ordering_percentage !== null ? $ordering_percentage . '%' : 'N/A' }} </u>
+</p>
 
         <div class="section-title">14. Adherence to Ordering Procedures</div>
         <table>
@@ -266,6 +291,10 @@
             </tbody>
         </table>
 
+    <p class="text-info">
+    <strong>Score:</strong> <u> {{ $order_adherence_score ?? 'N/A' }} </u>
+    <strong>Percentage:</strong> {{ $order_adherence_percentage !== null ? $order_adherence_percentage . '%' : 'N/A' }} </u>
+</p>
 <!-- Section 15: Procurement Plan -->
      <div class="section-title">15. Availability of Current Annual Laboratory Procurement Plan</div>
     <table>
@@ -294,6 +323,10 @@
             </tr>
         </tbody>
     </table>
+        <p class="text-info">
+    <strong>Score:</strong> <u> {{ $order_availability_score ?? 'N/A' }} </u>
+    <strong>Percentage:</strong> {{ $order_availability_percentage !== null ? $order_availability_percentage . '%' : 'N/A' }} </u>
+</p>
 
     <div class="col-12">
             @php

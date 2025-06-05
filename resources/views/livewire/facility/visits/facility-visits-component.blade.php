@@ -16,8 +16,12 @@
                                     @else
                                         Edit value
                                     @endif
+                                    <a href="{{ asset('storage/documents/labSparsTool_2024.pdf') }}" class="btn btn-info " download>
+                                        Download LabSpars Tool
+                                    </a>
 
                                 </h5>
+                                
                             </div>
                         </div>
                     </div>
@@ -124,7 +128,7 @@
                                             <td>
                                                
                                                 <a href="{{ URL::signedRoute('facility-visit_view', $facilityvisit->visit_code) }}"
-                                                    class="action-ico btn btn-sm btn-success mx-1" >
+                                                    class="action-ico btn btn-sm btn-info mx-1" >
                                                     <i class="fa fa-eye"></i>
                                                 </a>
                                                 <a href="{{ URL::signedRoute('facility-visit_details', $facilityvisit->visit_code) }}"
@@ -149,6 +153,7 @@
             </div> <!-- end card -->
         </div><!-- end col-->
     </div>
+    
     @include('livewire.facility.visits.inc.new-facility-visit')
     @push('scripts')
         <script>
