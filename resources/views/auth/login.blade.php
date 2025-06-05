@@ -41,7 +41,8 @@
             <div class="bottom">
 
                 <span class="helper-text m-b-10"><i class="fa fa-lock"></i> <a href="{{route('password.request')}}">Forgot password?</a></span>
-                <span class="helper-text m-b-10"><i class="fa fa-chain"></i> <a href="{{route('register.application')}}">Register 3rd Party Application</a></span>
+                <span class="helper-text m-b-10"><i class="fa fa-file-pdf-o  text-danger"></i> <a href="{{ asset('storage/documents/labSparsTool_2024.pdf') }}" target="_blank">Download LabSpars Data Collection Tool</a></span>
+                <!-- <span class="helper-text m-b-10"><i class="fa fa-chain"></i> <a href="{{route('register.application')}}">Register 3rd Party Application</a></span> -->
 
             </div>
         </form>

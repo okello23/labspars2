@@ -69,10 +69,10 @@
         <!-- Total Visits -->
         <div class="col col-md-3">
             <div class="card">
-                <div class="stat-value text-blue-600">{{ number_format($totalVisits) }}</div>
+                <div class="stat-value text-info"><h2>{{ number_format($totalVisits) }}</h2></div>
                 <div class="stat-label">Total Visits</div>
                 <div class="absolute top-2 right-2">
-                    <i class="fa fa-book text-blue text-3xl"></i>
+                    <i class="fa fa-play text-info text-3xl"></i>
                 </div>
             </div>
         </div>
@@ -80,10 +80,10 @@
         <!-- Pending Visits -->
         <div class="col col-md-3">
             <div class="card">
-                <div class="stat-value text-yellow-600">{{ number_format($pendingVisits) }}</div>
+                <div class="stat-value text-warning"><h2>{{ number_format($pendingVisits) }}</h2></div>
                 <div class="stat-label">Pending Visits</div>
                 <div class="absolute top-2 right-2">
-                    <i class="fa fa-map text-yellow text-3xl"></i>
+                    <i class="fa fa-pause text-warning text-3xl"></i>
                 </div>
             </div>
         </div>
@@ -91,10 +91,10 @@
         <!-- Completed Visits -->
         <div class="col col-md-3">
             <div class="card">
-                <div class="stat-value text-green-600">{{ number_format($completedVisits) }}</div>
+                <div class="stat-value text-success"><h2>{{ number_format($completedVisits) }}<h2></div>
                 <div class="stat-label">Completed Visits</div>
                 <div class="absolute top-2 right-2">
-                    <i class="fa fa-check-circle text-green text-3xl"></i>
+                    <i class="fa fa-check text-success text-3xl"></i>
                 </div>
             </div>
         </div>
@@ -129,16 +129,73 @@
         <div class="col-lg-6 col-md-6">
             <div class="card">
                 <div class="header">
-                    <h4>Visit Trends (Last 12 Months)</h4>
+                    <h4>Spider Graph</h4>
                 </div>
                 <div class="body">
                     <div class="card-body">
-                        <div class="chart-container" id="visitTrendsChart"></div>
+                        <!-- <div class="chart-container" id="visitTrendsChart"></div> -->
+                         <div>
+    <canvas id="spiderChart" width="400" height="400"></canvas>
+</div>
+
+
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- League Table -->
+        <div class="col-lg-6 col-md-6">
+            <div class="card">
+                <div class="header">
+                    <h4>League Table</h4>
+                </div>
+                <div class="body">
+                    <div class="card-body">
+                        <div class="chart-container" id="leagueTable" style="overflow-x: auto;">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Region</th>
+                                        <th>District</th>
+                                        <th>Total Visits</th>
+                                        <th>Pending Visits</th>
+                                        <th>Completed Visits</th>
+                                        <th>Ranking</th>
+                                        <th>Stock Mgt</th>
+                                        <th>Stoarage</th>
+                                        <th>Equipment</th>
+                                        <th>Ordering</th>
+                                        <th>LIS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($regionWiseStats as $key => $region)
+                                        <tr>
+                                             <td>{{ $key + 1 }}</td>
+                                            <td>{{ $region->name }}</td>
+                                            <td>Kiboga</td>
+                                            <td>{{ number_format($region->visits) }}</td>
+                                            <td>{{ number_format($region->visits) }}</td>
+                                            <td>{{ number_format($region->visits) }}</td>
+                                            <td>{{ number_format($region->visits) }}</td>
+                                            <td>{{ number_format($region->visits) }}</td>
+                                            <td>{{ number_format($region->pending) }}</td>
+                                            <td>{{ number_format($region->pending) }}</td>
+                                            <td>{{ number_format($region->pending) }}</td>
+                                            <td>{{ number_format($region->completed) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
         <!-- Regional Distribution Chart -->
         <div class="col-lg-6 col-md-6">
             <div class="card">
@@ -179,6 +236,7 @@
     </div>
 
     @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
             // Visit Trends Chart
             var visitTrendsOptions = {
@@ -255,6 +313,44 @@
                 colors: ['#6366F1']
             };
             new ApexCharts(document.querySelector("#visitStatusChart"), visitStatusOptions).render();
+
+               document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('spiderChart').getContext('2d');
+
+        const datasets = @json($scoreSets).map(set => ({
+            label: set.label,
+            data: set.data,
+            backgroundColor: set.color.replace('1)', '0.2)'),  // semi-transparent fill
+            borderColor: set.color,
+            pointBackgroundColor: set.color,
+            borderWidth: 2
+        }));
+
+        const chart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: @json($categories),
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    r: {
+                        suggestedMin: 0,
+                        suggestedMax: 5,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            }
+        });
+    });
         </script>
     @endpush
 </div>
