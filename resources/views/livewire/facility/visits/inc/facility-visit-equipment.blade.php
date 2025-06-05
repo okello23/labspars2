@@ -7,7 +7,7 @@
            <table class="table-sm">
                <thead>
                    <tr>
-                    <th>No.</th>
+                       <th>No.</th>
                        <th>Responses</th>
                        <th>Score</th>
                        <th>Comments</th>
@@ -15,7 +15,7 @@
                </thead>
                <tbody>
                    <tr>
-                    <td>1</td>
+                       <td>1</td>
                        <td>Is the Laboratory Equipment Inventory Log (HMIS Lab 20) available? </td>
                        <td>
                            <select class="form-control" wire:model="inventory_log_available" required>
@@ -29,8 +29,9 @@
                        </td>
                    </tr>
                    <tr>
-                    <td>2</td>
-                       <td>Has the Laboratory Inventory Log been updated in the last 1 calendar year (Check the Log was updated in the last 1 year  (yes= 1, No=0)</td>
+                       <td>2</td>
+                       <td>Has the Laboratory Inventory Log been updated in the last 1 calendar year (Check the Log was
+                           updated in the last 1 year (yes= 1, No=0)</td>
                        <td>
                            <select class="form-control" wire:model="inventory_log_updated">
                                <option value="">select</option>
@@ -45,10 +46,11 @@
                </tbody>
            </table>
        </div>
-        <p class="text-info">
-    <strong>Score:</strong> Sum of 1 & 2 divided by 2 <u> {{ $equipment_maintenance_score ?? 'N/A' }} </u>
-    <strong>Percentage:</strong> {{ $equipment_maintenance_percentage !== null ? $equipment_maintenance_percentage . '%' : 'N/A' }} </u>
-</p>
+       <p class="text-info">
+           <strong>Score:</strong> Sum of 1 & 2 divided by 2 <u> {{ $equipment_maintenance_score ?? 'N/A' }} </u>
+           <strong>Percentage:</strong>
+           {{ $equipment_maintenance_percentage !== null ? $equipment_maintenance_percentage . '%' : 'N/A' }} </u>
+       </p>
 
        <!-- Section 17: Equipment Management Plan -->
        <h4 class="section-title">17. Equipment Management Plan to Ensure Functionality</h4>
@@ -117,10 +119,11 @@
            </table>
        </div>
        <h4>Score: Sum (1 to 4)</h4>
-            <p class="text-info">
-    <strong>Score:</strong> Sum of 1 & 4 <u> {{ $equipment_mgt_plan_score ?? 'N/A' }} </u>
-    <strong>Percentage:</strong> {{ $equipment_mgt_plan_percentage !== null ? $equipment_mgt_plan_percentage . '%' : 'N/A' }} </u>
-</p>
+       <p class="text-info">
+           <strong>Score:</strong> Sum of 1 & 4 <u> {{ $equipment_mgt_plan_score ?? 'N/A' }} </u>
+           <strong>Percentage:</strong>
+           {{ $equipment_mgt_plan_percentage !== null ? $equipment_mgt_plan_percentage . '%' : 'N/A' }} </u>
+       </p>
 
        <!-- Section 18: Equipment Functionality -->
        <h4 class="section-title">18. Equipment Functionality</h4>
@@ -161,7 +164,9 @@
                            <td>{{ $functionality->nonfunctional_reagents }}</td>
                            <td>{{ $functionality->other_factors }}</td>
                            <td>{{ $functionality->response_time }}
-                            <a href="javascript:void(0)" wire:click="confirmDelete({{ $functionality->id }}, '{{ addslashes(get_class($functionality)) }}')" class="text-danger float-right fa fa-trash"></a>
+                               <a href="javascript:void(0)"
+                                   wire:click="confirmDelete({{ $functionality->id }}, '{{ addslashes(get_class($functionality)) }}')"
+                                   class="text-danger float-right fa fa-trash"></a>
                            </td>
                        </tr>
                    @empty
@@ -175,11 +180,11 @@
        </div>
        <!-- Section 19: Equipment Utilization -->
        <h4 class="section-title">19. Equipment Utilization for Chemistry, Hematology, and CD4 Platforms
-        <a class="action-ico mx-1 btn btn-sm btn-success" data-toggle="modal" data-target="#addequipmentUtilization"
+           <a class="action-ico mx-1 btn btn-sm btn-success" data-toggle="modal" data-target="#addequipmentUtilization"
                wire:click="$set('equipment_type','CD4')">
                Add CD4 Equipment</a>
        </h4>
-       <div class ="cd4">           
+       <div class ="cd4">
            <div class="table-responsive-sm">
                <table class="table-sm">
                    <thead>
@@ -210,7 +215,9 @@
                                <td>{{ $eutilization->greater_score }}</td>
                                <td>{{ $eutilization->capacity }}</td>
                                <td>{{ $eutilization->final_score }}
-                                <a href="javascript:void(0)" wire:click="confirmDelete({{ $eutilization->id }}, '{{ addslashes(get_class($eutilization)) }}')" class="text-danger float-right fa fa-trash"></a>
+                                   <a href="javascript:void(0)"
+                                       wire:click="confirmDelete({{ $eutilization->id }}, '{{ addslashes(get_class($eutilization)) }}')"
+                                       class="text-danger float-right fa fa-trash"></a>
 
                                </td>
                            </tr>
@@ -223,8 +230,8 @@
            </div>
        </div>
        <div class ="Chemistry">
-           <a class="action-ico mx-1 btn btn-sm btn-success mb-2" data-toggle="modal" data-target="#addequipmentUtilization"
-               wire:click="$set('equipment_type','Chemistry')">
+           <a class="action-ico mx-1 btn btn-sm btn-success mb-2" data-toggle="modal"
+               data-target="#addequipmentUtilization" wire:click="$set('equipment_type','Chemistry')">
                Add Chemistry Equipment</a>
            <div class="table-responsive-sm">
                <table class="table-sm">
@@ -256,7 +263,9 @@
                                <td>{{ $cutilization->greater_score }}</td>
                                <td>{{ $cutilization->capacity }}</td>
                                <td>{{ $cutilization->final_score }}
-                                <a href="javascript:void(0)" wire:click="confirmDelete({{ $cutilization->id }}, '{{ addslashes(get_class($cutilization)) }}')" class="text-danger float-right fa fa-trash"></a>
+                                   <a href="javascript:void(0)"
+                                       wire:click="confirmDelete({{ $cutilization->id }}, '{{ addslashes(get_class($cutilization)) }}')"
+                                       class="text-danger float-right fa fa-trash"></a>
 
                                </td>
                            </tr>
@@ -269,8 +278,8 @@
            </div>
        </div>
        <div class ="Heamatology">
-           <a class="action-ico mx-1 mb-1 btn btn-sm btn-success" data-toggle="modal" data-target="#addequipmentUtilization"
-               wire:click="$set('equipment_type','Hematology')">
+           <a class="action-ico mx-1 mb-1 btn btn-sm btn-success" data-toggle="modal"
+               data-target="#addequipmentUtilization" wire:click="$set('equipment_type','Hematology')">
                Add Heamatology Equipment</a>
            <div class="table-responsive-sm">
                <table class="table-sm">
@@ -302,12 +311,62 @@
                                <td>{{ $hutilization->greater_score }}</td>
                                <td>{{ $hutilization->capacity }}</td>
                                <td>{{ $hutilization->final_score }}
-                                <a href="javascript:void(0)" wire:click="confirmDelete({{ $hutilization->id }}, '{{ addslashes(get_class($hutilization)) }}')" class="text-danger float-right fa fa-trash"></a>
+                                   <a href="javascript:void(0)"
+                                       wire:click="confirmDelete({{ $hutilization->id }}, '{{ addslashes(get_class($hutilization)) }}')"
+                                       class="text-danger float-right fa fa-trash"></a>
 
                                </td>
                            </tr>
                        @empty
                            <td colspan="9">No Heamatology record entered</td>
+                       @endforelse
+                       <!-- Repeat for Chemistry and Hematology Equipment -->
+                   </tbody>
+               </table>
+           </div>
+       </div>
+       <div class ="Heamatology">
+           <a class="action-ico mx-1 mb-1 btn btn-sm btn-success" data-toggle="modal"
+               data-target="#addequipmentUtilization" wire:click="$set('equipment_type','POC')">
+               Add POC Equipment</a>
+           <div class="table-responsive-sm">
+               <table class="table-sm">
+                   <thead>
+                       <tr>
+                           <th colspan="9" class="text-center">4.Point of Care Equipment </th>
+                       </tr>
+                       <tr>
+                           <th>Equipment Name</th>
+                           <th>Throughput (per day)</th>
+                           <th>Average no. of days running per month</th>
+                           <th>Average actual output</th>
+                           <th>Average expected output</th>
+                           <th>% Utilization ((D/E)*100)</th>
+                           <th>If "F">70%, score 1</th>
+                           <th>Capacity of equipment</th>
+                           <th>If B=H, score 1</th>
+                       </tr>
+                   </thead>
+                   <tbody>
+                       @forelse ($utilizations->where('equipment_type','POC') as $pointofcare)
+                           <tr>
+                               <td>{{ $pointofcare->equipment_name }}({{ $pointofcare->equipment_type }})</td>
+                               <td>{{ $pointofcare->through_put }}</td>
+                               <td>{{ $pointofcare->running_days }}</td>
+                               <td>{{ $pointofcare->actual_output }}</td>
+                               <td>{{ $pointofcare->expected_output }}</td>
+                               <td>{{ $pointofcare->utilization }}</td>
+                               <td>{{ $pointofcare->greater_score }}</td>
+                               <td>{{ $pointofcare->capacity }}</td>
+                               <td>{{ $pointofcare->final_score }}
+                                   <a href="javascript:void(0)"
+                                       wire:click="confirmDelete({{ $pointofcare->id }}, '{{ addslashes(get_class($pointofcare)) }}')"
+                                       class="text-danger float-right fa fa-trash"></a>
+
+                               </td>
+                           </tr>
+                       @empty
+                           <td colspan="9">No Point of Care Equipment record entered</td>
                        @endforelse
                        <!-- Repeat for Chemistry and Hematology Equipment -->
                    </tbody>
