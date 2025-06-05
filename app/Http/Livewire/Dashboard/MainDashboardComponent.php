@@ -37,6 +37,34 @@ class MainDashboardComponent extends Component
     public $storageConditions = [];
     public $facilityStats     = [];
 
+    //spider graph
+ public $categories = [
+    'Stock Management',
+    'Storage Areas & Lab Facilities Mgt',
+    'Lab Equipment',
+    'Ordering',
+    'Lab Information Systems'
+];
+
+public $scoreSets = [
+    [
+        'label' => 'Visit-1 Score:',
+        'data' => [3.2, 2.7, 4, 4.5, 5],
+        'color' => 'rgb(255, 169, 99,1)'
+    ],
+    [
+        'label' => 'Visit-2 Score:',
+        'data' => [4.0, 3.5, 4.2, 4.8, 4.7],
+        'color' => 'rgba(54, 162, 235, 1)'
+    ],
+    [
+        'label' => 'Visit-3 Score:',
+        'data' => [4.5, 4.0, 4.6, 5.0, 4.9],
+        'color' => 'rgba(75, 192, 192, 1)'
+    ]
+];
+
+
     protected $queryString = [
         'search'           => ['except' => ''],
         'dateRange'        => ['except' => 'all'],
