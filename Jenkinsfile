@@ -33,17 +33,20 @@ RUN apt-get update && apt-get install -y \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Set working directory
-WORKDIR /var/www/html
+WORKDIR /var/www/html/labspars
 
 # Copy application files
-COPY . /var/www/html
+COPY . /var/www/html/labspars
 
 # Install dependencies
 RUN composer install --no-interaction --no-dev --optimize-autoloader
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html/storage
-RUN chown -R www-data:www-data /var/www/html/bootstrap/cache
+# Set permissions on storage and cache directories
+RUN chown -R www-data:www-data /var/www/html/labspars/storage
+RUN chown -R www-data:www-data /var/www/html/labspars/bootstrap/cache
+RUN chmod -R 777 /var/www/html/labspars
+RUN chmod -R 777 /var/www/html/labspars/storage
+RUN chmod -R 777 /var/www/html/labspars/bootstrap/cache
 '''
             }
         }
@@ -58,20 +61,20 @@ RUN chown -R www-data:www-data /var/www/html/bootstrap/cache
             steps {
                 // Create Docker Compose file dynamically
                 writeFile file: 'docker-compose.yml', text: '''
-version: '1.25'
+version: '3.8'
 
 services:
   app:
     image: labsparsdockerimg:${GIT_COMMIT_SHORT}
     ports:
-      - "8080:80"
+      - "8081:8080"
     volumes:
-      - .:/var/www/html
+      - .:/var/www/html/labspars
     environment:
       APP_ENV: local
       APP_KEY: "base64:ySxZVnws0cWt6eb8iSgrvn0mqHv71YwaBA1zGWXNS2w="
       DB_CONNECTION: mysql
-      DB_HOST: localhost
+      DB_HOST: db
       DB_PORT: 3306
       DB_DATABASE: labspars
       DB_USERNAME: ben
