@@ -25,6 +25,12 @@ return new class extends Migration
             $table->boolean('main_store_opening_date')->default(0)->nullable();
             $table->boolean('lab_store_opening_date')->default(0)->nullable();
             $table->text('practices_comments')->nullable();
+
+            $table->boolean('opened_bottles_have_lids')->nullable();
+            $table->boolean('chemicals_properly_labelled')->nullable();
+            $table->boolean('flammables_stored_safely')->nullable();
+            $table->boolean('corrosives_separated')->nullable();
+            $table->boolean('safety_data_sheets_available')->nullable();
             $table->timestamps();
         });
     }

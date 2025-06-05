@@ -7,13 +7,15 @@
            <table class="table-sm">
                <thead>
                    <tr>
-                       <th>Area</th>
+                    <th>No.</th>
+                       <th>Responses</th>
                        <th>Score</th>
                        <th>Comments</th>
                    </tr>
                </thead>
                <tbody>
                    <tr>
+                    <td>1</td>
                        <td>Is the Laboratory Equipment Inventory Log (HMIS Lab 20) available? </td>
                        <td>
                            <select class="form-control" wire:model="inventory_log_available" required>
@@ -27,7 +29,8 @@
                        </td>
                    </tr>
                    <tr>
-                       <td>b) Did the facility submit the last order to the warehouse electronically?</td>
+                    <td>2</td>
+                       <td>Has the Laboratory Inventory Log been updated in the last 1 calendar year (Check the Log was updated in the last 1 year  (yes= 1, No=0)</td>
                        <td>
                            <select class="form-control" wire:model="inventory_log_updated">
                                <option value="">select</option>
@@ -42,7 +45,10 @@
                </tbody>
            </table>
        </div>
-       <h4>Score: <span>(Sum of 1 & 2) / 2</span></h4>
+        <p class="text-info">
+    <strong>Score:</strong> Sum of 1 & 2 divided by 2 <u> {{ $equipment_maintenance_score ?? 'N/A' }} </u>
+    <strong>Percentage:</strong> {{ $equipment_maintenance_percentage !== null ? $equipment_maintenance_percentage . '%' : 'N/A' }} </u>
+</p>
 
        <!-- Section 17: Equipment Management Plan -->
        <h4 class="section-title">17. Equipment Management Plan to Ensure Functionality</h4>
@@ -111,6 +117,10 @@
            </table>
        </div>
        <h4>Score: Sum (1 to 4)</h4>
+            <p class="text-info">
+    <strong>Score:</strong> Sum of 1 & 4 <u> {{ $equipment_mgt_plan_score ?? 'N/A' }} </u>
+    <strong>Percentage:</strong> {{ $equipment_mgt_plan_percentage !== null ? $equipment_mgt_plan_percentage . '%' : 'N/A' }} </u>
+</p>
 
        <!-- Section 18: Equipment Functionality -->
        <h4 class="section-title">18. Equipment Functionality</h4>

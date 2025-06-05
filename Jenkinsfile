@@ -44,11 +44,10 @@ RUN composer install --no-interaction --no-dev --optimize-autoloader
 # Set permissions on storage and cache directories
 RUN chown -R www-data:www-data /var/www/html/labspars/storage
 RUN chown -R www-data:www-data /var/www/html/labspars/bootstrap/cache
-RUN chmod -R 777 /var/www/html/labspars
-RUN chmod -R 777 /var/www/html/labspars/storage
-RUN chmod -R 777 /var/www/html/labspars/bootstrap/cache
-'''
-            }
+RUN chmod -R 755 /var/www/html/labspars
+RUN chmod -R 755 /var/www/html/labspars/storage
+RUN chmod -R 755 /var/www/html/labspars/bootstrap/cache
+'''55           }
         }
 
         stage('Build Docker Image') {
@@ -72,7 +71,8 @@ services:
       - .:/var/www/html/labspars
     environment:
       APP_ENV: local
-      APP_KEY: "base64:ySxZVnws0cWt6eb8iSgrvn0mqHv71YwaBA1zGWXNS2w="
+      APP_KEY: env('APP_KEY', 'base64:YOUR_APP_KEY')
+      APP_DEBUG: false
       DB_CONNECTION: mysql
       DB_HOST: db
       DB_PORT: 3306

@@ -22,3 +22,9 @@ Homestead.json
 /.vagrant
 .phpunit.result.cache
 app/Providers/secrets/oauth/
+
+# Allow tracking of documents in storage/app/public/documents
+!storage/app/
+!storage/app/public/
+!storage/app/public/documents/
+!storage/app/public/documents/**
