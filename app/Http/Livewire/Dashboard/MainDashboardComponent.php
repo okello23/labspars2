@@ -37,6 +37,11 @@ class MainDashboardComponent extends Component
     public $storageConditions = [];
     public $facilityStats     = [];
 
+    //spider graph
+    public $categories = ['Stock Management','Storage Areas & Lab Facilities Mgt' , 'Lab Equipment', 'Ordering', 'Lab Information Systems'];
+    public $scores = [3.2, 1, 2, 4.5, 5]; // Auto-populate these from DB in real use
+
+
     protected $queryString = [
         'search'           => ['except' => ''],
         'dateRange'        => ['except' => 'all'],
