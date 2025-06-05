@@ -16,7 +16,7 @@
                                     @else
                                         Edit value
                                     @endif
-                                    <a href="{{ asset('storage/documents/labSparsTool_2024.pdf') }}" class="btn btn-info " download>
+                                    <a href="{{ asset('storage/documents/labSparsTool_2024.pdf') }}" class="btn btn-info fa fa-file-pdf-o" download>
                                         Download LabSpars Tool
                                     </a>
 
@@ -153,7 +153,7 @@
             </div> <!-- end card -->
         </div><!-- end col-->
     </div>
-    
+
     @include('livewire.facility.visits.inc.new-facility-visit')
     @push('scripts')
         <script>
