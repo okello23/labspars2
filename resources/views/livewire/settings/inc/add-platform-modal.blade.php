@@ -22,8 +22,7 @@
                         <div class="mb-4 col-md-6">
                             <label for="name" class="form-label required">Platform
                                 Name:</label>
-                            <input type="text" wire:model="name" id="name"
-                                class="form-control">
+                            <input type="text" wire:model="name" id="name" class="form-control">
                             @error('name')
                                 <span class="text-red-500">{{ $message }}</span>
                             @enderror
@@ -31,48 +30,45 @@
                         <div class="mb-4 col-md-6">
                             <label for="type" class="form-label required">Platform
                                 Type:</label>
-                            <select wire:model="type" id="type"
-                                class="form-control">
+                            <select wire:model="type" id="type" class="form-control">
                                 <option value="">Choose Type</option>
                                 <option value="Chemistry">Chemistry</option>
                                 <option value="Hematology">Hematology</option>
                                 <option value="CD4">CD4</option>
+                                <option value="POC">Point of Care</option>
                             </select>
                             @error('type')
                                 <span class="text-red-500">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="mb-4 col-md-6">
-                            <label for="manufacturer"
-                                class="form-label required">Manufacturer:</label>
-                            <input type="text" wire:model="manufacturer" id="manufacturer"
-                                class="form-control">
-                                @error('manufacturer')
+                            <label for="manufacturer" class="form-label required">Manufacturer:</label>
+                            <input type="text" wire:model="manufacturer" id="manufacturer" class="form-control">
+                            @error('manufacturer')
                                 <div class="text-danger text-small">{{ $message }}</div>
-                                @enderror
-                        </div>                      
+                            @enderror
+                        </div>
                         <div class="mb-4 col-md-6">
                             <label for="is_active" class="form-label required">Status:</label>
-                            <select wire:model="is_active" id="is_active"
-                                class="form-control">
+                            <select wire:model="is_active" id="is_active" class="form-control">
                                 <option value="">Select</option>
                                 <option value="1">Active</option>
                                 <option value="2">Inactive</option>
                             </select>
                             @error('is_active')
-                            <div class="text-danger text-small">{{ $message }}</div>
+                                <div class="text-danger text-small">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
-                        <div class="modal-footer">
-                            @if ($createNew)
-                                <x-button class="btn-success">Save</x-button>
-                            @else
-                                <x-button class="btn-success">Update</x-button>
-                            @endif
-                            <x-button type="button" class="btn btn-danger" wire:click="close">Close</x-button>
+                    <div class="modal-footer">
+                        @if ($createNew)
+                            <x-button class="btn-success">Save</x-button>
+                        @else
+                            <x-button class="btn-success">Update</x-button>
+                        @endif
+                        <x-button type="button" class="btn btn-danger" wire:click="close">Close</x-button>
 
-                        </div>
+                    </div>
                 </form>
             </div>
         </div> <!-- end modal content-->
