@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('fv_equipment_functionalities', function (Blueprint $table) {
-                $table->integer('response_time')->nullable();
-                
+                $table->integer('response_time')->nullable()->change();
+
        
         });
     }
