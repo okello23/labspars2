@@ -74,7 +74,7 @@
                       <li><a href="{{ route('reagents')}}">Reagents</a></li>
                       <li><a href="{{ route('test-category')}}">Test Categories</a></li>
                       <li><a href="{{ route('store-types')}}">Storage Types</a></li>
-                      <li><a href="{{ route('lab_platforms')}}">Lab Platforms</a></li>
+                      <li><a href="{{ route('lab_platforms')}}">Lab Equipment</a></li>
                       <li><a href="{{ route('product-types')}}">Stock Products</a></li>
                       <li><a href="{{ route('districts') }}">Districts</a></li>
                       <li><a href="{{ route('health-facilities') }}">Health Facilities</a></li>

@@ -1,4 +1,5 @@
 {{-- The whole world belongs to you. --}}
+@section('title', 'Home')
 <div>
     <div class="row clearfix">
         <div class="col-12">

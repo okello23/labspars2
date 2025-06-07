@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\District;
+use App\Models\Settings\Region;
 use App\Models\Facility\Facility;
 use App\Models\Facility\FacilityVisit;
 
@@ -48,9 +49,15 @@ class FacilityVisitsComponent extends Component
 
     public $responsible_lss_name;
 
+    public $region_id;
+    
+    public $health_sub_district_id;
+
     public $facility_id;
 
     public $facilities = [];
+
+    public $districts_list = [];
 
     public $district_id;
 
@@ -67,6 +74,40 @@ class FacilityVisitsComponent extends Component
         $date_of_visit = Carbon::parse($this->date_of_visit);
         $this->date_of_next_visit = $date_of_visit->addDays(60)->format('Y-m-d');
     }
+
+  public function updatedRegionId($value)
+{
+    // Clear lower-level selections
+    $this->district_id = '';
+    $this->health_sub_district_id = '';
+
+    // Populate districts for the selected region
+    $this->districts_list = District::where('region_id', $value)->get();
+}
+
+    public function mount()
+    {
+        $this->from_date = Carbon::now()->subMonths(2)->startOfMonth()->format('Y-m-d');
+        $this->to_date = Carbon::now()->endOfMonth()->format('Y-m-d');
+        $this->DistrictIds = [];
+        $this->resetInputs();
+
+        $this->dispatchBrowserEvent('swal:modal', [
+            'type' => 'info',
+            'message' => 'Notice!',
+            'message' => 'Data loaded is limited to the last three months. To view more, please clear the filters.'
+        ]);
+    }
+
+    public function export()
+    {
+        $this->dispatchBrowserEvent('swal:modal', [
+            'type' => 'info',
+            'title' => 'Export Data',
+            'message' => 'Functionality to export data is not yet implemented.'
+        ]);
+    }
+
 
     public function storevalue()
     {
@@ -190,19 +231,49 @@ class FacilityVisitsComponent extends Component
         ]);
     }
 
-    public function filterFacilities()
-    {
-        $data = FacilityVisit::search($this->search)
-            ->when($this->from_date != '' && $this->to_date != '', function ($query) {
-                $query->whereBetween('created_at', [$this->from_date, $this->to_date]);
-            }, function ($query) {
-                return $query;
+  public function filterFacilities()
+{
+    $data = FacilityVisit::search($this->search)
+        ->when($this->region_id != '', function ($query) {
+            $query->whereHas('facility.healthSubDistrict.district.region', function ($q) {
+                $q->where('id', $this->region_id);
             });
+        })
+        ->when($this->health_sub_district_id != '', function ($query) {
+            $query->whereHas('facility.healthSubDistrict', function ($q) {
+                $q->where('id', $this->health_sub_district_id);
+            });
+        })
+        ->when($this->district_id != '', function ($query) {
+            $query->whereHas('facility.healthSubDistrict.district', function ($q) {
+                $q->where('id', $this->district_id);
+                if ($this->region_id != '') {
+                    $q->whereHas('region', function ($regionQuery) {
+                        $regionQuery->where('id', $this->region_id);
+                    });
+                }
+            });
+        })
+        ->when($this->facility_level != '', function ($query) {
+            $query->whereHas('facility', function ($q) {
+                $q->where('level', $this->facility_level);
+            });
+        })
+        ->when($this->search != '', function ($query) {
+            $query->where('visit_number', 'like', '%'.$this->search.'%');
+        })
+        ->when($this->orderBy != '', function ($query) {
+            $query->orderBy($this->orderBy, $this->orderAsc ? 'asc' : 'desc');
+        })
+        ->when($this->from_date != '' && $this->to_date != '', function ($query) {
+            $query->whereBetween('created_at', [$this->from_date, $this->to_date]);
+        });
 
-        $this->DistrictIds = $data->pluck('id')->toArray();
+    $this->DistrictIds = $data->pluck('id')->toArray();
 
-        return $data;
-    }
+    return $data;
+}
+
 
     public function close()
     {
@@ -218,8 +289,9 @@ class FacilityVisitsComponent extends Component
             ->orderBy($this->orderBy, $this->orderAsc ? 'asc' : 'desc')
             ->paginate($this->perPage);
         // $data['facilities'] = Facility::all();
-        $data['districts'] = District::all();
-
+        $data['districts'] = [];
+        $data['regions'] = Region::all();
+        $data['health_sub_districts'] = [];
         return view('livewire.facility.visits.facility-visits-component', $data);
     }
 }
