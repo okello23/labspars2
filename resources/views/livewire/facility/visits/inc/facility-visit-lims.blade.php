@@ -310,7 +310,7 @@ Date report was filled (use last report not more than 2 months ago): <input type
             </tr>
         </thead>
         <tbody>
-            @forelse ($lisLabDataUsages as $lisLabDataUsage)
+            @forelse ($lisLabDataUsages as $key => $lisLabDataUsage)
                 <tr>
                     <td>{{ $key + 1 }}</td>
                     <td>{{ $lisLabDataUsage->item_name }}</td>
