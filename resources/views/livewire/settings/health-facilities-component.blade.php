@@ -1,5 +1,5 @@
 {{-- If you look to others for fulfillment, you will never truly be fulfilled. --}}
-@section('title', 'Districts')
+@section('title', 'Health Facilities')
 <div class="row">
 
   <div class="info-box" style="float:left; width: 100%; overflow-x: auto;  overflow-y: auto;">
