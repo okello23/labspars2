@@ -68,6 +68,15 @@ class FacilityVisitsComponent extends Component
     public $date_of_visit;
 
     public $date_of_next_visit;
+    // Filter-specific variables
+    public $filter_region_id;
+
+    public $filter_district_id;
+    
+    public $filter_health_sub_district_id;
+    
+    public $filter_facility_level;
+
 
     public function updatedDateOfVisit()
     {
@@ -76,6 +85,16 @@ class FacilityVisitsComponent extends Component
     }
 
   public function updatedRegionId($value)
+{
+    // Clear lower-level selections
+    $this->district_id = '';
+    $this->health_sub_district_id = '';
+
+    // Populate districts for the selected region
+    $this->districts_list = District::where('region_id', $value)->get();
+}
+
+  public function updatedFilterRegionId($value)
 {
     // Clear lower-level selections
     $this->district_id = '';
@@ -233,30 +252,30 @@ class FacilityVisitsComponent extends Component
 
   public function filterFacilities()
 {
-    $data = FacilityVisit::search($this->search)
-        ->when($this->region_id != '', function ($query) {
+      $data = FacilityVisit::search($this->search)
+        ->when($this->filter_region_id != '', function ($query) {
             $query->whereHas('facility.healthSubDistrict.district.region', function ($q) {
-                $q->where('id', $this->region_id);
+                $q->where('id', $this->filter_region_id);
             });
         })
-        ->when($this->health_sub_district_id != '', function ($query) {
+        ->when($this->filter_health_sub_district_id != '', function ($query) {
             $query->whereHas('facility.healthSubDistrict', function ($q) {
-                $q->where('id', $this->health_sub_district_id);
+                $q->where('id', $this->filter_health_sub_district_id);
             });
         })
-        ->when($this->district_id != '', function ($query) {
+        ->when($this->filter_district_id != '', function ($query) {
             $query->whereHas('facility.healthSubDistrict.district', function ($q) {
-                $q->where('id', $this->district_id);
-                if ($this->region_id != '') {
+                $q->where('id', $this->filter_district_id);
+                if ($this->filter_region_id != '') {
                     $q->whereHas('region', function ($regionQuery) {
-                        $regionQuery->where('id', $this->region_id);
+                        $regionQuery->where('id', $this->filter_region_id);
                     });
                 }
             });
         })
-        ->when($this->facility_level != '', function ($query) {
+        ->when($this->filter_facility_level != '', function ($query) {
             $query->whereHas('facility', function ($q) {
-                $q->where('level', $this->facility_level);
+                $q->where('level', $this->filter_facility_level);
             });
         })
         ->when($this->search != '', function ($query) {
