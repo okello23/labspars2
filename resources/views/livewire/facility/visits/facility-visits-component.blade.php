@@ -15,8 +15,8 @@
     <x-lss-visit-table-utilities>
             <div class="md-3">
               <div class="mb-1  col-md-12">
-                <label for="region_id" class="form-label">Region</label>
-                <select class="form-control" wire:model="region_id">
+                <label for="filter_region_id" class="form-label">Region</label>
+                <select class="form-control" wire:model="filter_region_id">
                     <option value="">All</option>
                     @foreach($regions as $region)
                         <option value="{{ $region->id }}">{{ $region->name }}</option>
@@ -27,8 +27,8 @@
 
             <div class="md-3">
               <div class="mb-1  col-md-12">
-                <label for="ownership" class="form-label">District</label>
-               <select class="form-control" wire:model="district_id" @if(empty($districts_list)) disabled @endif>
+                <label for="filter_district_id" class="form-label">District</label>
+               <select class="form-control" wire:model="filter_district_id" @if(empty($districts_list)) disabled @endif>
                     <option value="">Select District</option>
                     @foreach($districts_list as $district)
                         <option value="{{ $district->id }}">{{ $district->name }}</option>
