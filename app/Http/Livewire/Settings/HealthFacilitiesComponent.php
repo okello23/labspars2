@@ -17,7 +17,7 @@ class HealthFacilitiesComponent extends Component
 
     public $to_date;
 
-    public $SubCountyIds;
+    public $facilityIDs = [];
 
     public $perPage = 10;
 
@@ -164,13 +164,13 @@ class HealthFacilitiesComponent extends Component
 
     public function export()
     {
-        if (count($this->SubCountyIds) > 0) {
+        if (count($this->facilityIDs) > 0) {
             // return (new countiesExport($this->SubCountyIds))->download('counties_'.date('d-m-Y').'_'.now()->toTimeString().'.xlsx');
         } else {
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'warning',
                 'message' => 'Oops! Not Found!',
-                'text' => 'No counties selected for export!',
+                'text' => 'No Facilities selected for export!',
             ]);
         }
     }

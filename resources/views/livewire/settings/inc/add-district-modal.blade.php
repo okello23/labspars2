@@ -14,9 +14,9 @@ tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     </div> <!-- end modal header -->
     <div class="modal-body">
       <form
-      @if (!$toggleForm) wire:submit.prevent="store"
+      @if ($createNew) wire:submit.prevent="store"
       @else
-      wire:submit.prevent="update"
+      wire:submit.prevent="updateData"
       @endif
       >
 
