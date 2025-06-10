@@ -15,6 +15,8 @@ class ProductComponent extends Component
 
     public $to_date;
 
+    public $ProductIDs = [];
+
     public $perPage = 10;
 
     public $search = '';

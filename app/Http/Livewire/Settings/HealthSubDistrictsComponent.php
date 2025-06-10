@@ -34,6 +34,8 @@ class HealthSubDistrictsComponent extends Component
 
     public $edit_id;
 
+    public $CountyIds = [];
+
     protected $paginationTheme = 'bootstrap';
 
     public $createNew = false;
@@ -42,10 +44,19 @@ class HealthSubDistrictsComponent extends Component
 
     public $filter = false;
 
-    public function updatedCreateNew()
+    public function updatedaddEntryCreateNew()
     {
         $this->resetInputs();
         $this->toggleForm = false;
+    }
+
+    public function addEntry()
+    {
+        $this->dispatchBrowserEvent('swal:modal', [
+                'type' => 'error',
+                'message' => 'Not Allowed!',
+                'text' => 'Functionality not implemented yet.',
+            ]);
     }
 
     public function updatingSearch()
@@ -66,7 +77,6 @@ class HealthSubDistrictsComponent extends Component
         $this->validate([
             'name' => 'required|string|unique:counties',
             'district_id' => 'required|numeric',
-
         ]);
 
         $County = new HealthSubDistrict();
@@ -129,12 +139,12 @@ class HealthSubDistrictsComponent extends Component
     public function export()
     {
         if (count($this->CountyIds) > 0) {
-            // return (new countiesExport($this->CountyIds))->download('counties_'.date('d-m-Y').'_'.now()->toTimeString().'.xlsx');
+             // return (new countiesExport($this->CountyIds))->download('counties_'.date('d-m-Y').'_'.now()->toTimeString().'.xlsx');
         } else {
-            $this->dispatchBrowserEventBrowserEvent('swal:modal', [
+            $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'warning',
                 'message' => 'Oops! Not Found!',
-                'text' => 'No regions selected for export!',
+                'text' => 'No health sub districts selected for export!',
             ]);
         }
     }

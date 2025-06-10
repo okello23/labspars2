@@ -16,7 +16,7 @@ class LabPlatformComponent extends Component
 
     public $to_date;
 
-    public $SubCountyIds;
+    public $platformIDs = [];
 
     public $perPage = 10;
 
@@ -154,17 +154,16 @@ class LabPlatformComponent extends Component
 
     public function export()
     {
-        if (count($this->SubCountyIds) > 0) {
+        if (count($this->platformIDs) > 0) {
             // return (new countiesExport($this->SubCountyIds))->download('counties_'.date('d-m-Y').'_'.now()->toTimeString().'.xlsx');
         } else {
             $this->dispatchBrowserEvent('swal:modal', [
                 'type' => 'warning',
                 'message' => 'Oops! Not Found!',
-                'text' => 'No counties selected for export!',
+                'text' => 'No Equipment selected for export!',
             ]);
         }
     }
-
   
     public function render()
     {

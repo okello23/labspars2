@@ -35,7 +35,7 @@
                   <th>Name</th>
                   <th>District</th>
                   <th>Region</th>
-                  <th>Action</th>
+                  <!-- <th>Action</th> -->
                 </tr>
               </thead>
 
@@ -46,11 +46,11 @@
                   <td>{{ $value->name }}</td>
                   <td>{{ $value?->district->name }}</td>
                   <td>{{ $value?->district?->region?->name }}</td>
-                  <td>
+                  <!-- <td>
                     <button wire:click="editData({{ $value->id }})" class="action-ico btn btn-sm btn-success mx-1" data-toggle="modal" data-target="#addUpdateRecord">
                       <i class="fa fa-edit"></i>
                     </button>
-                  </td>
+                  </td> -->
                 </tr>
                 @endforeach
               </tbody>
