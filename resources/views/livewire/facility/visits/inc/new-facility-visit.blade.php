@@ -7,12 +7,22 @@
                 <form  @if ($toggleForm) wire:submit.prevent="updatevalue" @else wire:submit.prevent="storevalue" @endif >
                     <div class="modal-body">
                         <div class="row">
-                        <div class="mb-3 col-md-4">
+                        <div class="mb-3 col-md-3">
+                                <label for="district_id" class="form-label required">Region</label>
+                                  <select class="form-control" wire:model="region_id" required>
+                                  <option value="">All</option>
+                                  @foreach($regions as $region)
+                                      <option value="{{ $region->id }}">{{ $region->name }}</option>
+                                  @endforeach
+                              </select>
+                            </div>
+                            
+                            <div class="mb-3 col-md-3">
                                 <label for="district_id" class="form-label required">District</label>
                                 <select class="form-control selectr" id="district_id"
-                                    wire:model.lazy='district_id'>
+                                    wire:model.lazy='district_id'  @if(empty($districts_list)) disabled @endif>
                                     <option selected value="">Select</option>
-                                    @foreach ($districts as $value)
+                                    @foreach ($districts_list as $value)
                                         <option value='{{ $value->id }}'>{{ $value->name }}</option>
                                     @endforeach
                                 </select>
@@ -21,10 +31,10 @@
                                 @enderror
                             </div>
 
-                            <div class="mb-3 col-md-4">
+                            <div class="mb-3 col-md-3">
                                 <label for="station_id" class="form-label required">Facility</label>
                                 <select class="form-control selectr" id="facility_id"
-                                    wire:model.lazy='facility_id'>
+                                    wire:model.lazy='facility_id' required>
                                     <option selected value="">Select</option>
                                     @foreach ($facilities as $value)
                                         <option value='{{ $value->id }}'>{{ $value->name }}</option>
@@ -34,14 +44,14 @@
                                     <div class="text-danger text-small">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <div class="mb-3 col-md-4">
+                            <div class="mb-3 col-md-3">
                                 <label for="facility_level" class="form-label required">Level</label>
                                 <input type='text' class="form-control" wire:model.defer='facility_level' readonly>
                             </div>
 
                             <div class="mb-3 col-md-3">
                                 <label for="name" class="form-label required">Visit Number</label>
-                                <input type="text" id="visit_number" class="form-control" name="visit_number" required
+                                <input type="number" min="1" id="visit_number" class="form-control" name="visit_number" required
                                     wire:model.defer="visit_number">
                                 @error('visit_number')
                                     <div class="text-danger text-small">{{ $message }}</div>
@@ -69,8 +79,8 @@
                                 @enderror
                             </div>
                             <div class="form-group col-md-4">
-                                <label>Date Of Visit</label>
-                                <input type="date" class="form-control" max="{{ date('Y-m-d') }}" wire:model="date_of_visit">
+                                <label >Date Of Visit</label>
+                                <input type="date" class="form-control required" max="{{ date('Y-m-d') }}" wire:model="date_of_visit" required>
                                 @error('date_of_visit') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
                             <div class="form-group col-md-4">
