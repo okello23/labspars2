@@ -164,7 +164,6 @@ class LabPlatformComponent extends Component
             ]);
         }
     }
-
   
     public function render()
     {
