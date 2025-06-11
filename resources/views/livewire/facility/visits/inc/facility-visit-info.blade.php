@@ -92,7 +92,7 @@
 
                                 <div class="mb-3 col-md-6">
                                     <label for="email" class="form-label required">Email</label>
-                                    <input type="email" id="email" class="form-control" name="email" required
+                                    <input type="email" id="email" class="form-control" name="email"
                                         wire:model.defer="email">
                                     @error('email')
                                         <div class="text-danger text-small">{{ $message }}</div>
@@ -218,9 +218,9 @@
                                 </div>
 
                                 <div class="mb-3 col-md-6">
-                                    <label for="email" class="form-label required">Email</label>
+                                    <label for="email" class="form-label">Email</label>
                                     <input type="email" id="email" class="form-control" name="email"
-                                        required wire:model.defer="email">
+                                         wire:model.defer="email">
                                     @error('email')
                                         <div class="text-danger text-small">{{ $message }}</div>
                                     @enderror
