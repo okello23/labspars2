@@ -41,9 +41,9 @@ class MainDashboardComponent extends Component
  public $categories = [
     'Stock Management',
     'Storage Areas & Lab Facilities Mgt',
-    'Lab Equipment',
-    'Ordering',
-    'Lab Information Systems'
+    // 'Lab Equipment',
+    // 'Ordering',
+    // 'Lab Information Systems'
 ];
 
 public $scoreSets = [
@@ -72,6 +72,864 @@ public $scoreSets = [
         'selectedDistrict' => ['except' => null],
     ];
 
+    private function randomColor($index)
+{
+    $colors = [
+        'rgb(255, 169, 99, 1)',      // Visit-1: orange
+        'rgba(54, 162, 235, 1)',     // Visit-2: blue
+        'rgba(75, 192, 192, 1)',     // Visit-3: teal
+        'rgba(153, 102, 255, 1)',    // purple
+        'rgba(255, 206, 86, 1)',     // yellow
+        'rgba(201, 203, 207, 1)',    // grey
+        'rgba(255, 99, 132, 1)',     // red
+        'rgba(0, 128, 128, 1)',      // dark teal
+        'rgba(0, 191, 255, 1)',      // deep sky blue
+        'rgba(255, 105, 180, 1)',    // hot pink
+    ];
+
+    return $colors[$index % count($colors)];
+}
+
+
+    public function stockMgtScores(): array
+{
+    $user = auth()->user();
+    $visitQuery = $this->query();
+
+    // Default to user's institution if no region/district filter
+    if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
+        $visitQuery->whereHas('facility', function ($q) use ($user) {
+            $q->where('institution_id', $user->institution_id);
+        });
+    }
+
+    $visitIds = $visitQuery->pluck('id');
+
+    if ($visitIds->isEmpty()) {
+        return [];
+    }
+
+    $scores = DB::table('fv_stock_mgt_scores')
+        ->select(
+            'visit_id',
+            'availability_score',
+            'stock_card_score',
+            'correct_filling_score',
+            'physical_agrees_score',
+            'amc_well_calculated_score',
+            'emr_usage_score'
+        )
+        ->whereIn('visit_id', $visitIds)
+        ->orderBy('visit_id')
+        ->get();
+
+    return $scores->map(function ($score, $index) {
+        $fields = [
+            $score->availability_score,
+            $score->stock_card_score,
+            $score->correct_filling_score,
+            $score->physical_agrees_score,
+            $score->amc_well_calculated_score,
+            $score->emr_usage_score,
+        ];
+
+        // Filter out nulls or "NA"
+        $validScores = collect($fields)->filter(function ($value) {
+            return is_numeric($value);
+        });
+
+        $finalScore = $validScores->isNotEmpty()
+            ? round(($validScores->avg()) * 5, 2)
+            : 0;
+
+        return [
+            'label' => 'Visit-' . ($index + 1) . ' Score:',
+            'data' => [$finalScore], // just one score for this axis
+            'color' => $this->randomColor($index),
+        ];
+    })->toArray();
+}
+
+public function fvStorageAreaCleanlinessScore() : array {
+    $user = auth()->user();
+    $visitQuery = $this->query();
+
+    // Default to user's institution if no region/district filter
+    if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
+        $visitQuery->whereHas('facility', function ($q) use ($user) {
+            $q->where('institution_id', $user->institution_id);
+        });
+    }
+
+    $visitIds = $visitQuery->pluck('id');
+
+    if ($visitIds->isEmpty()) {
+        return [];
+    }
+
+    $scores = DB::table('fv_cleanliness_management')
+        ->select(
+            'visit_id',
+            'lab_store_clean',
+            'main_store_clean',
+            'laboratory_clean',
+        )
+        ->whereIn('visit_id', $visitIds)
+        ->orderBy('visit_id')
+        ->get();
+
+    return $scores->map(function ($score, $index) {
+        $fields = [
+            $score->lab_store_clean,
+            $score->main_store_clean,
+            $score->laboratory_clean,
+        ];
+
+          // Filter out nulls or "NA"
+         $validScores = collect($fields)->filter(function ($score) {
+        return $score != 2; // Exclude NA (2)
+        });
+
+    $finalScore = $validScores->isNotEmpty()
+    ? round($validScores->avg(), 2) // Computes sum/count
+    : 0;
+
+
+        return [
+            'label' => 'Visit-' . ($index + 1) . ' Score:',
+            'data' => [$finalScore], // just one score for this axis
+            'color' => $this->randomColor($index),
+        ];
+    })->toArray();
+    
+}
+
+public function fvHygieneManagementScore() : array {
+    $user = auth()->user();
+    $visitQuery = $this->query();
+    // Default to user's institution if no region/district filter
+    if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
+        $visitQuery->whereHas('facility', function ($q) use ($user) {
+            $q->where('institution_id', $user->institution_id);
+        });
+    }
+    $visitIds = $visitQuery->pluck('id');
+    if ($visitIds->isEmpty()) {
+        return [];
+    }
+    $scores = DB::table('fv_hygiene_management')
+        ->select(
+            'visit_id',
+            'running_water',
+            'hand_washing_separate',
+            'hand_washing_facility',
+            'drainage_system',
+            'soap_available',
+        )
+        ->whereIn('visit_id', $visitIds)
+        ->orderBy('visit_id')
+        ->get();
+    return $scores->map(function ($score, $index) {
+        $fields = [
+            $score->running_water,
+            $score->hand_washing_separate,
+            $score->hand_washing_facility,
+            $score->drainage_system,
+            $score->soap_available,
+        ];
+        
+        // Filter out nulls or "NA"
+         $validScores = collect($fields)->filter(function ($score) {
+        return $score != 2; // Exclude NA (2)
+        });
+
+    $finalScore = $validScores->isNotEmpty()
+    ? round($validScores->avg(), 2) // Computes sum/count
+    : 0;
+
+
+        return [
+            'label' => 'Visit-' . ($index + 1) . ' Score:',
+            'data' => [$finalScore], // just one score for this axis
+            'color' => $this->randomColor($index),
+        ];
+    })->toArray();
+}
+
+public function fvStorageSystemMgtMainLabScore() : array {
+    $user = auth()->user();
+    $visitQuery = $this->query();
+
+    // Default to user's institution if no region/district filter
+    if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
+        $visitQuery->whereHas('facility', function ($q) use ($user) {
+            $q->where('institution_id', $user->institution_id);
+        });
+    }
+
+    $visitIds = $visitQuery->pluck('id');
+
+    if ($visitIds->isEmpty()) {
+        return [];
+    }
+
+    $scores = DB::table('fv_storage_system_management')
+        ->select(
+            'visit_id',
+            'main_store_shelves',
+            'main_store_reagents',
+            'main_store_stock_cards',
+            'main_store_systematic',
+            'main_store_labeled',
+        )
+        ->whereIn('visit_id', $visitIds)
+        ->orderBy('visit_id')
+        ->get();
+
+    return $scores->map(function ($score, $index) {
+        $fields = [
+            $score->main_store_shelves,
+            $score->main_store_reagents,
+            $score->main_store_stock_cards,
+            $score->main_store_systematic,
+            $score->main_store_labeled,
+        ];
+
+    $validScores = collect($fields)->filter(function ($score) {
+    return $score != 2; // Exclude NA (2)
+});
+
+   $finalScore = $validScores->isNotEmpty()
+    ? round($validScores->avg(), 2) // Computes sum/count
+    : 0;
+
+        return [
+            'label' => 'Visit-' . ($index + 1) . ' Score:',
+            'data' => [$finalScore], // just one score for this axis
+            'color' => $this->randomColor($index),
+        ];
+    })->toArray();
+    
+}
+
+public function fvStorageSystemMgtLabStoreScore() : array {
+    $user = auth()->user();
+    $visitQuery = $this->query();
+
+    // Default to user's institution if no region/district filter
+    if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
+        $visitQuery->whereHas('facility', function ($q) use ($user) {
+            $q->where('institution_id', $user->institution_id);
+        });
+    }
+
+    $visitIds = $visitQuery->pluck('id');
+
+    if ($visitIds->isEmpty()) {
+        return [];
+    }
+
+    $scores = DB::table('fv_storage_system_management')
+        ->select(
+            'visit_id',
+            'lab_store_shelves',
+            'lab_store_reagents',
+            'lab_store_stock_cards',
+            'lab_store_systematic',
+            'lab_store_labeled',
+        )
+        ->whereIn('visit_id', $visitIds)
+        ->orderBy('visit_id')
+        ->get();
+
+    return $scores->map(function ($score, $index) {
+        $fields = [
+            $score->lab_store_shelves,
+            $score->lab_store_reagents,
+            $score->lab_store_stock_cards,
+            $score->lab_store_systematic,
+            $score->lab_store_labeled,
+        ];
+
+    $validScores = collect($fields)->filter(function ($score) {
+    return $score != 2; // Exclude NA (2)
+});
+
+   $finalScore = $validScores->isNotEmpty()
+    ? round($validScores->avg(), 2) // Computes sum/count
+    : 0;
+
+        return [
+            'label' => 'Visit-' . ($index + 1) . ' Score:',
+            'data' => [$finalScore], // just one score for this axis
+            'color' => $this->randomColor($index),
+        ];
+    })->toArray();
+    
+}
+
+public function fvOverallStorageSystemScore(): array
+{
+    $mainScores = $this->fvStorageSystemMgtMainLabScore();
+    $labScores = $this->fvStorageSystemMgtLabStoreScore();
+    
+    // Create a combined array with scores for each visit
+    $combinedScores = [];
+    
+    // Get the maximum number of visits between both score sets
+    $maxVisits = max(count($mainScores), count($labScores));
+    
+    for ($i = 0; $i < $maxVisits; $i++) {
+        $mainScore = $mainScores[$i]['data'][0] ?? 0;
+        $labScore = $labScores[$i]['data'][0] ?? 0;
+        
+        // Calculate average for this visit (only if both scores exist)
+        $validScores = [];
+        if (isset($mainScores[$i])) $validScores[] = $mainScore;
+        if (isset($labScores[$i])) $validScores[] = $labScore;
+        
+        $averageScore = !empty($validScores) 
+            ? round(array_sum($validScores) / count($validScores), 2)
+            : 0;
+        
+        $combinedScores[] = [
+            'label' => 'Visit-' . ($i + 1) . ' Overall Score',
+            'data' => [$averageScore],
+            'color' => $this->randomColor($i),
+            'main_score' => $mainScore,
+            'lab_score' => $labScore
+        ];
+    }
+    
+    return $combinedScores;
+}
+
+
+public function fvMainLabStorageConditionScore() : array {
+    $user = auth()->user();
+    $visitQuery = $this->query();
+    // Default to user's institution if no region/district filter
+    if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
+        $visitQuery->whereHas('facility', function ($q) use ($user) {
+            $q->where('institution_id', $user->institution_id);
+        });
+    }
+    $visitIds = $visitQuery->pluck('id');
+    if ($visitIds->isEmpty()) {
+        return [];
+    }
+    $scores = DB::table('fv_storage_condition_management')
+        ->select(
+            'visit_id',
+            'main_store_pests',
+            'main_store_sunlight',
+            'main_store_temperature',
+            'main_store_lockable',
+            'main_temperature_regulated',
+            'main_roof_condition',
+            'main_sufficient_storage_space',
+            'main_fire_safety_equipment_available',
+            'main_cold_storage_functional',
+            'main_fridge_well_ventilated',
+            'main_fridge_used_for_reagents_only',
+            'main_containers_securely_capped',
+            'main_fridge_temperature_monitored',
+            'main_boxes_not_on_floor',
+        )
+        ->whereIn('visit_id', $visitIds)
+        ->orderBy('visit_id')
+        ->get();
+
+    return $scores->map(function ($score, $index) {
+        $fields = [
+           $score->main_store_pests,
+           $score->main_store_sunlight,
+           $score->main_store_temperature,
+           $score->main_store_lockable,
+           $score->main_temperature_regulated,
+           $score->main_roof_condition,
+           $score->main_sufficient_storage_space,
+           $score->main_fire_safety_equipment_available,
+           $score->main_cold_storage_functional,
+           $score->main_fridge_well_ventilated,
+           $score->main_fridge_used_for_reagents_only,
+           $score->main_containers_securely_capped,
+           $score->main_fridge_temperature_monitored,
+           $score->main_boxes_not_on_floor,
+        ];
+        // Filter out nulls or "NA"
+         $validScores = collect($fields)->filter(function ($score) {
+        return $score != 2; // Exclude NA (2)
+        });
+    $finalScore = $validScores->isNotEmpty()
+    ? round($validScores->avg(), 2) // Computes sum/count
+    : 0;
+        return [
+            'label' => 'Visit-' . ($index + 1) . ' Score:',
+            'data' => [$finalScore], // just one score for this axis
+            'color' => $this->randomColor($index),
+        ];
+    })->toArray();
+}   
+
+function fvLabStorageConditionScore() : array {
+    $user = auth()->user();
+    $visitQuery = $this->query();
+    // Default to user's institution if no region/district filter
+    if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
+        $visitQuery->whereHas('facility', function ($q) use ($user) {
+            $q->where('institution_id', $user->institution_id);
+        });
+    }
+    $visitIds = $visitQuery->pluck('id');
+    if ($visitIds->isEmpty()) {
+        return [];
+    }
+    $scores = DB::table('fv_storage_condition_management')
+        ->select(
+            'visit_id',
+            'lab_store_pests',
+            'lab_store_sunlight',
+            'lab_store_temperature',
+            'lab_store_lockable',
+            'lab_temperature_regulated',
+            'lab_roof_condition',
+            'lab_sufficient_storage_space',
+            'lab_fire_safety_equipment_available',
+            'lab_cold_storage_functional',
+            'lab_fridge_well_ventilated',
+            'lab_fridge_used_for_reagents_only',
+            'lab_containers_securely_capped',
+            'lab_fridge_temperature_monitored',
+            'lab_boxes_not_on_floor',
+        )
+        ->whereIn('visit_id', $visitIds)
+        ->orderBy('visit_id')
+        ->get();
+
+    return $scores->map(function ($score, $index) {
+        $fields = [
+           $score->lab_store_pests,
+           $score->lab_store_sunlight,
+           $score->lab_store_temperature,
+           $score->lab_store_lockable,
+           $score->lab_temperature_regulated,
+           $score->lab_roof_condition,
+           $score->lab_sufficient_storage_space,
+           $score->lab_fire_safety_equipment_available,
+           $score->lab_cold_storage_functional,
+           $score->lab_fridge_well_ventilated,
+           $score->lab_fridge_used_for_reagents_only,
+           $score->lab_containers_securely_capped,
+           $score->lab_fridge_temperature_monitored,
+           $score->lab_boxes_not_on_floor,
+        ];
+         // Filter out nulls or "NA"
+         $validScores = collect($fields)->filter(function ($score) {
+        return $score != 2; // Exclude NA (2)
+        });
+    $finalScore = $validScores->isNotEmpty()
+    ? round($validScores->avg(), 2) // Computes sum/count
+    : 0;
+        return [
+            'label' => 'Visit-' . ($index + 1) . ' Score:',
+            'data' => [$finalScore], // just one score for this axis
+            'color' => $this->randomColor($index),
+        ];
+    })->toArray();
+    
+}
+
+public function fvOverallStorageConditionScore(): array
+{
+    $mainScores = $this->fvMainLabStorageConditionScore();
+    $labScores = $this->fvLabStorageConditionScore();
+    
+    // Create a combined array with scores for each visit
+    $combinedScores = [];
+    
+    // Get the maximum number of visits between both score sets
+    $maxVisits = max(count($mainScores), count($labScores));
+    
+    for ($i = 0; $i < $maxVisits; $i++) {
+        $mainScore = $mainScores[$i]['data'][0] ?? 0;
+        $labScore = $labScores[$i]['data'][0] ?? 0;
+        
+        // Calculate average for this visit (only if both scores exist)
+        $validScores = [];
+        if (isset($mainScores[$i])) $validScores[] = $mainScore;
+        if (isset($labScores[$i])) $validScores[] = $labScore;
+        
+        $averageScore = !empty($validScores) 
+            ? round(array_sum($validScores) / count($validScores), 2)
+            : 0;
+        
+        $combinedScores[] = [
+            'label' => 'Visit-' . ($i + 1) . ' Overall Score',
+            'data' => [$averageScore],
+            'color' => $this->randomColor($i),
+            'main_score' => $mainScore,
+            'lab_score' => $labScore
+        ];
+    }
+    
+    return $combinedScores;
+}
+
+public function fvMainStoragePracticeManagementScore() : array {
+    $user = auth()->user();
+    $visitQuery = $this->query();
+    // Default to user's institution if no region/district filter
+    if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
+        $visitQuery->whereHas('facility', function ($q) use ($user) {
+            $q->where('institution_id', $user->institution_id);
+        });
+    }
+    $visitIds = $visitQuery->pluck('id');
+    if ($visitIds->isEmpty()) {
+        return [];
+    }
+    $scores = DB::table('fv_storage_practice_management')
+        ->select(
+            'visit_id',
+            'main_store_expired_record',
+            'main_store_expired_separate',
+            'main_store_fefo',
+            'main_store_opening_date',
+            'main_opened_bottles_have_lids',
+            'main_chemicals_properly_labelled',
+            'main_flammables_stored_safely',
+            'main_corrosives_separated',
+            'main_safety_data_sheets_available',
+        )
+        ->whereIn('visit_id', $visitIds)
+        ->orderBy('visit_id')
+        ->get();
+
+    return $scores->map(function ($score, $index) {
+        $fields = [
+           $score->main_store_expired_record,
+           $score->main_store_expired_separate,
+           $score->main_store_fefo,
+           $score->main_store_opening_date,
+           $score->main_opened_bottles_have_lids,
+           $score->main_chemicals_properly_labelled,
+           $score->main_flammables_stored_safely,
+           $score->main_corrosives_separated,
+           $score->main_safety_data_sheets_available,
+        ];
+        // Filter out nulls or "NA"
+         $validScores = collect($fields)->filter(function ($score) {
+        return $score != 2; // Exclude NA (2)
+        });
+    $finalScore = $validScores->isNotEmpty()
+    ? round($validScores->avg(), 2) // Computes sum/count
+    : 0;
+        return [
+            'label' => 'Visit-' . ($index + 1) . ' Score:',
+            'data' => [$finalScore], // just one score for this axis
+            'color' => $this->randomColor($index),
+        ];
+    })->toArray();
+}   
+
+
+public function fvLabStoragePracticeManagementScore() : array {
+    $user = auth()->user();
+    $visitQuery = $this->query();
+    // Default to user's institution if no region/district filter
+    if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
+        $visitQuery->whereHas('facility', function ($q) use ($user) {
+            $q->where('institution_id', $user->institution_id);
+        });
+    }
+    $visitIds = $visitQuery->pluck('id');
+    if ($visitIds->isEmpty()) {
+        return [];
+    }
+    $scores = DB::table('fv_storage_practice_management')
+        ->select(
+            'visit_id',
+            'lab_store_expired_record',
+            'lab_store_expired_separate',
+            'lab_store_fefo',
+            'lab_store_opening_date',
+            'lab_opened_bottles_have_lids',
+            'lab_chemicals_properly_labelled',
+            'lab_flammables_stored_safely',
+            'lab_corrosives_separated',
+            'lab_safety_data_sheets_available',
+        )
+        ->whereIn('visit_id', $visitIds)
+        ->orderBy('visit_id')
+        ->get();
+
+    return $scores->map(function ($score, $index) {
+        $fields = [
+           $score->lab_store_expired_record,
+           $score->lab_store_expired_separate,
+           $score->lab_store_fefo,
+           $score->lab_store_opening_date,
+           $score->lab_opened_bottles_have_lids,
+           $score->lab_chemicals_properly_labelled,
+           $score->lab_flammables_stored_safely,
+           $score->lab_corrosives_separated,
+           $score->lab_safety_data_sheets_available,
+        ];
+        // Filter out nulls or "NA"
+         $validScores = collect($fields)->filter(function ($score) {
+        return $score != 2; // Exclude NA (2)
+        });
+    $finalScore = $validScores->isNotEmpty()
+    ? round($validScores->avg(), 2) // Computes sum/count
+    : 0;
+        return [
+            'label' => 'Visit-' . ($index + 1) . ' Score:',
+            'data' => [$finalScore], // just one score for this axis
+            'color' => $this->randomColor($index),
+        ];
+    })->toArray();
+}   
+
+public function fvOverallStoragePracticeManagementScore(): array
+{
+    $mainScores = $this->fvMainStoragePracticeManagementScore();
+    $labScores = $this->fvLabStoragePracticeManagementScore();
+    
+    // Create a combined array with scores for each visit
+    $combinedScores = [];
+    
+    // Get the maximum number of visits between both score sets
+    $maxVisits = max(count($mainScores), count($labScores));
+    
+    for ($i = 0; $i < $maxVisits; $i++) {
+        $mainScore = $mainScores[$i]['data'][0] ?? 0;
+        $labScore = $labScores[$i]['data'][0] ?? 0;
+        
+        // Calculate average for this visit (only if both scores exist)
+        $validScores = [];
+        if (isset($mainScores[$i])) $validScores[] = $mainScore;
+        if (isset($labScores[$i])) $validScores[] = $labScore;
+        
+        $averageScore = !empty($validScores) 
+            ? round(array_sum($validScores) / count($validScores), 2)
+            : 0;
+        
+        $combinedScores[] = [
+            'label' => 'Visit-' . ($i + 1) . ' Overall Score',
+            'data' => [$averageScore],
+            'color' => $this->randomColor($i),
+            'main_score' => $mainScore,
+            'lab_score' => $labScore
+        ];
+    }
+    
+    return $combinedScores;
+}
+
+
+public function fvTotalStorageScore(): array
+{
+    // Get all component scores
+    $componentFunctions = [
+        'fvOverallStorageConditionScore',
+        'fvOverallStoragePracticeManagementScore',
+        'fvOverallStorageSystemScore',
+        'fvStorageAreaCleanlinessScore',
+        'fvHygieneManagementScore'
+    ];
+    
+    // Collect all scores grouped by visit
+    $allScores = [];
+    $maxVisits = 0;
+    
+    foreach ($componentFunctions as $function) {
+        $scores = $this->$function();
+        $maxVisits = max($maxVisits, count($scores));
+        
+        foreach ($scores as $index => $score) {
+            if (!isset($allScores[$index])) {
+                $allScores[$index] = [
+                    'scores' => [],
+                    'color' => $score['color']
+                ];
+            }
+            $allScores[$index]['scores'][] = $score['data'][0];
+        }
+    }
+    
+    // Calculate total score for each visit (0-5 scale)
+    $result = [];
+    $numberOfFunctions = count($componentFunctions);
+    
+    for ($i = 0; $i < $maxVisits; $i++) {
+        $visitScores = $allScores[$i]['scores'] ?? array_fill(0, $numberOfFunctions, 0);
+        
+        // Apply formula: (Sum(scores) / number of functions) * scaling factor
+        // Assuming original scores are 0-1, multiply by 5 to get 0-5 scale
+        $totalScore = (array_sum($visitScores) / $numberOfFunctions) * 5;
+        $roundedScore = round($totalScore, 2);
+        
+        $result[] = [
+            'label' => 'Visit-' . ($i + 1) . ' Total Score (0-5)',
+            'score' => [$roundedScore],
+            'color' => $allScores[$i]['color'] ?? $this->randomColor($i),
+            'component_scores' => [
+                'storage_condition' => ($visitScores[0] ?? 0) * 5,
+                'practice_management' => ($visitScores[1] ?? 0) * 5,
+                'storage_system' => ($visitScores[2] ?? 0) * 5,
+                'cleanliness' => ($visitScores[3] ?? 0) * 5,
+                'hygiene' => ($visitScores[4] ?? 0) * 5,
+            ]
+        ];
+    }
+    
+    return $result;
+}
+
+public function fvOrderManagement() : array {
+    $user = auth()->user();
+    $visitQuery = $this->query();
+    // Default to user's institution if no region/district filter
+    if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
+        $visitQuery->whereHas('facility', function ($q) use ($user) {
+            $q->where('institution_id', $user->institution_id);
+        });
+    }
+    $visitIds = $visitQuery->pluck('id');
+    if ($visitIds->isEmpty()) {
+        return [];
+    }
+    $scores = DB::table('fv_order_management')
+        ->select(
+            'visit_id',
+            'cycles_filed_stored',
+            'electronic_submission',
+            'qty_to_order_score',
+            'test_menu_available',
+        )
+        ->whereIn('visit_id', $visitIds)
+        ->orderBy('visit_id')
+        ->get();
+
+    return $scores->map(function ($score, $index) {
+        $fields = [
+           $score->cycles_filed_stored,
+           $score->electronic_submission,
+           $score->qty_to_order_score,
+           $score->test_menu_available,
+        ];
+        // Filter out nulls or "NA"
+         $validScores = collect($fields)->filter(function ($score) {
+        return $score != 2; // Exclude NA (2)
+        });
+    $finalScore = $validScores->isNotEmpty()
+    ? round($validScores->avg(), 2) // Computes sum/count
+    : 0;
+        return [
+            'label' => 'Visit-' . ($index + 1) . ' Score:',
+            'data' => [$finalScore],
+        ];
+    })->toArray();
+}   
+
+
+public function fvAdherenceToOrderPracticesManagement() : array {
+    $user = auth()->user();
+    $visitQuery = $this->query();
+    // Default to user's institution if no region/district filter
+    if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
+        $visitQuery->whereHas('facility', function ($q) use ($user) {
+            $q->where('institution_id', $user->institution_id);
+        });
+    }
+    $visitIds = $visitQuery->pluck('id');
+    if ($visitIds->isEmpty()) {
+        return [];
+    }
+    $scores = DB::table('fv_adherences')
+        ->select(
+            'visit_id',
+            'ordering_timely',
+            'delivery_on_time',
+            'annual_procurement_plan',
+        )
+        ->whereIn('visit_id', $visitIds)
+        ->orderBy('visit_id')
+        ->get();
+
+    return $scores->map(function ($score, $index) {
+        $fields = [
+           $score->ordering_timely,
+           $score->delivery_on_time,
+           $score->annual_procurement_plan,
+        ];
+        // Filter out nulls or "NA"
+         $validScores = collect($fields)->filter(function ($score) {
+        return $score != 2; // Exclude NA (2)
+        });
+    $finalScore = $validScores->isNotEmpty()
+    ? round($validScores->avg(), 2) // Computes sum/count
+    : 0;
+        return [
+            'label' => 'Visit-' . ($index + 1) . ' Score:',
+            'data' => [$finalScore],
+        ];
+    })->toArray();
+}   
+
+
+public function fvTotalOrderMgtScore(): array
+{
+    // Get all component scores
+    $componentFunctions = [
+        'fvOrderManagement',
+        'fvAdherenceToOrderPracticesManagement',
+    ];
+    
+    // Collect all scores grouped by visit
+    $allScores = [];
+    $maxVisits = 0;
+    
+    foreach ($componentFunctions as $function) {
+        $scores = $this->$function();
+        $maxVisits = max($maxVisits, count($scores));
+        
+        foreach ($scores as $index => $score) {
+            if (!isset($allScores[$index])) {
+                $allScores[$index] = [
+                    'scores' => [],
+                ];
+            }
+            $allScores[$index]['scores'][] = $score['data'][0];
+        }
+    }
+    
+    // Calculate total score for each visit (0-5 scale)
+    $result = [];
+    $numberOfFunctions = count($componentFunctions);
+    
+    for ($i = 0; $i < $maxVisits; $i++) {
+        $visitScores = $allScores[$i]['scores'] ?? array_fill(0, $numberOfFunctions, 0);
+        
+        // Apply formula: (Sum(scores) / number of functions) * scaling factor
+        // Assuming original scores are 0-1, multiply by 5 to get 0-5 scale
+        $totalScore = (array_sum($visitScores) / $numberOfFunctions) * 5;
+        $roundedScore = round($totalScore, 2);
+        
+        $result[] = [
+            'label' => 'Visit-' . ($i + 1) . ' Total Score (0-5)',
+            'score' => [$roundedScore],
+            'component_scores' => [
+                'order_mgt' => ($visitScores[0] ?? 0) * 5,
+                'adherence_to_order_practice' => ($visitScores[1] ?? 0) * 5,
+            ]
+        ];
+    }
+    
+    return $result;
+}
+
     public function mount()
     {
         $this->loadDashboardData();
@@ -82,20 +940,42 @@ public $scoreSets = [
     }
     public function query()
     {
+        $user = auth()->user();
         $data = FacilityVisit::query()
-            ->with(['facility.healthSubDistrict.district.region'])
+            ->with(['facility.healthSubDistrict.district.region']);
 
-            ->when($this->selectedRegion, function ($query) {
-                $query->whereHas('facility.healthSubDistrict.district', function ($q) {
-                    $q->where('region_id', $this->selectedRegion);
-                });
-            })
+            // ->when($this->selectedRegion, function ($query) {
+            //     $query->whereHas('facility.healthSubDistrict.district', function ($q) {
+            //         $q->where('region_id', $this->selectedRegion);
+            //     });
+            // })
 
-            ->when($this->selectedDistrict, function ($query) {
-                $query->whereHas('facility.healthSubDistrict', function ($q) {
-                    $q->where('district_id', $this->selectedDistrict);
-                });
-            });
+            // ->when($this->selectedDistrict, function ($query) {
+            //     $query->whereHas('facility.healthSubDistrict', function ($q) {
+            //         $q->where('district_id', $this->selectedDistrict);
+            //     });
+            // });
+
+             // Filter for user's institution if no region/district is selected
+    if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
+        $data->whereHas('facility', function ($q) use ($user) {
+            $q->where('facility_id', $user->institution_id);
+        });
+    }
+
+    // Existing filters
+    if ($this->selectedRegion) {
+        $data->whereHas('facility.healthSubDistrict.district', function ($q) {
+            $q->where('region_id', $this->selectedRegion);
+        });
+    }
+
+    if ($this->selectedDistrict) {
+        $data->whereHas('facility.healthSubDistrict', function ($q) {
+            $q->where('district_id', $this->selectedDistrict);
+        });
+    }
+
         // Apply date filters
         switch ($this->dateRange) {
             case 'today':
@@ -275,6 +1155,8 @@ public $scoreSets = [
 
     public function render()
     {
+        dd($this->fvTotalOrderMgtScore());
+        
         $regions   = Region::all();
         $districts = $this->selectedRegion ? District::where('region_id', $this->selectedRegion)->get() : collect();
 
