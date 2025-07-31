@@ -52,12 +52,12 @@
 </table>
 
 <p>
-    <strong>Score - Available:</strong> Sum of A to P divided by 16 minus NA: ______
-    <strong>Percentage - Available:</strong> _______%< <strong>Score - In Use:</strong> Sum of A to P divided by 16
-        minus NA: ______
-        <strong>Percentage - In Use:</strong> _______%<br>
-        <strong>Sum of Available + In Use:</strong> _______
-        <strong>Percentage:</strong> _______%
+    <strong>Availability Score:</strong> Sum of A to P divided by 16 minus NA: ______ <strong>Availability Percentage:</strong> _______%
+    <br>
+    <strong>Score - In Use:</strong> Sum of A to P divided by 16 minus NA: ______   <strong>Percentage - In Use:</strong> _______%
+    <br>
+    <strong>Total Score:</strong> _______
+    <strong>Total Percentage:</strong> _______%
 </p>
 
 <!-- Section 21: Availability of HMIS 105 Reports -->
@@ -162,8 +162,14 @@
 
 <!-- Section 23: Completeness and Accuracy of HMIS 105 Report -->
 <h2>23. Completeness and Accuracy of HMIS 105 Report</h2>
-Date report was filled (use last report not more than 2 months ago): <input type="date"
-    wire:model="last_report_filling_date" id="last_report_filling_date">
+
+<div class="col-12 col-md-6 px-1 mb-3">
+<label for="last_report_filling_date" class="form-label required">Date report was filled (use last report not more than 2 months ago): </label>
+<input type="date" class="form-control col-md-3" wire:model="last_report_filling_date" id="last_report_filling_date">
+@error('last_report_filling_date')
+<div class="text-danger text-small">{{ $message }}</div>
+@enderror
+</div>
 <small>Note: for this indicator, an average of the score in parts a, b & c contribute to the final score!</small>
 <b>a) Completeness of the HMIS 105 report</b>
 

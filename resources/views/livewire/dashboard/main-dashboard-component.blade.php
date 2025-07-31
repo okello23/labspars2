@@ -136,7 +136,7 @@
                     <div class="card-body">
                         <!-- <div class="chart-container" id="visitTrendsChart"></div> -->
                          <div>
-    <canvas id="spiderChart" width="400" height="400"></canvas>
+   <canvas id="spiderChart" width="600" height="600"></canvas>
 </div>
 
 
@@ -315,43 +315,91 @@
             };
             new ApexCharts(document.querySelector("#visitStatusChart"), visitStatusOptions).render();
 
-               document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document.getElementById('spiderChart').getContext('2d');
+              async function plotSpiderChart() {
+                
+  const response = await fetch('/spider-graph-data'); // Replace with your actual route
+  const spiderData = await response.json();
 
-        const datasets = @json($scoreSets).map(set => ({
-            label: set.label,
-            data: set.data,
-            backgroundColor: set.color.replace('1)', '0.2)'),  // semi-transparent fill
-            borderColor: set.color,
-            pointBackgroundColor: set.color,
-            borderWidth: 2
-        }));
+  // Radar axes
+  const labels = [
+    "Stock Management",
+    "Storage",
+    "Ordering",
+    "Equipment Management",
+    "Lab Information System"
+  ];
 
-        const chart = new Chart(ctx, {
-            type: 'radar',
-            data: {
-                labels: @json($categories),
-                datasets: datasets
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    r: {
-                        suggestedMin: 0,
-                        suggestedMax: 5,
-                        ticks: {
-                            stepSize: 1
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        position: 'top'
-                    }
-                }
-            }
-        });
-    });
+  // Assign random RGBA colors for each dataset
+  const getRGBA = (index, alpha = 0.5) => {
+    const colors = [
+      [255, 99, 132],
+      [54, 162, 235],
+      [255, 206, 86],
+      [75, 192, 192],
+      [153, 102, 255],
+      [255, 159, 64],
+      [100, 200, 100],
+      [240, 80, 128]
+    ];
+    const [r, g, b] = colors[index % colors.length];
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
+
+  // Prepare datasets
+  const datasets = spiderData.map((visit, index) => ({
+    label: visit.label,
+    data: Object.values(visit.data),
+    fill: true,
+    backgroundColor: getRGBA(index, 0.2),
+    borderColor: getRGBA(index, 1),
+    pointBackgroundColor: getRGBA(index, 1),
+    pointBorderColor: "#fff",
+    pointHoverBackgroundColor: "#fff",
+    pointHoverBorderColor: getRGBA(index, 1),
+  }));
+
+  // Chart config
+  const config = {
+    type: 'radar',
+    data: {
+      labels: labels,
+      datasets: datasets
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Thematic Area Scores per Visit (Radar Chart)'
+        },
+        legend: {
+          position: 'top'
+        }
+      },
+      elements: {
+        line: {
+          borderWidth: 2
+        }
+      },
+      scales: {
+        r: {
+          min: 0,
+          max: 5,
+          ticks: {
+            stepSize: 1
+          }
+        }
+      }
+    }
+  };
+
+  // Render the chart
+  const ctx = document.getElementById('spiderChart').getContext('2d');
+  new Chart(ctx, config);
+}
+
+// Call it on page load
+plotSpiderChart();
         </script>
     @endpush
 </div>
