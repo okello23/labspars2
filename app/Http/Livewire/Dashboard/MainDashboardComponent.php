@@ -99,7 +99,7 @@ public $scoreSets = [
     // Default to user's institution if no region/district filter
     if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
-            $q->where('facility_id', $user->institution_id);
+            $q->where('facility_id', $user->facility_id);
         });
     }
 
@@ -157,7 +157,7 @@ public function fvStorageAreaCleanlinessScore() : array {
     // Default to user's institution if no region/district filter
     if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
-            $q->where('facility_id', $user->institution_id);
+            $q->where('facility_id', $user->facility_id);
         });
     }
 
@@ -210,7 +210,7 @@ public function fvHygieneManagementScore() : array {
     // Default to user's institution if no region/district filter
     if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
-            $q->where('facility_id', $user->institution_id);
+            $q->where('facility_id', $user->facility_id);
         });
     }
     $visitIds = $visitQuery->pluck('id');
@@ -263,7 +263,7 @@ public function fvStorageSystemMgtMainLabScore() : array {
     // Default to user's institution if no region/district filter
     if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
-            $q->where('facility_id', $user->institution_id);
+            $q->where('facility_id', $user->facility_id);
         });
     }
 
@@ -319,7 +319,7 @@ public function fvStorageSystemMgtLabStoreScore() : array {
     // Default to user's institution if no region/district filter
     if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
-            $q->where('facility_id', $user->institution_id);
+            $q->where('facility_id', $user->facility_id);
         });
     }
 
@@ -411,7 +411,7 @@ public function fvMainLabStorageConditionScore() : array {
     // Default to user's institution if no region/district filter
     if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
-            $q->where('facility_id', $user->institution_id);
+            $q->where('facility_id', $user->facility_id);
         });
     }
     $visitIds = $visitQuery->pluck('id');
@@ -478,7 +478,7 @@ function fvLabStorageConditionScore() : array {
     // Default to user's institution if no region/district filter
     if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
-            $q->where('facility_id', $user->institution_id);
+            $q->where('facility_id', $user->facility_id);
         });
     }
     $visitIds = $visitQuery->pluck('id');
@@ -582,7 +582,7 @@ public function fvMainStoragePracticeManagementScore() : array {
     // Default to user's institution if no region/district filter
     if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
-            $q->where('facility_id', $user->institution_id);
+            $q->where('facility_id', $user->facility_id);
         });
     }
     $visitIds = $visitQuery->pluck('id');
@@ -640,7 +640,7 @@ public function fvLabStoragePracticeManagementScore() : array {
     // Default to user's institution if no region/district filter
     if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
-            $q->where('facility_id', $user->institution_id);
+            $q->where('facility_id', $user->facility_id);
         });
     }
     $visitIds = $visitQuery->pluck('id');
@@ -793,7 +793,7 @@ public function fvOrderManagement() : array {
     // Default to user's institution if no region/district filter
     if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
-            $q->where('facility_id', $user->institution_id);
+            $q->where('facility_id', $user->facility_id);
         });
     }
     $visitIds = $visitQuery->pluck('id');
@@ -840,7 +840,7 @@ public function fvAdherenceToOrderPracticesManagement() : array {
     // Default to user's institution if no region/district filter
     if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
-            $q->where('facility_id', $user->institution_id);
+            $q->where('facility_id', $user->facility_id);
         });
     }
     $visitIds = $visitQuery->pluck('id');
@@ -936,7 +936,7 @@ public function fvEquipmentManagementScore() : array {
     // Default to user's institution if no region/district filter
     if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
-            $q->where('facility_id', $user->institution_id);
+            $q->where('facility_id', $user->facility_id);
         });
     }
     $visitIds = $visitQuery->pluck('id');
@@ -987,7 +987,7 @@ public function fvEquipmentUtilizationScores(): array {
     // Default to user's institution if no region/district filter
     if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
-            $q->where('facility_id', $user->institution_id);
+            $q->where('facility_id', $user->facility_id);
         });
     }
 
@@ -1083,7 +1083,7 @@ public function fvLisDataToolScores() : array {
     // Default to user's institution if no region/district filter
     if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
-            $q->where('facility_id', $user->institution_id);
+            $q->where('facility_id', $user->facility_id);
         });
     }
     $visitIds = $visitQuery->pluck('id');
@@ -1132,7 +1132,7 @@ public function fvLisHmisScores() : array {
     // Default to user's institution if no region/district filter
     if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
-            $q->where('facility_id', $user->institution_id);
+            $q->where('facility_id', $user->facility_id);
         });
     }
     $visitIds = $visitQuery->pluck('id');
@@ -1183,7 +1183,7 @@ public function fvLisCompStockStatusScores() : array {
     // Default to user's institution if no region/district filter
     if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
-            $q->where('facility_id', $user->institution_id);
+            $q->where('facility_id', $user->facility_id);
         });
     }
     $visitIds = $visitQuery->pluck('id');
@@ -1232,7 +1232,7 @@ public function fvLisCompStockStatusScores() : array {
     // Default to user's institution if no region/district filter
     if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
-            $q->where('facility_id', $user->institution_id);
+            $q->where('facility_id', $user->facility_id);
         });
     }
     $visitIds = $visitQuery->pluck('id');
@@ -1283,7 +1283,7 @@ public function fvLisCompStockStatusScores() : array {
     // Default to user's institution if no region/district filter
     if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
-            $q->where('facility_id', $user->institution_id);
+            $q->where('facility_id', $user->facility_id);
         });
     }
     $visitIds = $visitQuery->pluck('id');
@@ -1335,10 +1335,9 @@ public function fvLisCompStockStatusScores() : array {
     // Default to user's institution if no region/district filter
     if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
-            $q->where('facility_id', $user->institution_id);
+            $q->where('facility_id', $user->facility_id);
         });
     }
-    dd($visitQuery);
     $visitIds = $visitQuery->pluck('id');
     if ($visitIds->isEmpty()) {
         return [];
@@ -1475,8 +1474,8 @@ public function getSpiderGraphData(): array
             ],
         ];
     })->toArray();
-
     return $spiderData;
+
 }
 
 
@@ -1508,7 +1507,7 @@ public function getSpiderGraphData(): array
              // Filter for user's institution if no region/district is selected
     if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
         $data->whereHas('facility', function ($q) use ($user) {
-            $q->where('facility_id', $user->institution_id);
+            $q->where('facility_id', $user->facility_id);
         });
     }
 
@@ -1704,7 +1703,7 @@ public function getSpiderGraphData(): array
 
     public function render()
     {
-        dd($this->fvLisReportFillingScores());
+        // dd($this->fvLisReportFillingScores());
         
         $regions   = Region::all();
         $districts = $this->selectedRegion ? District::where('region_id', $this->selectedRegion)->get() : collect();
