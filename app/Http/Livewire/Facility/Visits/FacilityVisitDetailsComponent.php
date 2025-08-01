@@ -1950,6 +1950,7 @@ class FacilityVisitDetailsComponent extends Component
             'reports_filling_percentage'      => 'nullable|numeric',
         ]); // Validate input data
 
+
         FvLisHmisReport::updateOrCreate(
             ['visit_id' => $this->active_visit->id],
             [
