@@ -124,10 +124,11 @@
                 <div class="header"> <h4>Spider Graph</h4> </div>
                 <div class="body">
                     <div class="card-body"> <div>
-   <canvas id="spiderChart" width="600" height="600"></canvas>
-</div>
+                        <select id="facilityFilter" multiple class="form-control" style="margin-bottom: 1rem; width: 100%;"></select>
+                        <button id="deselectAllBtn" class="btn btn-sm btn-danger mt-2">Deselect All</button>
 
-
+                        <canvas id="spiderChart" width="600" height="600"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -147,7 +148,7 @@
                 </div>
             </div> 
 
-         <div class="col-lg-12 col-md-12">
+         <!-- <div class="col-lg-12 col-md-12">
             <div class="card">
                 <div class="header">
                     <h4>League Table</h4>
@@ -186,12 +187,13 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>  
     </div>
     </div>
     
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -278,12 +280,10 @@
             };
             new ApexCharts(document.querySelector("#visitStatusChart"), visitStatusOptions).render();
 
-              async function plotSpiderChart() {
-                
-  const response = await fetch('/spider-graph-data'); // Replace with your actual route
+async function plotSpiderChart() {
+  const response = await fetch('/spider-graph-data');
   const spiderData = await response.json();
 
-  // Radar axes
   const labels = [
     "Stock Management",
     "Storage",
@@ -292,7 +292,6 @@
     "Lab Information System"
   ];
 
-  // Assign random RGBA colors for each dataset
   const getRGBA = (index, alpha = 0.5) => {
     const colors = [
       [255, 99, 132],
@@ -302,31 +301,41 @@
       [153, 102, 255],
       [255, 159, 64],
       [100, 200, 100],
-      [240, 80, 128]
+      [240, 80, 128],
+      [0, 200, 255],
+      [180, 80, 200]
     ];
     const [r, g, b] = colors[index % colors.length];
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   };
 
-  // Prepare datasets
-  const datasets = spiderData.map((visit, index) => ({
-    label: visit.label,
-    data: Object.values(visit.data),
-    fill: true,
-    backgroundColor: getRGBA(index, 0.2),
-    borderColor: getRGBA(index, 1),
-    pointBackgroundColor: getRGBA(index, 1),
-    pointBorderColor: "#fff",
-    pointHoverBackgroundColor: "#fff",
-    pointHoverBorderColor: getRGBA(index, 1),
-  }));
+  // Populate dropdown
+  const dropdown = document.getElementById('facilityFilter');
+  const deselectBtn = document.getElementById('deselectAllBtn');
 
-  // Chart config
-  const config = {
+  spiderData.forEach((visit, i) => {
+    const option = document.createElement('option');
+    option.value = i;
+    option.textContent = visit.label;
+    dropdown.appendChild(option);
+  });
+
+  // Initialize Choices.js
+  const choices = new Choices(dropdown, {
+    removeItemButton: true,
+    searchEnabled: true,
+    placeholder: true,
+    placeholderValue: 'Select facilities to plot the Spider graph...',
+    shouldSort: false
+  });
+
+  const ctx = document.getElementById('spiderChart').getContext('2d');
+
+  let spiderChart = new Chart(ctx, {
     type: 'radar',
     data: {
       labels: labels,
-      datasets: datasets
+      datasets: [] // Start empty
     },
     options: {
       responsive: true,
@@ -354,15 +363,42 @@
         }
       }
     }
+  });
+
+  // Update chart with selected datasets
+  const updateChart = () => {
+    const selected = Array.from(dropdown.selectedOptions).map(opt => parseInt(opt.value));
+    const filteredDatasets = selected.map((i) => ({
+      label: spiderData[i].label,
+      data: Object.values(spiderData[i].data),
+      fill: true,
+      backgroundColor: getRGBA(i, 0.2),
+      borderColor: getRGBA(i, 1),
+      pointBackgroundColor: getRGBA(i, 1),
+      pointBorderColor: "#fff",
+      pointHoverBackgroundColor: "#fff",
+      pointHoverBorderColor: getRGBA(i, 1),
+    }));
+
+    spiderChart.data.datasets = filteredDatasets;
+    spiderChart.update();
   };
 
-  // Render the chart
-  const ctx = document.getElementById('spiderChart').getContext('2d');
-  new Chart(ctx, config);
+  // Initial empty chart
+  updateChart();
+
+  // Change on selection
+  dropdown.addEventListener('change', updateChart);
+
+  // Deselect All
+  deselectBtn.addEventListener('click', () => {
+    choices.removeActiveItems();
+    updateChart();
+  });
 }
 
-// Call it on page load
 plotSpiderChart();
+
         </script>
     @endpush
 </div>
