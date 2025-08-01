@@ -90,13 +90,11 @@ public $scoreSets = [
     return $colors[$index % count($colors)];
 }
 
-
-    public function stockMgtScores(): array
+public function stockMgtScores(): array
 {
     $user = auth()->user();
     $visitQuery = $this->query();
 
-    // Default to user's institution if no region/district filter
     if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
             $q->where('facility_id', $user->facility_id);
@@ -123,7 +121,7 @@ public $scoreSets = [
         ->orderBy('visit_id')
         ->get();
 
-    return $scores->map(function ($score, $index) {
+    return $scores->map(function ($score) {  // Removed $visitId parameter
         $fields = [
             $score->availability_score,
             $score->stock_card_score,
@@ -133,7 +131,6 @@ public $scoreSets = [
             $score->emr_usage_score,
         ];
 
-        // Filter out nulls or "NA"
         $validScores = collect($fields)->filter(function ($value) {
             return is_numeric($value);
         });
@@ -143,9 +140,10 @@ public $scoreSets = [
             : 0;
 
         return [
-            'label' => 'Visit-' . ($index + 1) . ' Score:',
-            'data' => [$finalScore], // just one score for this axis
-            'color' => $this->randomColor($index),
+            'visit_id' => $score->visit_id,  // Use actual visit_id from DB
+            'label' => 'Visit-' . $score->visit_id . ' Score:',  // Use actual visit_id
+            'data' => [$finalScore],
+            'color' => $this->randomColor($score->visit_id),
         ];
     })->toArray();
 }
@@ -178,7 +176,7 @@ public function fvStorageAreaCleanlinessScore() : array {
         ->orderBy('visit_id')
         ->get();
 
-    return $scores->map(function ($score, $index) {
+    return $scores->map(function ($score) {
         $fields = [
             $score->lab_store_clean,
             $score->main_store_clean,
@@ -186,22 +184,20 @@ public function fvStorageAreaCleanlinessScore() : array {
         ];
 
           // Filter out nulls or "NA"
-         $validScores = collect($fields)->filter(function ($score) {
-        return $score != 2; // Exclude NA (2)
-        });
+       $validScores = collect($fields)->filter(fn($s) => $s != 2);;
 
-    $finalScore = $validScores->isNotEmpty()
-    ? round($validScores->avg(), 2) // Computes sum/count
-    : 0;
-
-
+       $finalScore = $validScores->isNotEmpty()
+        ? round($validScores->avg(), 2)
+        : 0;
+        
         return [
-            'label' => 'Visit-' . ($index + 1) . ' Score:',
-            'data' => [$finalScore], // just one score for this axis
-            'color' => $this->randomColor($index),
-        ];
-    })->toArray();
-    
+        'visit_id' => $score->visit_id,
+        'label'    => 'Visit-' . $score->visit_id . ' Score:',
+        'data'     => [$finalScore],
+        'color'    => $this->randomColor($score->visit_id),
+    ];
+})->toArray();
+
 }
 
 public function fvHygieneManagementScore() : array {
@@ -229,7 +225,7 @@ public function fvHygieneManagementScore() : array {
         ->whereIn('visit_id', $visitIds)
         ->orderBy('visit_id')
         ->get();
-    return $scores->map(function ($score, $index) {
+    return $scores->map(function ($score) {
         $fields = [
             $score->running_water,
             $score->hand_washing_separate,
@@ -243,17 +239,19 @@ public function fvHygieneManagementScore() : array {
         return $score != 2; // Exclude NA (2)
         });
 
-    $finalScore = $validScores->isNotEmpty()
-    ? round($validScores->avg(), 2) // Computes sum/count
-    : 0;
+        $validScores = collect($fields)->filter(fn($s) => $s != 2);
 
+        $finalScore = $validScores->isNotEmpty()
+        ? round($validScores->avg(), 2)
+        : 0;
 
         return [
-            'label' => 'Visit-' . ($index + 1) . ' Score:',
-            'data' => [$finalScore], // just one score for this axis
-            'color' => $this->randomColor($index),
-        ];
-    })->toArray();
+        'visit_id' => $score->visit_id,
+        'label'    => 'Visit-' . $score->visit_id . ' Score:',
+        'data'     => [$finalScore],
+        'color'    => $this->randomColor($score->visit_id),
+    ];
+})->toArray();
 }
 
 public function fvStorageSystemMgtMainLabScore() : array {
@@ -286,7 +284,7 @@ public function fvStorageSystemMgtMainLabScore() : array {
         ->orderBy('visit_id')
         ->get();
 
-    return $scores->map(function ($score, $index) {
+    return $scores->map(function ($score) {
         $fields = [
             $score->main_store_shelves,
             $score->main_store_reagents,
@@ -295,20 +293,19 @@ public function fvStorageSystemMgtMainLabScore() : array {
             $score->main_store_labeled,
         ];
 
-    $validScores = collect($fields)->filter(function ($score) {
-    return $score != 2; // Exclude NA (2)
-});
+   $validScores = collect($fields)->filter(fn($s) => $s != 2);
 
-   $finalScore = $validScores->isNotEmpty()
-    ? round($validScores->avg(), 2) // Computes sum/count
-    : 0;
+    $finalScore = $validScores->isNotEmpty()
+        ? round($validScores->avg(), 2)
+        : 0;
 
-        return [
-            'label' => 'Visit-' . ($index + 1) . ' Score:',
-            'data' => [$finalScore], // just one score for this axis
-            'color' => $this->randomColor($index),
-        ];
-    })->toArray();
+    return [
+        'visit_id' => $score->visit_id,
+        'label'    => 'Visit-' . $score->visit_id . ' Score:',
+        'data'     => [$finalScore],
+        'color'    => $this->randomColor($score->visit_id),
+    ];
+})->toArray();
     
 }
 
@@ -342,7 +339,7 @@ public function fvStorageSystemMgtLabStoreScore() : array {
         ->orderBy('visit_id')
         ->get();
 
-    return $scores->map(function ($score, $index) {
+    return $scores->map(function ($score) {
         $fields = [
             $score->lab_store_shelves,
             $score->lab_store_reagents,
@@ -351,56 +348,56 @@ public function fvStorageSystemMgtLabStoreScore() : array {
             $score->lab_store_labeled,
         ];
 
-    $validScores = collect($fields)->filter(function ($score) {
-    return $score != 2; // Exclude NA (2)
-});
+    $validScores = collect($fields)->filter(fn($s) => $s != 2);
 
-   $finalScore = $validScores->isNotEmpty()
-    ? round($validScores->avg(), 2) // Computes sum/count
-    : 0;
+    $finalScore = $validScores->isNotEmpty()
+        ? round($validScores->avg(), 2)
+        : 0;
 
-        return [
-            'label' => 'Visit-' . ($index + 1) . ' Score:',
-            'data' => [$finalScore], // just one score for this axis
-            'color' => $this->randomColor($index),
-        ];
-    })->toArray();
+    return [
+        'visit_id' => $score->visit_id,
+        'label'    => 'Visit-' . $score->visit_id . ' Score:',
+        'data'     => [$finalScore],
+        'color'    => $this->randomColor($score->visit_id),
+    ];
+})->toArray();
     
 }
 
 public function fvOverallStorageSystemScore(): array
 {
-    $mainScores = $this->fvStorageSystemMgtMainLabScore();
-    $labScores = $this->fvStorageSystemMgtLabStoreScore();
-    
-    // Create a combined array with scores for each visit
+    $mainScores = $this->fvStorageSystemMgtMainLabScore();  // Should include 'visit_id'
+    $labScores = $this->fvStorageSystemMgtLabStoreScore();  // Should include 'visit_id'
+
+    // Index both score sets by visit_id for easier access
+    $mainByVisit = collect($mainScores)->keyBy('visit_id');
+    $labByVisit  = collect($labScores)->keyBy('visit_id');
+
+    // Merge all unique visit_ids
+    $visitIds = $mainByVisit->keys()->merge($labByVisit->keys())->unique()->sort();
+
     $combinedScores = [];
-    
-    // Get the maximum number of visits between both score sets
-    $maxVisits = max(count($mainScores), count($labScores));
-    
-    for ($i = 0; $i < $maxVisits; $i++) {
-        $mainScore = $mainScores[$i]['data'][0] ?? 0;
-        $labScore = $labScores[$i]['data'][0] ?? 0;
-        
-        // Calculate average for this visit (only if both scores exist)
-        $validScores = [];
-        if (isset($mainScores[$i])) $validScores[] = $mainScore;
-        if (isset($labScores[$i])) $validScores[] = $labScore;
-        
-        $averageScore = !empty($validScores) 
-            ? round(array_sum($validScores) / count($validScores), 2)
+
+    foreach ($visitIds as $i => $visitId) {
+        $mainScore = $mainByVisit[$visitId]['data'][0] ?? null;
+        $labScore  = $labByVisit[$visitId]['data'][0] ?? null;
+
+        $validScores = collect([$mainScore, $labScore])->filter(fn($s) => is_numeric($s));
+
+        $averageScore = $validScores->isNotEmpty()
+            ? round($validScores->avg(), 2)
             : 0;
-        
+
         $combinedScores[] = [
-            'label' => 'Visit-' . ($i + 1) . ' Overall Score',
-            'data' => [$averageScore],
-            'color' => $this->randomColor($i),
+            'visit_id'   => $visitId,
+            'label'      => "Visit-$visitId Overall Score",
+            'data'       => [$averageScore],
+            'color'      => $this->randomColor($i),
             'main_score' => $mainScore,
-            'lab_score' => $labScore
+            'lab_score'  => $labScore,
         ];
     }
-    
+
     return $combinedScores;
 }
 
@@ -440,7 +437,7 @@ public function fvMainLabStorageConditionScore() : array {
         ->orderBy('visit_id')
         ->get();
 
-    return $scores->map(function ($score, $index) {
+    return $scores->map(function ($score) {
         $fields = [
            $score->main_store_pests,
            $score->main_store_sunlight,
@@ -458,18 +455,19 @@ public function fvMainLabStorageConditionScore() : array {
            $score->main_boxes_not_on_floor,
         ];
         // Filter out nulls or "NA"
-         $validScores = collect($fields)->filter(function ($score) {
-        return $score != 2; // Exclude NA (2)
-        });
+         $validScores = collect($fields)->filter(fn($s) => $s != 2);
+
     $finalScore = $validScores->isNotEmpty()
-    ? round($validScores->avg(), 2) // Computes sum/count
-    : 0;
-        return [
-            'label' => 'Visit-' . ($index + 1) . ' Score:',
-            'data' => [$finalScore], // just one score for this axis
-            'color' => $this->randomColor($index),
-        ];
-    })->toArray();
+        ? round($validScores->avg(), 2)
+        : 0;
+
+    return [
+        'visit_id' => $score->visit_id,
+        'label'    => 'Visit-' . $score->visit_id . ' Score:',
+        'data'     => [$finalScore],
+        'color'    => $this->randomColor($score->visit_id),
+    ];
+})->toArray();
 }   
 
 function fvLabStorageConditionScore() : array {
@@ -507,7 +505,7 @@ function fvLabStorageConditionScore() : array {
         ->orderBy('visit_id')
         ->get();
 
-    return $scores->map(function ($score, $index) {
+    return $scores->map(function ($score) {
         $fields = [
            $score->lab_store_pests,
            $score->lab_store_sunlight,
@@ -524,57 +522,60 @@ function fvLabStorageConditionScore() : array {
            $score->lab_fridge_temperature_monitored,
            $score->lab_boxes_not_on_floor,
         ];
-         // Filter out nulls or "NA"
-         $validScores = collect($fields)->filter(function ($score) {
-        return $score != 2; // Exclude NA (2)
-        });
-    $finalScore = $validScores->isNotEmpty()
-    ? round($validScores->avg(), 2) // Computes sum/count
-    : 0;
-        return [
-            'label' => 'Visit-' . ($index + 1) . ' Score:',
-            'data' => [$finalScore], // just one score for this axis
-            'color' => $this->randomColor($index),
-        ];
-    })->toArray();
+        
+        $validScores = collect($fields)->filter(fn($s) => $s != 2);
+
+        $finalScore = $validScores->isNotEmpty()
+        ? round($validScores->avg(), 2)
+        : 0;
+
+    return [
+        'visit_id' => $score->visit_id,
+        'label'    => 'Visit-' . $score->visit_id . ' Score:',
+        'data'     => [$finalScore],
+        'color'    => $this->randomColor($score->visit_id),
+    ];
+})->toArray();
     
 }
 
 public function fvOverallStorageConditionScore(): array
 {
-    $mainScores = $this->fvMainLabStorageConditionScore();
-    $labScores = $this->fvLabStorageConditionScore();
-    
-    // Create a combined array with scores for each visit
+    $mainScores = $this->fvMainLabStorageConditionScore(); // Should return ['visit_id' => ..., 'data' => [...]]
+    $labScores  = $this->fvLabStorageConditionScore();     // Same
+
+    // Index both score sets by visit_id
+    $mainByVisit = collect($mainScores)->keyBy('visit_id');
+    $labByVisit  = collect($labScores)->keyBy('visit_id');
+
+    // Combine all unique visit_ids
+    $visitIds = $mainByVisit->keys()->merge($labByVisit->keys())->unique()->sort();
+
     $combinedScores = [];
-    
-    // Get the maximum number of visits between both score sets
-    $maxVisits = max(count($mainScores), count($labScores));
-    
-    for ($i = 0; $i < $maxVisits; $i++) {
-        $mainScore = $mainScores[$i]['data'][0] ?? 0;
-        $labScore = $labScores[$i]['data'][0] ?? 0;
-        
-        // Calculate average for this visit (only if both scores exist)
-        $validScores = [];
-        if (isset($mainScores[$i])) $validScores[] = $mainScore;
-        if (isset($labScores[$i])) $validScores[] = $labScore;
-        
-        $averageScore = !empty($validScores) 
-            ? round(array_sum($validScores) / count($validScores), 2)
+
+    foreach ($visitIds as $i => $visitId) {
+        $mainScore = $mainByVisit[$visitId]['data'][0] ?? null;
+        $labScore  = $labByVisit[$visitId]['data'][0] ?? null;
+
+        $validScores = collect([$mainScore, $labScore])->filter(fn($s) => is_numeric($s));
+
+        $averageScore = $validScores->isNotEmpty()
+            ? round($validScores->avg(), 2)
             : 0;
-        
+
         $combinedScores[] = [
-            'label' => 'Visit-' . ($i + 1) . ' Overall Score',
-            'data' => [$averageScore],
-            'color' => $this->randomColor($i),
+            'visit_id'   => $visitId,
+            'label'      => "Visit-$visitId Overall Score",
+            'data'       => [$averageScore],
+            'color'      => $this->randomColor($i),
             'main_score' => $mainScore,
-            'lab_score' => $labScore
+            'lab_score'  => $labScore,
         ];
     }
-    
+
     return $combinedScores;
 }
+
 
 public function fvMainStoragePracticeManagementScore() : array {
     $user = auth()->user();
@@ -606,7 +607,7 @@ public function fvMainStoragePracticeManagementScore() : array {
         ->orderBy('visit_id')
         ->get();
 
-    return $scores->map(function ($score, $index) {
+    return $scores->map(function ($score) {
         $fields = [
            $score->main_store_expired_record,
            $score->main_store_expired_separate,
@@ -618,19 +619,20 @@ public function fvMainStoragePracticeManagementScore() : array {
            $score->main_corrosives_separated,
            $score->main_safety_data_sheets_available,
         ];
-        // Filter out nulls or "NA"
-         $validScores = collect($fields)->filter(function ($score) {
-        return $score != 2; // Exclude NA (2)
-        });
+       
+          $validScores = collect($fields)->filter(fn($s) => $s != 2);
+
     $finalScore = $validScores->isNotEmpty()
-    ? round($validScores->avg(), 2) // Computes sum/count
-    : 0;
-        return [
-            'label' => 'Visit-' . ($index + 1) . ' Score:',
-            'data' => [$finalScore], // just one score for this axis
-            'color' => $this->randomColor($index),
-        ];
-    })->toArray();
+        ? round($validScores->avg(), 2)
+        : 0;
+
+    return [
+        'visit_id' => $score->visit_id,
+        'label'    => 'Visit-' . $score->visit_id . ' Score:',
+        'data'     => [$finalScore],
+        'color'    => $this->randomColor($score->visit_id),
+    ];
+})->toArray();
 }   
 
 
@@ -664,7 +666,7 @@ public function fvLabStoragePracticeManagementScore() : array {
         ->orderBy('visit_id')
         ->get();
 
-    return $scores->map(function ($score, $index) {
+    return $scores->map(function ($score) {
         $fields = [
            $score->lab_store_expired_record,
            $score->lab_store_expired_separate,
@@ -677,60 +679,61 @@ public function fvLabStoragePracticeManagementScore() : array {
            $score->lab_safety_data_sheets_available,
         ];
         // Filter out nulls or "NA"
-         $validScores = collect($fields)->filter(function ($score) {
-        return $score != 2; // Exclude NA (2)
-        });
+         $validScores = collect($fields)->filter(fn($s) => $s != 2);
+
     $finalScore = $validScores->isNotEmpty()
-    ? round($validScores->avg(), 2) // Computes sum/count
-    : 0;
-        return [
-            'label' => 'Visit-' . ($index + 1) . ' Score:',
-            'data' => [$finalScore], // just one score for this axis
-            'color' => $this->randomColor($index),
-        ];
-    })->toArray();
+        ? round($validScores->avg(), 2)
+        : 0;
+
+    return [
+        'visit_id' => $score->visit_id,
+        'label'    => 'Visit-' . $score->visit_id . ' Score:',
+        'data'     => [$finalScore],
+        'color'    => $this->randomColor($score->visit_id),
+    ];
+})->toArray();
 }   
 
 public function fvOverallStoragePracticeManagementScore(): array
 {
-    $mainScores = $this->fvMainStoragePracticeManagementScore();
-    $labScores = $this->fvLabStoragePracticeManagementScore();
-    
-    // Create a combined array with scores for each visit
+    $mainScores = $this->fvMainStoragePracticeManagementScore(); // Must include 'visit_id'
+    $labScores  = $this->fvLabStoragePracticeManagementScore();  // Must include 'visit_id'
+
+    // Index both sets by visit_id for merging
+    $mainByVisit = collect($mainScores)->keyBy('visit_id');
+    $labByVisit  = collect($labScores)->keyBy('visit_id');
+
+    // Merge and get all unique visit_ids
+    $visitIds = $mainByVisit->keys()->merge($labByVisit->keys())->unique()->sort();
+
     $combinedScores = [];
-    
-    // Get the maximum number of visits between both score sets
-    $maxVisits = max(count($mainScores), count($labScores));
-    
-    for ($i = 0; $i < $maxVisits; $i++) {
-        $mainScore = $mainScores[$i]['data'][0] ?? 0;
-        $labScore = $labScores[$i]['data'][0] ?? 0;
-        
-        // Calculate average for this visit (only if both scores exist)
-        $validScores = [];
-        if (isset($mainScores[$i])) $validScores[] = $mainScore;
-        if (isset($labScores[$i])) $validScores[] = $labScore;
-        
-        $averageScore = !empty($validScores) 
-            ? round(array_sum($validScores) / count($validScores), 2)
+
+    foreach ($visitIds as $i => $visitId) {
+        $mainScore = $mainByVisit[$visitId]['data'][0] ?? null;
+        $labScore  = $labByVisit[$visitId]['data'][0] ?? null;
+
+        $validScores = collect([$mainScore, $labScore])->filter(fn($s) => is_numeric($s));
+
+        $averageScore = $validScores->isNotEmpty()
+            ? round($validScores->avg(), 2)
             : 0;
-        
+
         $combinedScores[] = [
-            'label' => 'Visit-' . ($i + 1) . ' Overall Score',
-            'data' => [$averageScore],
-            'color' => $this->randomColor($i),
+            'visit_id'   => $visitId,
+            'label'      => "Visit-$visitId Overall Score",
+            'data'       => [$averageScore],
+            'color'      => $this->randomColor($i),
             'main_score' => $mainScore,
-            'lab_score' => $labScore
+            'lab_score'  => $labScore,
         ];
     }
-    
+
     return $combinedScores;
 }
 
-
 public function fvTotalStorageScore(): array
 {
-    // Get all component scores
+    // Define all component score functions
     $componentFunctions = [
         'fvOverallStorageConditionScore',
         'fvOverallStoragePracticeManagementScore',
@@ -738,52 +741,53 @@ public function fvTotalStorageScore(): array
         'fvStorageAreaCleanlinessScore',
         'fvHygieneManagementScore'
     ];
-    
-    // Collect all scores grouped by visit
-    $allScores = [];
-    $maxVisits = 0;
-    
+
+    // Initialize collection by visit_id
+    $allScoresByVisitId = [];
+
     foreach ($componentFunctions as $function) {
         $scores = $this->$function();
-        $maxVisits = max($maxVisits, count($scores));
-        
-        foreach ($scores as $index => $score) {
-            if (!isset($allScores[$index])) {
-                $allScores[$index] = [
+
+        foreach ($scores as $score) {
+            $visitId = $score['visit_id'] ?? null;
+            if ($visitId === null) continue;
+
+            if (!isset($allScoresByVisitId[$visitId])) {
+                $allScoresByVisitId[$visitId] = [
                     'scores' => [],
-                    'color' => $score['color']
+                    'color' => $score['color'] ?? $this->randomColor($visitId),
                 ];
             }
-            $allScores[$index]['scores'][] = $score['data'][0];
+
+            $allScoresByVisitId[$visitId]['scores'][] = $score['data'][0] ?? 0;
         }
     }
-    
-    // Calculate total score for each visit (0-5 scale)
-    $result = [];
+
     $numberOfFunctions = count($componentFunctions);
-    
-    for ($i = 0; $i < $maxVisits; $i++) {
-        $visitScores = $allScores[$i]['scores'] ?? array_fill(0, $numberOfFunctions, 0);
-        
-        // Apply formula: (Sum(scores) / number of functions) * scaling factor
-        // Assuming original scores are 0-1, multiply by 5 to get 0-5 scale
-        $totalScore = (array_sum($visitScores) / $numberOfFunctions) * 5;
+    $result = [];
+
+    foreach ($allScoresByVisitId as $visitId => $data) {
+        $visitScores = $data['scores'];
+        $paddedScores = array_pad($visitScores, $numberOfFunctions, 0);
+
+        $totalScore = array_sum($paddedScores) / $numberOfFunctions * 5;
         $roundedScore = round($totalScore, 2);
-        
+
         $result[] = [
-            'label' => 'Visit-' . ($i + 1) . ' Total Score (0-5)',
+            'visit_id' => $visitId,
+            'label' => "Visit-$visitId Total Score (0-5)",
             'score' => [$roundedScore],
-            'color' => $allScores[$i]['color'] ?? $this->randomColor($i),
+            'color' => $data['color'],
             'component_scores' => [
-                'storage_condition' => ($visitScores[0] ?? 0) * 5,
-                'practice_management' => ($visitScores[1] ?? 0) * 5,
-                'storage_system' => ($visitScores[2] ?? 0) * 5,
-                'cleanliness' => ($visitScores[3] ?? 0) * 5,
-                'hygiene' => ($visitScores[4] ?? 0) * 5,
-            ]
+                'storage_condition'      => ($paddedScores[0] ?? 0) * 5,
+                'practice_management'    => ($paddedScores[1] ?? 0) * 5,
+                'storage_system'         => ($paddedScores[2] ?? 0) * 5,
+                'cleanliness'            => ($paddedScores[3] ?? 0) * 5,
+                'hygiene'                => ($paddedScores[4] ?? 0) * 5,
+            ],
         ];
     }
-    
+
     return $result;
 }
 
@@ -812,7 +816,7 @@ public function fvOrderManagement() : array {
         ->orderBy('visit_id')
         ->get();
 
-    return $scores->map(function ($score, $index) {
+    return $scores->map(function ($score) {
         $fields = [
            $score->cycles_filed_stored,
            $score->electronic_submission,
@@ -820,17 +824,19 @@ public function fvOrderManagement() : array {
            $score->test_menu_available,
         ];
         // Filter out nulls or "NA"
-         $validScores = collect($fields)->filter(function ($score) {
-        return $score != 2; // Exclude NA (2)
-        });
+       $validScores = collect($fields)->filter(fn($s) => $s != 2);
+
     $finalScore = $validScores->isNotEmpty()
-    ? round($validScores->avg(), 2) // Computes sum/count
-    : 0;
-        return [
-            'label' => 'Visit-' . ($index + 1) . ' Score:',
-            'data' => [$finalScore],
-        ];
-    })->toArray();
+        ? round($validScores->avg(), 2)
+        : 0;
+
+    return [
+        'visit_id' => $score->visit_id,
+        'label'    => 'Visit-' . $score->visit_id . ' Score:',
+        'data'     => [$finalScore],
+        'color'    => $this->randomColor($score->visit_id),
+    ];
+})->toArray();
 }   
 
 
@@ -858,127 +864,138 @@ public function fvAdherenceToOrderPracticesManagement() : array {
         ->orderBy('visit_id')
         ->get();
 
-    return $scores->map(function ($score, $index) {
+    return $scores->map(function ($score) {
         $fields = [
            $score->ordering_timely,
            $score->delivery_on_time,
            $score->annual_procurement_plan,
         ];
         // Filter out nulls or "NA"
-         $validScores = collect($fields)->filter(function ($score) {
-        return $score != 2; // Exclude NA (2)
-        });
+        $validScores = collect($fields)->filter(fn($s) => $s != 2);
+
     $finalScore = $validScores->isNotEmpty()
-    ? round($validScores->avg(), 2) // Computes sum/count
-    : 0;
-        return [
-            'label' => 'Visit-' . ($index + 1) . ' Score:',
-            'data' => [$finalScore],
-        ];
-    })->toArray();
+        ? round($validScores->avg(), 2)
+        : 0;
+
+    return [
+        'visit_id' => $score->visit_id,
+        'label'    => 'Visit-' . $score->visit_id . ' Score:',
+        'data'     => [$finalScore],
+        'color'    => $this->randomColor($score->visit_id),
+    ];
+})->toArray();
 }   
-
-
 public function fvTotalOrderMgtScore(): array
 {
-    // Get all component scores
+    // Define component score functions
     $componentFunctions = [
         'fvOrderManagement',
         'fvAdherenceToOrderPracticesManagement',
     ];
-    
-    // Collect all scores grouped by visit
-    $allScores = [];
-    $maxVisits = 0;
-    
+
+    $scoresByVisit = [];
+
     foreach ($componentFunctions as $function) {
         $scores = $this->$function();
-        $maxVisits = max($maxVisits, count($scores));
-        
-        foreach ($scores as $index => $score) {
-            if (!isset($allScores[$index])) {
-                $allScores[$index] = [
-                    'scores' => [],
-                ];
+
+        foreach ($scores as $score) {
+            $visitId = $score['visit_id'] ?? null;
+
+            // Fallback using label if visit_id missing
+            if ($visitId === null && isset($score['label'])) {
+                preg_match('/Visit-(\d+)/', $score['label'], $matches);
+                $visitId = $matches[1] ?? null;
             }
-            $allScores[$index]['scores'][] = $score['data'][0];
+
+            if ($visitId === null) {
+                continue;
+            }
+
+            if (!isset($scoresByVisit[$visitId])) {
+                $scoresByVisit[$visitId] = [];
+            }
+
+            $scoresByVisit[$visitId][] = $score['data'][0] ?? 0;
         }
     }
-    
-    // Calculate total score for each visit (0-5 scale)
-    $result = [];
+
     $numberOfFunctions = count($componentFunctions);
-    
-    for ($i = 0; $i < $maxVisits; $i++) {
-        $visitScores = $allScores[$i]['scores'] ?? array_fill(0, $numberOfFunctions, 0);
-        
-        // Apply formula: (Sum(scores) / number of functions) * scaling factor
-        // Assuming original scores are 0-1, multiply by 5 to get 0-5 scale
-        $totalScore = (array_sum($visitScores) / $numberOfFunctions) * 5;
+    $result = [];
+
+    foreach ($scoresByVisit as $visitId => $visitScores) {
+        // Ensure exactly N scores per visit
+        $paddedScores = array_pad($visitScores, $numberOfFunctions, 0);
+        $totalScore = array_sum($paddedScores) / $numberOfFunctions * 5;
         $roundedScore = round($totalScore, 2);
-        
+
         $result[] = [
-            'label' => 'Visit-' . ($i + 1) . ' Total Score (0-5)',
+            'visit_id' => $visitId,
+            'label' => "Visit-$visitId Total Score (0-5)",
             'score' => [$roundedScore],
             'component_scores' => [
-                'order_mgt' => ($visitScores[0] ?? 0) * 5,
-                'adherence_to_order_practice' => ($visitScores[1] ?? 0) * 5,
-            ]
+                'order_mgt' => ($paddedScores[0] ?? 0) * 5,
+                'adherence_to_order_practice' => ($paddedScores[1] ?? 0) * 5,
+            ],
         ];
     }
-    
+
     return $result;
 }
-
-public function fvEquipmentManagementScore() : array {
+public function fvEquipmentManagementScore(): array {
     $user = auth()->user();
     $visitQuery = $this->query();
+
     // Default to user's institution if no region/district filter
-    if ($user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
+    if ($user && $user->category === 'institution' && !$this->selectedRegion && !$this->selectedDistrict) {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
             $q->where('facility_id', $user->facility_id);
         });
     }
+
     $visitIds = $visitQuery->pluck('id');
+
     if ($visitIds->isEmpty()) {
         return [];
     }
+
     $scores = DB::table('fv_equipment_management')
         ->select(
             'visit_id',
-           'inventory_log_available',
-           'inventory_log_updated',
-           'service_info_available',
-           'equipment_serviced',
-           'iqc_performed',
-           'operator_manuals_available',
+            'inventory_log_available',
+            'inventory_log_updated',
+            'service_info_available',
+            'equipment_serviced',
+            'iqc_performed',
+            'operator_manuals_available'
         )
         ->whereIn('visit_id', $visitIds)
         ->orderBy('visit_id')
         ->get();
 
-    return $scores->map(function ($score, $index) {
+    return $scores->map(function ($score) {
         $fields = [
-           $score->inventory_log_available,
-           $score->inventory_log_updated,
-           $score->service_info_available,
-           $score->equipment_serviced,
-           $score->iqc_performed,
-           $score->operator_manuals_available,
+            $score->inventory_log_available,
+            $score->inventory_log_updated,
+            $score->service_info_available,
+            $score->equipment_serviced,
+            $score->iqc_performed,
+            $score->operator_manuals_available,
         ];
-        // Filter out nulls or "NA"
-         $validScores = collect($fields)->filter(function ($score) {
-        return $score != 2; // Exclude NA (2)
-        });
-    $finalScore = $validScores->isNotEmpty()
-    ? round($validScores->avg(), 2) // Computes sum/count
-    : 0;
+
+        // Filter out values where score is "NA" (i.e., 2)
+        $validScores = collect($fields)->filter(fn($s) => $s != 2);
+
+        $finalScore = $validScores->isNotEmpty()
+            ? round($validScores->avg(), 2)
+            : 0;
+
         return [
-            'label' => 'Visit-' . ($index + 1) . ' Score:',
-            'data' => [$finalScore],
+            'visit_id' => $score->visit_id,
+            'label'    => 'Visit-' . $score->visit_id . ' Score:',
+            'data'     => [$finalScore],
         ];
     })->toArray();
-}   
+}
 
 public function fvEquipmentUtilizationScores(): array {
     $user = auth()->user();
@@ -1009,20 +1026,24 @@ public function fvEquipmentUtilizationScores(): array {
         ->get()
         ->groupBy('visit_id'); // Group entire result by visit_id for processing
 
-    // Step 2: Compute final score per visit
+  // Step 2: Compute final score per visit
     $results = $equipmentTypeScores->map(function ($equipTypes, $visitId) {
         $categoryScores = $equipTypes->map(function ($row) {
             return ($row->sum_greater + $row->sum_final) / 2;
         });
 
-        // Step 3: Average over exactly 4 categories (as per TOR)
-        $finalScore = round($categoryScores->sum() / 4, 2);
+        // Get actual count of categories instead of hardcoding 4
+        $categoryCount = $categoryScores->count();
+        $finalScore = $categoryCount > 0 
+            ? round($categoryScores->sum() / $categoryCount, 2)
+            : 0;
 
         return [
+            'visit_id' => $visitId,
             'label' => 'Visit-' . $visitId . ' Equipment Score:',
             'data' => [$finalScore],
         ];
-    })->values(); // Reset keys for consistent index access
+    })->values();
 
     return $results->toArray();
 }
@@ -1068,6 +1089,7 @@ public function getCombinedEquipmentScores(): array {
             : 0;
 
         $final[] = [
+            'visit_id' => $visitId,
             'label' => "Visit-$visitId Combined Score:",
             'data' => [$averageScore],
         ];
@@ -1153,7 +1175,7 @@ public function fvLisHmisScores() : array {
         ->orderBy('visit_id')
         ->get();
 
-    return $scores->map(function ($score, $visitId) {
+    return $scores->map(function ($score) {
         $fields = [
           $score->hmis_105_outpatient_report,
           $score->hmis_105_previous_months,
@@ -1163,18 +1185,19 @@ public function fvLisHmisScores() : array {
           $score->hmis_section_10_complete,
         ];
         // Filter out nulls or "NA"
-         $validScores = collect($fields)->filter(function ($score) {
-        return $score != 2; // Exclude NA (2)
-        });
+         $validScores = collect($fields)->filter(fn($s) => $s != 2);
+
     $finalScore = $validScores->isNotEmpty()
-    ? round($validScores->avg(), 2) // Computes sum/count
-    : 0;
-        return [
-             'visit_id' => $visitId,
-            'label' => 'Visit-' . ($visitId + 1) . 'lims_hmis_scores:',
-            'data' => [$finalScore],
-        ];
-    })->toArray();
+        ? round($validScores->avg(), 2)
+        : 0;
+
+    return [
+        'visit_id' => $score->visit_id,
+        'label'    => 'Visit-' . $score->visit_id . ' Score:',
+        'data'     => [$finalScore],
+        'color'    => $this->randomColor($score->visit_id),
+    ];
+})->toArray();
 }
 
 public function fvLisCompStockStatusScores() : array {
@@ -1417,9 +1440,42 @@ public function fvLisTotalScorePerVisit(): array
     return $finalScores;
 }
 
+private function getFacilityNamesByVisit(): array
+{
+    // Retrieve visit data with facility names and created_at for ordering
+    $visits = DB::table('facility_visits as visits')
+        ->join('facilities', 'visits.facility_id', '=', 'facilities.id')
+        ->select('visits.id as visit_id', 'facilities.name as facility_name','facilities.level', 'visits.created_at')
+        ->orderBy('facilities.name')
+        ->orderBy('visits.created_at') // or use id if that's the visit sequence
+        ->get();
+
+    $facilityVisitCounts = [];
+    $labels = [];
+
+    foreach ($visits as $visit) {
+        $facilityName = $visit->facility_name;
+        $visitId = $visit->visit_id;
+
+        // Track visit count
+        if (!isset($facilityVisitCounts[$facilityName])) {
+            $facilityVisitCounts[$facilityName] = 1;
+        } else {
+            $facilityVisitCounts[$facilityName]++;
+        }
+
+        $count = $facilityVisitCounts[$facilityName];
+        $labels[$visitId] = "$facilityName (V-$count)";
+    }
+
+    return $labels; // [visit_id => "Facility Name (V-x)"]
+}
+
 
 public function getSpiderGraphData(): array
 {
+     $facilityMap = $this->getFacilityNamesByVisit();
+
     // Get all thematic scores
     $stockScores      = $this->stockMgtScores();
     $storageScores    = $this->fvTotalStorageScore();
@@ -1427,29 +1483,31 @@ public function getSpiderGraphData(): array
     $equipmentScores  = $this->getCombinedEquipmentScores();
     $lisScores        = $this->fvLisTotalScorePerVisit();
 
-    // Helper to normalize scores into [visit_id => score]
-    $normalize = function ($scores, $key = 'data') {
-        $normalized = [];
-        foreach ($scores as $score) {
-            if (isset($score['visit_id'])) {
-                $visitId = $score['visit_id'];
-            } else {
-                preg_match('/Visit-(\d+)/', $score['label'], $matches);
-                $visitId = $matches[1] ?? null;
-            }
+    // Normalize all scores into [visit_id => score]
+   $normalize = function (array $scores, string $key = 'data'): array {
+    $normalized = [];
 
-            if ($visitId !== null) {
-                $normalized[$visitId] = $score[$key][0] ?? 0;
-            }
+    foreach ($scores as $entry) {
+        if (!isset($entry['visit_id']) || !is_numeric($entry['visit_id']) || $entry['visit_id'] <= 0) {
+            continue; // ✅ Skip invalid or zero visit_id
         }
-        return $normalized;
-    };
 
-    $stock      = $normalize($stockScores);
-    $storage    = $normalize($storageScores, 'score');
-    $ordering   = $normalize($orderScores, 'score');
-    $equipment  = $normalize($equipmentScores);
-    $lis        = $normalize($lisScores);
+        $visitId = (int) $entry['visit_id'];
+
+        $normalized[$visitId] = isset($entry[$key][0]) && is_numeric($entry[$key][0])
+            ? (float)$entry[$key][0]
+            : 0;
+    }
+
+    return $normalized;
+};
+
+
+    $stock     = $normalize($stockScores);
+    $storage   = $normalize($storageScores, 'score');
+    $ordering  = $normalize($orderScores, 'score');
+    $equipment = $normalize($equipmentScores);
+    $lis       = $normalize($lisScores);
 
     // Collect all unique visit IDs
     $visitIds = collect(array_merge(
@@ -1460,12 +1518,12 @@ public function getSpiderGraphData(): array
         array_keys($lis)
     ))->unique()->sort()->values();
 
-    // Build radar structure per visit
-    $spiderData = $visitIds->map(function ($visitId) use ($stock, $storage, $ordering, $equipment, $lis) {
+    // Build spider chart data structure
+    $spiderData = $visitIds->map(function ($visitId) use ($stock, $storage, $ordering, $equipment, $lis, $facilityMap) {
         return [
             'visit_id' => $visitId,
-            'label' => "Visit-$visitId",
-            'data' => [
+            'label' => $facilityMap[$visitId] ?? "Unknown Facility ($visitId)",
+            'data'     => [
                 'Stock Management'       => $stock[$visitId] ?? 0,
                 'Storage'                => $storage[$visitId] ?? 0,
                 'Ordering'               => $ordering[$visitId] ?? 0,
@@ -1474,8 +1532,8 @@ public function getSpiderGraphData(): array
             ],
         ];
     })->toArray();
-    return $spiderData;
 
+    return $spiderData;
 }
 
 
@@ -1559,7 +1617,7 @@ public function getSpiderGraphData(): array
             ->get();
 
         // Region-wise Statistics
-        $this->regionWiseStats = $this->query()->select('regions.name', DB::raw('count(*) as visits'))
+        $this->regionWiseStats = $this->query()->select('regions.name as regionName','facilities.*','districts.name as districtName', 'health_sub_districts.name as subDistrictName', DB::raw('count(*) as visits'))
             ->join('facilities', 'facility_visits.facility_id', '=', 'facilities.id')
             ->join('health_sub_districts', 'facilities.sub_district_id', '=', 'health_sub_districts.id')
             ->join('districts', 'health_sub_districts.district_id', '=', 'districts.id')
@@ -1703,8 +1761,7 @@ public function getSpiderGraphData(): array
 
     public function render()
     {
-        // dd($this->fvLisReportFillingScores());
-        
+        // dd($this->getSpiderGraphData());
         $regions   = Region::all();
         $districts = $this->selectedRegion ? District::where('region_id', $this->selectedRegion)->get() : collect();
 
