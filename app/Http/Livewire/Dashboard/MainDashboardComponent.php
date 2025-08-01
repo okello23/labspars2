@@ -1547,31 +1547,20 @@ public function getSpiderGraphData(): array
     }
     public function query()
     {
-        $user = \Auth()->user();
+    $user = \Auth()->user();
         $data = FacilityVisit::query()
             ->with(['facility.healthSubDistrict.district.region']);
 
-            // ->when($this->selectedRegion, function ($query) {
-            //     $query->whereHas('facility.healthSubDistrict.district', function ($q) {
-            //         $q->where('region_id', $this->selectedRegion);
-            //     });
-            // })
-
-            // ->when($this->selectedDistrict, function ($query) {
-            //     $query->whereHas('facility.healthSubDistrict', function ($q) {
-            //         $q->where('district_id', $this->selectedDistrict);
-            //     });
-            // });
-             // Filter for user's Institution if no region/district is selected
-    if ($user->category === 'Institution' && !$this->selectedRegion && !$this->selectedDistrict) {
-        $data->whereHas('facility', function ($q) use ($user) {
-            $q->where('facility_id', $user->facility_id);
-        });
+            // Filter for user's Institution if no region/district is selected
+            if ($user->category === 'Institution' && !$this->selectedRegion && !$this->selectedDistrict) {
+                $data->whereHas('facility', function ($q) use ($user) {
+                    $q->where('facility_id', $user->facility_id);
+                });
     }
 
     // Existing filters
     if ($this->selectedRegion) {
-        $data->whereHas('facility.healthSubDistrict.district', function ($q) {
+    $data->whereHas('facility.healthSubDistrict.district', function ($q) {
             $q->where('region_id', $this->selectedRegion);
         });
     }
