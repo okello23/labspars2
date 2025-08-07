@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Livewire\Api\ApiComponent;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
+use App\Http\Livewire\Dashboard\MainDashboardComponent;
 use App\Http\Livewire\Microbiology\SamplesComponent;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ApiAuthController;
@@ -19,6 +20,8 @@ use App\Http\Controllers\Auth\ApiAuthController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+
 Route::group(['middleware' => ['auth:api']], function () {
 
   Route::get('dhis2/facilities', ApiComponent::class)->name('facilities');

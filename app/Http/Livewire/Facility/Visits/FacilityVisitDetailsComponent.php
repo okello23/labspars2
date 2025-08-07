@@ -107,7 +107,7 @@ class FacilityVisitDetailsComponent extends Component
             'name'       => 'required|string',
             'contact'    => 'required|numeric',
             'sex'        => 'required|string',
-            'email'      => 'required|email',
+            // 'email'      => 'required|email',
             'profession' => 'required|string',
 
         ]);
@@ -130,7 +130,7 @@ class FacilityVisitDetailsComponent extends Component
         $this->validate([
             'name'    => 'required|string',
             'contact' => 'required|numeric',
-            'email'   => 'required|email',
+            // 'email'   => 'required|email',
             'title'   => 'required|string',
 
         ]);
@@ -1949,6 +1949,7 @@ class FacilityVisitDetailsComponent extends Component
             'reports_filling_score'           => 'nullable|numeric',
             'reports_filling_percentage'      => 'nullable|numeric',
         ]); // Validate input data
+
 
         FvLisHmisReport::updateOrCreate(
             ['visit_id' => $this->active_visit->id],

@@ -78,4 +78,8 @@ Route::group(['middleware' => ['auth', 'password_expired', 'suspended_user']], f
     });
 });
 
+    Route::get('/spider-graph-data', function () {
+    return response()->json(app(MainDashboardComponent::class)->getSpiderGraphData());
+});
+
 require __DIR__ . '/auth.php';

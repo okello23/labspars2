@@ -6,7 +6,7 @@
             <div class="section_title">
                 <div class="mr-3">
                     <h3>Overview</h3>
-                    <small>Statistics, Visit Analytics Data Visualization, Big Data Analytics, etc.</small>
+                    <small>LSS Visit Analytics & Visualization. Use these filters to filter and alter visualizations</small>
                 </div>
 
                 <div class="input-group mb-3">
@@ -71,7 +71,7 @@
         <div class="col col-md-3">
             <div class="card">
                 <div class="stat-value text-info"><h2>{{ number_format($totalVisits) }}</h2></div>
-                <div class="stat-label">Total Visits</div>
+                <div class="stat-label">Total LSS Entries</div>
                 <div class="absolute top-2 right-2">
                     <i class="fa fa-play text-info text-3xl"></i>
                 </div>
@@ -82,7 +82,7 @@
         <div class="col col-md-3">
             <div class="card">
                 <div class="stat-value text-warning"><h2>{{ number_format($pendingVisits) }}</h2></div>
-                <div class="stat-label">Pending Visits</div>
+                <div class="stat-label">Incomplete LSS Entries</div>
                 <div class="absolute top-2 right-2">
                     <i class="fa fa-pause text-warning text-3xl"></i>
                 </div>
@@ -92,8 +92,8 @@
         <!-- Completed Visits -->
         <div class="col col-md-3">
             <div class="card">
-                <div class="stat-value text-success"><h2>{{ number_format($completedVisits) }}<h2></div>
-                <div class="stat-label">Completed Visits</div>
+                <div class="stat-value text-success"><h2>{{ number_format($completedVisits) }}</h2></div>
+                <div class="stat-label">Completed LSS Entries</div>
                 <div class="absolute top-2 right-2">
                     <i class="fa fa-check text-success text-3xl"></i>
                 </div>
@@ -103,25 +103,17 @@
         <!-- Facility Coverage -->
         <div class="col col-md-3">
             <div class="card">
-                <div class="stat-value text-purple-600">
-                    {{ $facilityStats['total'] ? number_format(($facilityStats['visited'] / $facilityStats['total']) * 100, 1) : 0 }}%
+                <div class="stat-value text-warning"><h2>
+                    {{ $facilityStats['total'] ? number_format(($facilityStats['visited'] / $facilityStats['total']) * 100, 1) : 0 }}%</h2>
                 </div>
-                <div class="stat-label">Facility Coverage</div>
+                <div class="stat-label">LSS Facility Coverage</div>
                 <div class="absolute top-2 right-2">
-                    <i class="fa fa-building text-purple text-3xl"></i>
+                    <i class="fa fa-spinner text-warning text-3xl"></i>
                 </div>
             </div>
         </div>
         <!-- Stock Availability -->
-        {{-- <div class="col col-md-3">
-            <div class="card">
-                <div class="stat-value text-teal-600">{{ number_format($stockStats, 1) }}%</div>
-                <div class="stat-label">Stock Availability</div>
-                <div class="absolute top-2 right-2">
-                    <i class="fas fa-boxes text-teal-200 text-3xl"></i>
-                </div>
-            </div>
-        </div> --}}
+
     </div>
 
     <!-- Charts Section -->
@@ -129,24 +121,34 @@
         <!-- Visit Trends Chart -->
         <div class="col-lg-6 col-md-6">
             <div class="card">
-                <div class="header">
-                    <h4>Spider Graph</h4>
-                </div>
+                <div class="header"> <h4>Spider Graph</h4> </div>
                 <div class="body">
-                    <div class="card-body">
-                        <!-- <div class="chart-container" id="visitTrendsChart"></div> -->
-                         <div>
-    <canvas id="spiderChart" width="400" height="400"></canvas>
-</div>
+                    <div class="card-body"> <div>
+                        <select id="facilityFilter" multiple class="form-control" style="margin-bottom: 1rem; width: 100%;"></select>
+                        <button id="deselectAllBtn" class="btn btn-sm btn-danger mt-2">Deselect All</button>
 
-
+                        <canvas id="spiderChart" width="600" height="600"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- League Table -->
+        </div>     
+        
+        <!-- Regional Distribution Chart -->
         <div class="col-lg-6 col-md-6">
+
+         <div class="card">
+                <div class="header">
+                    <h4>LSS Regional Distribution</h4>
+                </div>
+                <div class="body">
+                    <div class="card-body">
+                        <div class="chart-container" id="regionalDistributionChart"></div>
+                    </div>
+                </div>
+            </div> 
+
+         <!-- <div class="col-lg-12 col-md-12">
             <div class="card">
                 <div class="header">
                     <h4>League Table</h4>
@@ -160,30 +162,22 @@
                                         <th>#</th>
                                         <th>Region</th>
                                         <th>District</th>
+                                        <th>Health Sub-District</th>
+                                        <th>Health Facility</th>
                                         <th>Total Visits</th>
-                                        <th>Pending Visits</th>
-                                        <th>Completed Visits</th>
-                                        <th>Ranking</th>
-                                        <th>Stock Mgt</th>
-                                        <th>Stoarage</th>
-                                        <th>Equipment</th>
-                                        <th>Ordering</th>
-                                        <th>LIS</th>
+                                        <th>Pending</th>
+                                        <th>Completed</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($regionWiseStats as $key => $region)
                                         <tr>
                                              <td>{{ $key + 1 }}</td>
-                                            <td>{{ $region->name }}</td>
-                                            <td>Kiboga</td>
+                                            <td>{{ $region->regionName }}</td>
+                                            <td>{{ $region->districtName }}</td>
+                                            <td>{{ $region->subDistrictName }}</td>
+                                            <td>{{ $region->name }} {{ $region->level}}</td>
                                             <td>{{ number_format($region->visits) }}</td>
-                                            <td>{{ number_format($region->visits) }}</td>
-                                            <td>{{ number_format($region->visits) }}</td>
-                                            <td>{{ number_format($region->visits) }}</td>
-                                            <td>{{ number_format($region->visits) }}</td>
-                                            <td>{{ number_format($region->pending) }}</td>
-                                            <td>{{ number_format($region->pending) }}</td>
                                             <td>{{ number_format($region->pending) }}</td>
                                             <td>{{ number_format($region->completed) }}</td>
                                         </tr>
@@ -193,48 +187,13 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        
-        
-        <!-- Regional Distribution Chart -->
-        <div class="col-lg-6 col-md-6">
-            <div class="card">
-                <div class="header">
-                    <h4>Regional Distribution</h4>
-                </div>
-                <div class="body">
-                    <div class="card-body">
-                        <div class="chart-container" id="regionalDistributionChart"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Equipment Status Chart -->
-        <div class="col-lg-6 col-md-6">
-            <div class="card">
-                <div class="header">
-                    <h4>Equipment Status Distribution</h4>
-                </div>
-                <div class="card-body">
-                    <div class="chart-container" id="equipmentStatusChart"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Visit Status Distribution -->
-        <div class="col-lg-6 col-md-6">
-            <div class="card">
-                <div class="header">
-                    <h4>Visit Status Distribution</h4>
-                </div>
-                <div class="card-body">
-                    <div class="chart-container" id="visitStatusChart"></div>
-                </div>
-            </div>
-        </div>
+            </div> -->
+        </div>  
     </div>
+    </div>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -247,7 +206,7 @@
                 }],
                 chart: {
                     type: 'area',
-                    height: 300,
+                    height: 450,
                     toolbar: {
                         show: false
                     }
@@ -270,9 +229,9 @@
                 series: @json($regionWiseStats->pluck('visits')),
                 chart: {
                     type: 'pie',
-                    height: 300
+                    height: 400
                 },
-                labels: @json($regionWiseStats->pluck('name')),
+                labels: @json($regionWiseStats->pluck('regionName')),
                 colors: ['#6366F1', '#F59E0B', '#10B981', '#EF4444']
             };
             new ApexCharts(document.querySelector("#regionalDistributionChart"), regionalDistributionOptions).render();
@@ -285,7 +244,13 @@
                     height: 300
                 },
                 labels: @json($equipmentStats->pluck('status')),
-                colors: ['#10B981', '#F59E0B', '#EF4444']
+                colors: [
+                        "#6A89CC", // Light Blue
+                        "#38ADA9", // Teal
+                        "#E55039", // Red Orange
+                        "#F8C291", // Peach
+                        "#60A3BC"  // Muted Blue
+                        ]
             };
             new ApexCharts(document.querySelector("#equipmentStatusChart"), equipmentStatusOptions).render();
 
@@ -315,43 +280,125 @@
             };
             new ApexCharts(document.querySelector("#visitStatusChart"), visitStatusOptions).render();
 
-               document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document.getElementById('spiderChart').getContext('2d');
+async function plotSpiderChart() {
+  const response = await fetch('/spider-graph-data');
+  const spiderData = await response.json();
 
-        const datasets = @json($scoreSets).map(set => ({
-            label: set.label,
-            data: set.data,
-            backgroundColor: set.color.replace('1)', '0.2)'),  // semi-transparent fill
-            borderColor: set.color,
-            pointBackgroundColor: set.color,
-            borderWidth: 2
-        }));
+  const labels = [
+    "Stock Management",
+    "Storage",
+    "Ordering",
+    "Equipment Management",
+    "Lab Information System"
+  ];
 
-        const chart = new Chart(ctx, {
-            type: 'radar',
-            data: {
-                labels: @json($categories),
-                datasets: datasets
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    r: {
-                        suggestedMin: 0,
-                        suggestedMax: 5,
-                        ticks: {
-                            stepSize: 1
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        position: 'top'
-                    }
-                }
-            }
-        });
-    });
+  const getRGBA = (index, alpha = 0.5) => {
+    const colors = [
+      [255, 99, 132],
+      [54, 162, 235],
+      [255, 206, 86],
+      [75, 192, 192],
+      [153, 102, 255],
+      [255, 159, 64],
+      [100, 200, 100],
+      [240, 80, 128],
+      [0, 200, 255],
+      [180, 80, 200]
+    ];
+    const [r, g, b] = colors[index % colors.length];
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
+
+  // Populate dropdown
+  const dropdown = document.getElementById('facilityFilter');
+  const deselectBtn = document.getElementById('deselectAllBtn');
+
+  spiderData.forEach((visit, i) => {
+    const option = document.createElement('option');
+    option.value = i;
+    option.textContent = visit.label;
+    dropdown.appendChild(option);
+  });
+
+  // Initialize Choices.js
+  const choices = new Choices(dropdown, {
+    removeItemButton: true,
+    searchEnabled: true,
+    placeholder: true,
+    placeholderValue: 'Select facilities to plot the Spider graph...',
+    shouldSort: false
+  });
+
+  const ctx = document.getElementById('spiderChart').getContext('2d');
+
+  let spiderChart = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: labels,
+      datasets: [] // Start empty
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Thematic Area Scores per Facility LSS Visit'
+        },
+        legend: {
+          position: 'top'
+        }
+      },
+      elements: {
+        line: {
+          borderWidth: 2
+        }
+      },
+      scales: {
+        r: {
+          min: 0,
+          max: 5,
+          ticks: {
+            stepSize: 1
+          }
+        }
+      }
+    }
+  });
+
+  // Update chart with selected datasets
+  const updateChart = () => {
+    const selected = Array.from(dropdown.selectedOptions).map(opt => parseInt(opt.value));
+    const filteredDatasets = selected.map((i) => ({
+      label: spiderData[i].label,
+      data: Object.values(spiderData[i].data),
+      fill: true,
+      backgroundColor: getRGBA(i, 0.2),
+      borderColor: getRGBA(i, 1),
+      pointBackgroundColor: getRGBA(i, 1),
+      pointBorderColor: "#fff",
+      pointHoverBackgroundColor: "#fff",
+      pointHoverBorderColor: getRGBA(i, 1),
+    }));
+
+    spiderChart.data.datasets = filteredDatasets;
+    spiderChart.update();
+  };
+
+  // Initial empty chart
+  updateChart();
+
+  // Change on selection
+  dropdown.addEventListener('change', updateChart);
+
+  // Deselect All
+  deselectBtn.addEventListener('click', () => {
+    choices.removeActiveItems();
+    updateChart();
+  });
+}
+
+plotSpiderChart();
+
         </script>
     @endpush
 </div>
