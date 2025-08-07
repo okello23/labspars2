@@ -16,7 +16,7 @@ class DistrictsComponent extends Component
 
     public $to_date;
 
-    public $DistrictIds;
+    public $DistrictIds = [];
 
     public $perPage = 10;
 
@@ -62,6 +62,7 @@ class DistrictsComponent extends Component
             'region_id' => 'required',
         ]);
     }
+    
 
     public function addEntry()
     {
@@ -115,13 +116,32 @@ class DistrictsComponent extends Component
     public function updateData()
     {
         $this->validate([
-            'name' => 'required|unique:districts,name,'.$this->edit_id.'',
+            'name' => 'required|unique:districts,name,' . $this->edit_id . ',id',
             'region_id' => 'required',
         ]);
 
         $district = District::find($this->edit_id);
+        if (!$district) {
+            $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => 'District not found!']);
+            return;
+        }
+        if ($district->name == $this->name && $district->region_id == $this->region_id) {
+            $this->dispatchBrowserEvent('alert', ['type' => 'info',  'message' => 'No changes made!']);
+            return;
+        }
+        $this->validate([
+            'name' => 'required|unique:districts,name,' . $this->edit_id . ',id',
+            'region_id' => 'required',
+        ], [
+            'name.required' => 'The district name is required',
+            'name.unique' => 'The district name entered already exists',
+            'region_id.required' => 'Region is required',
+        ]); 
+        
         $district->name = $this->name;
         $district->region_id = $this->region_id;
+        $district->updated_by = \Auth::user()->id;
+
         $district->update();
 
         $this->resetInputs();
