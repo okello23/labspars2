@@ -25,6 +25,7 @@ use App\Models\Facility\Visits\FvStoragePracticeManagement;
 use App\Models\Facility\Visits\FvStorageSystemManagement;
 use App\Models\Settings\FvLisDataToolScore;
 use App\Models\Settings\LisDataCollectionTool;
+use App\Http\Livewire\Dashboard\MainDashboardComponent;
 use Livewire\Component;
 
 class FacilityVisitViewComponent extends Component
@@ -40,6 +41,12 @@ class FacilityVisitViewComponent extends Component
     public $consumption_reconciliation, $stock_mgt_comments;
     public $limsData, $stkScores, $cleanliness, $hygiene, $condition, $system, $StoragePractices, $adherence, $ordering, $equipmentMgt;
     public $scores = [];
+    public $stock_management;
+    public $storage_management;
+    public $ordering_management;
+    public $equipment_management;
+    public $lis_mgt;
+    public $component_scores;
 
     public $categories = [
         'Stock Management'               => 6,
@@ -48,6 +55,21 @@ class FacilityVisitViewComponent extends Component
         'Laboratory Equipment'           => 4,
         'Laboratory Information Systems' => 6,
     ];
+
+    public function showFacilityVisit($visitCode)
+{
+    $visit = FacilityVisit::where('visit_code', $visitCode)->firstOrFail();
+
+    // Fetch scores for this visit
+    $scores = (new MainDashboardComponent())->stockMgtScores();
+    $stockManagement = collect($scores)->firstWhere('visit_id', $visit->id)['components'] ?? [];
+
+    return view('facility-visit_view', [
+        'facilityvisit'    => $visit,
+        'stock_management' => $stockManagement,
+    ]);
+}
+
 
     public function getScaledScoresProperty()
     {
@@ -68,6 +90,28 @@ class FacilityVisitViewComponent extends Component
         $this->code         = $code;
         $this->active_visit = FacilityVisit::where('visit_code', $code)
             ->with(['facility', 'facility.healthSubDistrict', 'facility.healthSubDistrict.district', 'facility.healthSubDistrict.district.region'])->first();
+
+        // Stock Management scores
+        $stockMgtScores = (new MainDashboardComponent())->stockMgtScores();
+        $this->stock_management = collect($stockMgtScores)->firstWhere('visit_id', $this->active_visit->id)['components'] ?? [];
+        
+        // Storage scores
+        $StorageMgtScore = (new MainDashboardComponent())->fvTotalStorageScore();
+        $this->storage_management = collect($StorageMgtScore)->firstWhere('visit_id', $this->active_visit->id)['component_scores'] ?? [];
+        
+        // Order Scores
+        $orderMgtScore = (new MainDashboardComponent())->fvTotalOrderMgtScore();
+        $this->ordering_management = collect($orderMgtScore)->firstWhere('visit_id', $this->active_visit->id)['component_scores'] ?? []; 
+
+        // Equipment Mgt Scores
+        $equipmentMgtScore = (new MainDashboardComponent())->getCombinedEquipmentScores();
+        $this->equipment_management = collect($equipmentMgtScore)->firstWhere('visit_id', $this->active_visit->id)['component_scores'] ?? [];
+        
+        // LIS Mgt Scores
+        $lisMgtScore = (new MainDashboardComponent())->fvLisTotalScorePerVisit();
+        $this->lis_mgt = collect($lisMgtScore)->firstWhere('visit_id', $this->active_visit->id)['component_scores'] ?? [];
+
+
         $this->consumption_reconciliation = $this->active_visit->consumption_reconciliation ?? null;
         $this->use_stock_cards            = $this->active_visit->use_stock_cards ?? 0;
         $this->limsData                   = FvLisHmisReport::where('visit_id', $this->active_visit->id)->first();

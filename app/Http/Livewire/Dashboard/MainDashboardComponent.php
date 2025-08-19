@@ -121,29 +121,30 @@ public function stockMgtScores(): array
         ->orderBy('visit_id')
         ->get();
 
-    return $scores->map(function ($score) {  // Removed $visitId parameter
-        $fields = [
-            $score->availability_score,
-            $score->stock_card_score,
-            $score->correct_filling_score,
-            $score->physical_agrees_score,
-            $score->amc_well_calculated_score,
-            $score->emr_usage_score,
-        ];
+   return $scores->map(function ($score) {
+    $fields = [
+        'availability_score'        => $score->availability_score,
+        'stock_card_score'          => $score->stock_card_score,
+        'correct_filling_score'     => $score->correct_filling_score,
+        'physical_agrees_score'     => $score->physical_agrees_score,
+        'amc_well_calculated_score' => $score->amc_well_calculated_score,
+        'emr_usage_score'           => $score->emr_usage_score,
+    ];
 
-        $validScores = collect($fields)->filter(function ($value) {
-            return is_numeric($value);
-        });
+    $validScores = collect($fields)->filter(function ($value) {
+        return is_numeric($value);
+    });
 
-        $finalScore = $validScores->isNotEmpty()
-            ? round(($validScores->avg()) * 5, 2)
-            : 0;
+    $finalScore = $validScores->isNotEmpty()
+        ? round(($validScores->avg()) * 5, 2)
+        : 0;
 
         return [
             'visit_id' => $score->visit_id,  // Use actual visit_id from DB
             'label' => 'Visit-' . $score->visit_id . ' Score:',  // Use actual visit_id
             'data' => [$finalScore],
             'color' => $this->randomColor($score->visit_id),
+             'components' => $fields,
         ];
     })->toArray();
 }
@@ -735,11 +736,11 @@ public function fvTotalStorageScore(): array
 {
     // Define all component score functions
     $componentFunctions = [
+        'fvStorageAreaCleanlinessScore',
+        'fvHygieneManagementScore',
+        'fvOverallStorageSystemScore',
         'fvOverallStorageConditionScore',
         'fvOverallStoragePracticeManagementScore',
-        'fvOverallStorageSystemScore',
-        'fvStorageAreaCleanlinessScore',
-        'fvHygieneManagementScore'
     ];
 
     // Initialize collection by visit_id
@@ -858,7 +859,7 @@ public function fvAdherenceToOrderPracticesManagement() : array {
             'visit_id',
             'ordering_timely',
             'delivery_on_time',
-            'annual_procurement_plan',
+            // 'annual_procurement_plan',
         )
         ->whereIn('visit_id', $visitIds)
         ->orderBy('visit_id')
@@ -868,7 +869,7 @@ public function fvAdherenceToOrderPracticesManagement() : array {
         $fields = [
            $score->ordering_timely,
            $score->delivery_on_time,
-           $score->annual_procurement_plan,
+        //    $score->annual_procurement_plan,
         ];
         // Filter out nulls or "NA"
         $validScores = collect($fields)->filter(fn($s) => $s != 2);
@@ -885,12 +886,56 @@ public function fvAdherenceToOrderPracticesManagement() : array {
     ];
 })->toArray();
 }   
+
+public function fvOrderingAvailabilityOfProcurementPlan() : array {
+    $user = auth()->user();
+    $visitQuery = $this->query();
+    // Default to user's Institution if no region/district filter
+    if ($user->category === 'Institution' && !$this->selectedRegion && !$this->selectedDistrict) {
+        $visitQuery->whereHas('facility', function ($q) use ($user) {
+            $q->where('facility_id', $user->facility_id);
+        });
+    }
+    $visitIds = $visitQuery->pluck('id');
+    if ($visitIds->isEmpty()) {
+        return [];
+    }
+    $scores = DB::table('fv_adherences')
+        ->select(
+            'visit_id',
+            'annual_procurement_plan',
+        )
+        ->whereIn('visit_id', $visitIds)
+        ->orderBy('visit_id')
+        ->get();
+
+    return $scores->map(function ($score) {
+        $fields = [
+           $score->annual_procurement_plan,
+        ];
+        // Filter out nulls or "NA"
+        $validScores = collect($fields)->filter(fn($s) => $s != 2);
+
+    $finalScore = $validScores->isNotEmpty()
+        ? round($validScores->avg(), 2)
+        : 0;
+
+    return [
+        'visit_id' => $score->visit_id,
+        'label'    => 'Visit-' . $score->visit_id . ' Score:',
+        'data'     => [$finalScore],
+        'color'    => $this->randomColor($score->visit_id),
+    ];
+})->toArray();
+}  
+
 public function fvTotalOrderMgtScore(): array
 {
     // Define component score functions
     $componentFunctions = [
         'fvOrderManagement',
         'fvAdherenceToOrderPracticesManagement',
+        'fvOrderingAvailabilityOfProcurementPlan',
     ];
 
     $scoresByVisit = [];
@@ -935,12 +980,14 @@ public function fvTotalOrderMgtScore(): array
             'component_scores' => [
                 'order_mgt' => ($paddedScores[0] ?? 0) * 5,
                 'adherence_to_order_practice' => ($paddedScores[1] ?? 0) * 5,
+                'availability_of_procurement_plan' => ($paddedScores[2] ?? 0) * 5,
             ],
         ];
     }
 
     return $result;
 }
+
 public function fvEquipmentManagementScore(): array {
     $user = auth()->user();
     $visitQuery = $this->query();
@@ -1092,6 +1139,12 @@ public function getCombinedEquipmentScores(): array {
             'visit_id' => $visitId,
             'label' => "Visit-$visitId Combined Score:",
             'data' => [$averageScore],
+            'color' => $this->randomColor($visitId),
+            'component_scores' => [
+                'management_score' => $management,
+                'utilization_score' => $utilization,
+            ],
+          
         ];
     }
 
@@ -1142,13 +1195,13 @@ public function fvLisDataToolScores() : array {
 
     return [
          'visit_id' => $visitId,
-        'label' => 'Visit-' . $visitId . ' lis_stock_status_scores:',
+        'label' => 'Visit-' . $visitId . ' availability_of_data_tools',
         'data' => [$finalScore],
     ];
 })->values()->toArray(); // Reset keys if needed
 }
 
-public function fvLisHmisScores() : array {
+public function fvLisAvailabilityOfHims105Reports() : array {
     $user = auth()->user();
     $visitQuery = $this->query();
     // Default to user's Institution if no region/district filter
@@ -1166,10 +1219,10 @@ public function fvLisHmisScores() : array {
             'visit_id',
             'hmis_105_outpatient_report',
             'hmis_105_previous_months',
-            't_reports_submitted_to_district',
-            't_reports_submitted_on_time',
-            'hmis_section_6_complete',
-            'hmis_section_10_complete',
+            // 't_reports_submitted_to_district',
+            // 't_reports_submitted_on_time',
+            // 'hmis_section_6_complete',
+            // 'hmis_section_10_complete',
         )
         ->whereIn('visit_id', $visitIds)
         ->orderBy('visit_id')
@@ -1179,8 +1232,97 @@ public function fvLisHmisScores() : array {
         $fields = [
           $score->hmis_105_outpatient_report,
           $score->hmis_105_previous_months,
+        //   $score->t_reports_submitted_to_district,
+        //   $score->t_reports_submitted_on_time,
+        //   $score->hmis_section_6_complete,
+        //   $score->hmis_section_10_complete,
+        ];
+        // Filter out nulls or "NA"
+         $validScores = collect($fields)->filter(fn($s) => $s != 2);
+
+    $finalScore = $validScores->isNotEmpty()
+        ? round($validScores->avg(), 2)
+        : 0;
+
+    return [
+        'visit_id' => $score->visit_id,
+        'label'    => 'Visit-' . $score->visit_id .' availability_of_hmis105_report',
+        'data'     => [$finalScore],
+        'color'    => $this->randomColor($score->visit_id),
+    ];
+})->toArray();
+}
+
+public function fvLisTimelinessOfHmis105Reports() : array {
+    $user = auth()->user();
+    $visitQuery = $this->query();
+    // Default to user's Institution if no region/district filter
+    if ($user->category === 'Institution' && !$this->selectedRegion && !$this->selectedDistrict) {
+        $visitQuery->whereHas('facility', function ($q) use ($user) {
+            $q->where('facility_id', $user->facility_id);
+        });
+    }
+    $visitIds = $visitQuery->pluck('id');
+    if ($visitIds->isEmpty()) {
+        return [];
+    }
+    $scores = DB::table('fv_lis_hmis_reports')
+        ->select(
+            'visit_id',
+            't_reports_submitted_to_district',
+            't_reports_submitted_on_time',
+        )
+        ->whereIn('visit_id', $visitIds)
+        ->orderBy('visit_id')
+        ->get();
+
+    return $scores->map(function ($score) {
+        $fields = [
           $score->t_reports_submitted_to_district,
           $score->t_reports_submitted_on_time,
+        ];
+        // Filter out nulls or "NA"
+         $validScores = collect($fields)->filter(fn($s) => $s != 2);
+
+    $finalScore = $validScores->isNotEmpty()
+        ? round($validScores->avg(), 2)
+        : 0;
+
+    return [
+        'visit_id' => $score->visit_id,
+        'label'    => 'Visit-' . $score->visit_id . ' timeliness_of_hmis105_report',
+        'data'     => [$finalScore],
+        'color'    => $this->randomColor($score->visit_id),
+    ];
+})->toArray();
+}
+
+
+public function fvLisCompletenessAndAccuracyOfHmis105Reports() : array {
+    $user = auth()->user();
+    $visitQuery = $this->query();
+    // Default to user's Institution if no region/district filter
+    if ($user->category === 'Institution' && !$this->selectedRegion && !$this->selectedDistrict) {
+        $visitQuery->whereHas('facility', function ($q) use ($user) {
+            $q->where('facility_id', $user->facility_id);
+        });
+    }
+    $visitIds = $visitQuery->pluck('id');
+    if ($visitIds->isEmpty()) {
+        return [];
+    }
+    $scores = DB::table('fv_lis_hmis_reports')
+        ->select(
+            'visit_id',        
+            'hmis_section_6_complete',
+            'hmis_section_10_complete',
+        )
+        ->whereIn('visit_id', $visitIds)
+        ->orderBy('visit_id')
+        ->get();
+
+    return $scores->map(function ($score) {
+        $fields = [
           $score->hmis_section_6_complete,
           $score->hmis_section_10_complete,
         ];
@@ -1193,7 +1335,7 @@ public function fvLisHmisScores() : array {
 
     return [
         'visit_id' => $score->visit_id,
-        'label'    => 'Visit-' . $score->visit_id . ' Score:',
+        'label'    => 'Visit-' . $score->visit_id . ' completeness_and_accuracy_of_hmis105_report',
         'data'     => [$finalScore],
         'color'    => $this->randomColor($score->visit_id),
     ];
@@ -1243,7 +1385,7 @@ public function fvLisCompStockStatusScores() : array {
 
     return [
          'visit_id' => $visitId,
-        'label' => 'Visit-' . $visitId . ' lis_stock_status_scores:',
+        'label' => 'Visit-' . $visitId . ' lis_stock_status_scores',
         'data' => [$finalScore],
     ];
 })->values()->toArray(); // Reset keys if needed
@@ -1258,6 +1400,7 @@ public function fvLisCompStockStatusScores() : array {
             $q->where('facility_id', $user->facility_id);
         });
     }
+    
     $visitIds = $visitQuery->pluck('id');
     if ($visitIds->isEmpty()) {
         return [];
@@ -1294,11 +1437,81 @@ public function fvLisCompStockStatusScores() : array {
 
     return [
          'visit_id' => $visitId,
-        'label' => 'Visit-' . $visitId . ' lis_comp_service_scores:',
+        'label' => 'Visit-' . $visitId . ' lis_comp_service_scores',
         'data' => [$finalScore],
     ];
 })->values()->toArray(); // Reset keys if needed
 }
+
+public function hmisCompletenessAndAccuracy(): array
+{
+    // Map of component keys => function names
+    $componentFunctions = [
+        'completeness_and_accuracy_of_hmis105_report' => 'fvLisCompletenessAndAccuracyOfHmis105Reports',
+        'comp_stock_status' => 'fvLisCompStockStatusScores',
+        'comp_service_stats' => 'fvLisCompServiceStatsScores',
+    ];
+
+    $scoresByVisit = [];
+
+    foreach ($componentFunctions as $key => $function) {
+        if (!method_exists($this, $function)) {
+            continue; // Skip if function not defined
+        }
+
+        $scores = $this->$function();
+
+        foreach ($scores as $score) {
+            $visitId = $score['visit_id'] ?? null;
+
+            // Extract visitId from label if missing
+            if ($visitId === null && isset($score['label'])) {
+                preg_match('/Visit-(\d+)/', $score['label'], $matches);
+                $visitId = $matches[1] ?? null;
+            }
+
+            if ($visitId === null) {
+                continue;
+            }
+
+            if (!isset($scoresByVisit[$visitId])) {
+                $scoresByVisit[$visitId] = [
+                    'component_scores' => []
+                ];
+            }
+
+            // Store component score (scaled 0–5 already)
+            $scoresByVisit[$visitId]['component_scores'][$key] = $score['data'][0] ?? 0;
+        }
+    }
+
+    $result = [];
+    $numComponents = count($componentFunctions);
+
+    foreach ($scoresByVisit as $visitId => $data) {
+        $componentScores = $data['component_scores'];
+
+        // Ensure all components are present (missing ones = 0)
+        $paddedScores = array_replace(
+            array_fill_keys(array_keys($componentFunctions), 0),
+            $componentScores
+        );
+
+        // Compute total score (average across all components)
+        $totalScore = (array_sum($paddedScores) / $numComponents);
+        $roundedScore = round($totalScore, 2);
+
+        $result[] = [
+            'visit_id' => $visitId,
+            'label' => "Visit-$visitId LIS Management Total Score (0-5)",
+            'score' => [$roundedScore],
+            'component_scores' => $paddedScores,
+        ];
+    }
+
+    return $result;
+}
+
 
     public function fvLisLabDataUseScores() : array {
     $user = auth()->user();
@@ -1345,7 +1558,7 @@ public function fvLisCompStockStatusScores() : array {
 
     return [
          'visit_id' => $visitId,
-        'label' => 'Visit-' . $visitId . ' lab_item_uses:',
+        'label' => 'Visit-' . $visitId . ' lab_data_use',
         'data' => [$finalScore],
     ];
 })->values()->toArray(); // Reset keys if needed
@@ -1395,23 +1608,28 @@ public function fvLisCompStockStatusScores() : array {
 
     return [
          'visit_id' => $visitId,
-        'label' => 'Visit-' . $visitId . ' lis_report_filling:',
+        'label' => 'Visit-' . $visitId . ' lis_report_filling',
         'data' => [$finalScore],
     ];
 })->values()->toArray(); // Reset keys if needed
 }
+
 
 public function fvLisTotalScorePerVisit(): array
 {
     // Get all component scores
     $scoreSets = [
         $this->fvLisDataToolScores(),
-        $this->fvLisHmisScores(),
+        $this->fvLisAvailabilityOfHims105Reports(),
+        $this->fvLisTimelinessOfHmis105Reports(),
+
+        // keep these 3 separate, we'll merge later
+        $this->fvLisCompletenessAndAccuracyOfHmis105Reports(),
         $this->fvLisCompStockStatusScores(),
         $this->fvLisCompServiceStatsScores(),
+        
         $this->fvLisLabDataUseScores(),
         $this->fvLisReportFillingScores(),
-        // Add more functions here if needed, no need to update the count
     ];
 
     // Flatten all score entries into one collection
@@ -1430,22 +1648,73 @@ public function fvLisTotalScorePerVisit(): array
             ? round(($visitScores->sum() / $numberOfFunctions) * 5, 2)
             : 0;
 
+        // Initialize component scores
+        $componentScores = [
+            'availability_and_use_of_data_tool' => 0,
+            'availability_of_hmis_reports' => 0,
+            'timeliness_of_hmis_reports' => 0,
+            'completeness_and_accuracy_of_hmis105_report' => 0, // merged
+            'lab_data_use' => 0,
+            'report_filing' => 0,
+        ];
+
+        // Track the three completeness-related scores
+        $completenessParts = [];
+
+        foreach ($items as $item) {
+            $label = $item['label'];
+            $value = $item['data'][0] ?? 0;
+
+            if ($label === "Visit-$visitId availability_of_data_tools") {
+                $componentScores['availability_and_use_of_data_tool'] = $value;
+            }
+            if ($label === "Visit-$visitId availability_of_hmis105_report") {
+                $componentScores['availability_of_hmis_reports'] = $value;
+            }
+            if ($label === "Visit-$visitId timeliness_of_hmis105_report") {
+                $componentScores['timeliness_of_hmis_reports'] = $value;
+            }
+            if (in_array($label, [
+                "Visit-$visitId completeness_and_accuracy_of_hmis105_report",
+                "Visit-$visitId lis_stock_status_scores",
+                "Visit-$visitId lis_comp_service_scores"
+            ])) {
+                $completenessParts[] = $value;
+            }
+            if ($label === "Visit-$visitId lab_data_use") {
+                $componentScores['lab_data_use'] = $value;
+            }
+            if ($label === "Visit-$visitId lis_report_filling") {
+                $componentScores['report_filing'] = $value;
+            }
+        }
+
+        // Combine completeness-related parts into one averaged score
+        if (!empty($completenessParts)) {
+            $componentScores['completeness_and_accuracy_of_hmis105_report'] =
+                round(collect($completenessParts)->avg(), 2);
+        }
+
         return [
             'visit_id' => $visitId,
             'label'    => "Visit-$visitId total_score (scaled):",
             'data'     => [$finalScore],
+            'color'    => $this->randomColor($visitId),
+            'component_scores' => $componentScores
         ];
     })->values()->toArray();
 
     return $finalScores;
 }
 
+
+
 private function getFacilityNamesByVisit(): array
 {
     // Retrieve visit data with facility names and created_at for ordering
     $visits = DB::table('facility_visits as visits')
         ->join('facilities', 'visits.facility_id', '=', 'facilities.id')
-        ->select('visits.id as visit_id', 'facilities.name as facility_name','facilities.level', 'visits.created_at')
+        ->select('visits.id as visit_id', 'facilities.name as facility_name','facilities.level', 'visits.date_of_visit')
         ->orderBy('facilities.name')
         ->orderBy('visits.created_at') // or use id if that's the visit sequence
         ->get();
@@ -1466,6 +1735,10 @@ private function getFacilityNamesByVisit(): array
 
         $count = $facilityVisitCounts[$facilityName];
         $labels[$visitId] = "$facilityName (V-$count)";
+        $labels[$visitId] = [
+            'label' => "$facilityName (V-$count)",
+            'visitDate' =>  $visit->date_of_visit
+];
     }
 
     return $labels; // [visit_id => "Facility Name (V-x)"]
@@ -1519,19 +1792,22 @@ public function getSpiderGraphData(): array
     ))->unique()->sort()->values();
 
     // Build spider chart data structure
-    $spiderData = $visitIds->map(function ($visitId) use ($stock, $storage, $ordering, $equipment, $lis, $facilityMap) {
-        return [
-            'visit_id' => $visitId,
-            'label' => $facilityMap[$visitId] ?? "Unknown Facility ($visitId)",
-            'data'     => [
-                'Stock Management'       => $stock[$visitId] ?? 0,
-                'Storage'                => $storage[$visitId] ?? 0,
-                'Ordering'               => $ordering[$visitId] ?? 0,
-                'Equipment Management'   => $equipment[$visitId] ?? 0,
-                'Lab Information System' => $lis[$visitId] ?? 0,
-            ],
-        ];
-    })->toArray();
+  $spiderData = $visitIds->map(function ($visitId) use ($stock, $storage, $ordering, $equipment, $lis, $facilityMap) {
+    $meta = $facilityMap[$visitId] ?? ['label' => "Unknown Facility ($visitId)", 'visitDate' => null];
+
+    return [
+        'visit_id'   => $visitId,
+        'label'      => $meta['label'],
+        'visit_date' => $meta['visitDate'],
+        'data'       => [
+            'Stock Management'       => $stock[$visitId] ?? 0,
+            'Storage'                => $storage[$visitId] ?? 0,
+            'Ordering'               => $ordering[$visitId] ?? 0,
+            'Equipment Management'   => $equipment[$visitId] ?? 0,
+            'Lab Information System' => $lis[$visitId] ?? 0,
+        ],
+    ];
+})->toArray();
 
     return $spiderData;
 }
@@ -1750,7 +2026,7 @@ public function getSpiderGraphData(): array
 
     public function render()
     {
-        // dd($this->getSpiderGraphData());
+        // dd($this->fvLisTotalScorePerVisit());
         $regions   = Region::all();
         $districts = $this->selectedRegion ? District::where('region_id', $this->selectedRegion)->get() : collect();
 

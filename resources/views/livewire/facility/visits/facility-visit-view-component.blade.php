@@ -26,7 +26,6 @@
                     <h3 class="text-lg font-semibold mb-2">Spider Graph Summary</h3>
                     <div id="apexRadarChart"></div>
                 </div>
-
             </div>
         </div>
 
