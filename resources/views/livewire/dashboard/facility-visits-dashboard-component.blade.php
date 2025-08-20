@@ -167,6 +167,7 @@
         <div class="content-wrapper">
             {{-- <div class="indicators-section"> --}}
             <div class="section-title">Lab SPARS Indicators</div>
+            
 
             <table>
                 <thead>
@@ -326,86 +327,84 @@
                     </tr>
 
                    <tr class="category-header">
-<tr class="category-header">
-    <td colspan="3">Laboratory Information systems </td>
-</tr>
-<tr class="indicator-item">
-    <td>20. Availability of laboratory data collection tools</td>
-    <td>{{ $lis_mgt['availability_and_use_of_data_tool'] ?? '' }}</td>
-    <td>{{ isset($lis_mgt['availability_and_use_of_data_tool']) ? $lis_mgt['availability_and_use_of_data_tool']*5 * 20 . '%' : '' }}</td>
-</tr>
-<tr class="indicator-item">
-    <td>21. Availability of HMIS 105 reports</td>
-    <td>{{ $lis_mgt['availability_of_hmis_reports'] ?? '' }}</td>
-    <td>{{ isset($lis_mgt['availability_of_hmis_reports']) ? $lis_mgt['availability_of_hmis_reports']*5 * 20 . '%' : '' }}</td>
-</tr>
-<tr class="indicator-item">
-    <td>22. Timeliness of HMIS 105 reports</td>
-    <td>{{ $lis_mgt['timeliness_of_hmis_reports'] ?? '' }}</td>
-    <td>{{ isset($lis_mgt['timeliness_of_hmis_reports']) ? $lis_mgt['timeliness_of_hmis_reports']*5 * 20 . '%' : '' }}</td>
-</tr>
-<tr class="indicator-item">
-    <td>23. Completeness and accuracy of HMIS 105 report</td>
-    <td>{{ $lis_mgt['completeness_and_accuracy_of_hmis105_report'] ?? '' }}</td>
-    <td>{{ isset($lis_mgt['completeness_and_accuracy_of_hmis105_report']) ? $lis_mgt['completeness_and_accuracy_of_hmis105_report']*5 * 20 . '%' : '' }}</td>
-</tr>
-<tr class="indicator-item">
-    <td>24. Use of Laboratory data</td>
-    <td>{{ $lis_mgt['lab_data_use'] ?? '' }}</td>
-    <td>{{ isset($lis_mgt['lab_data_use']) ? $lis_mgt['lab_data_use']*5 * 20 . '%' : '' }}</td>
-</tr>
-<tr class="indicator-item">
-    <td>25. Filing of reports</td>
-    <td>{{ $lis_mgt['report_filing'] ?? '' }}</td>
-    <td>{{ isset($lis_mgt['report_filing']) ? $lis_mgt['report_filing']*5 * 20 . '%' : '' }}</td>
-</tr>
+                    <tr class="category-header">
+                        <td colspan="3">Laboratory Information systems </td>
+                    </tr>
+                    <tr class="indicator-item">
+                        <td>20. Availability of laboratory data collection tools</td>
+                        <td>{{ $lis_mgt['availability_and_use_of_data_tool'] ?? '' }}</td>
+                        <td>{{ isset($lis_mgt['availability_and_use_of_data_tool']) ? $lis_mgt['availability_and_use_of_data_tool']*5 * 20 . '%' : '' }}</td>
+                    </tr>
+                    <tr class="indicator-item">
+                        <td>21. Availability of HMIS 105 reports</td>
+                        <td>{{ $lis_mgt['availability_of_hmis_reports'] ?? '' }}</td>
+                        <td>{{ isset($lis_mgt['availability_of_hmis_reports']) ? $lis_mgt['availability_of_hmis_reports']*5 * 20 . '%' : '' }}</td>
+                    </tr>
+                    <tr class="indicator-item">
+                        <td>22. Timeliness of HMIS 105 reports</td>
+                        <td>{{ $lis_mgt['timeliness_of_hmis_reports'] ?? '' }}</td>
+                        <td>{{ isset($lis_mgt['timeliness_of_hmis_reports']) ? $lis_mgt['timeliness_of_hmis_reports']*5 * 20 . '%' : '' }}</td>
+                    </tr>
+                    <tr class="indicator-item">
+                        <td>23. Completeness and accuracy of HMIS 105 report</td>
+                        <td>{{ $lis_mgt['completeness_and_accuracy_of_hmis105_report'] ?? '' }}</td>
+                        <td>{{ isset($lis_mgt['completeness_and_accuracy_of_hmis105_report']) ? $lis_mgt['completeness_and_accuracy_of_hmis105_report']*5 * 20 . '%' : '' }}</td>
+                    </tr>
+                    <tr class="indicator-item">
+                        <td>24. Use of Laboratory data</td>
+                        <td>{{ $lis_mgt['lab_data_use'] ?? '' }}</td>
+                        <td>{{ isset($lis_mgt['lab_data_use']) ? $lis_mgt['lab_data_use']*5 * 20 . '%' : '' }}</td>
+                    </tr>
+                    <tr class="indicator-item">
+                        <td>25. Filing of reports</td>
+                        <td>{{ $lis_mgt['report_filing'] ?? '' }}</td>
+                        <td>{{ isset($lis_mgt['report_filing']) ? $lis_mgt['report_filing']*5 * 20 . '%' : '' }}</td>
+                    </tr>
 
-<tr class="total-row">
-    <td><strong>TOTAL (Add 20-25)</strong></td>
-    <td>
-        {{ 
-            ($lis_mgt['availability_and_use_of_data_tool'] ?? 0) +
-            ($lis_mgt['availability_of_hmis_reports'] ?? 0) +
-            ($lis_mgt['timeliness_of_hmis_reports'] ?? 0) +
-            ($lis_mgt['completeness_and_accuracy_of_hmis105_report'] ?? 0) +
-            ($lis_mgt['lab_data_use'] ?? 0) +
-            ($lis_mgt['report_filing'] ?? 0)
-        }}
-    </td>
-    <td>
-        {{
-            round((
-                ($lis_mgt['availability_and_use_of_data_tool'] ?? 0) +
-                ($lis_mgt['availability_of_hmis_reports'] ?? 0) +
-                ($lis_mgt['timeliness_of_hmis_reports'] ?? 0) +
-                ($lis_mgt['completeness_and_accuracy_of_hmis105_report'] ?? 0) +
-                ($lis_mgt['lab_data_use'] ?? 0) +
-                ($lis_mgt['report_filing'] ?? 0)
-            ) * 20,2) . '%'
-        }}
-        
-    </td>
-</tr>
-<tr class="spider-row">
-    <td colspan="3">
-        <strong>
-            Spider Graph Score (TOTAL/6) x 5 = {{ 
-             round(((
-                ($lis_mgt['availability_and_use_of_data_tool'] ?? 0) +
-                ($lis_mgt['availability_of_hmis_reports'] ?? 0) +
-                ($lis_mgt['timeliness_of_hmis_reports'] ?? 0) +
-                ($lis_mgt['completeness_and_accuracy_of_hmis105_report'] ?? 0) +
-                ($lis_mgt['lab_data_use'] ?? 0) +
-                ($lis_mgt['report_filing'] ?? 0)
-            ) / 6) * 5, 2)
+                    <tr class="total-row">
+                        <td><strong>TOTAL (Add 20-25)</strong></td>
+                        <td>
+                            {{ 
+                                ($lis_mgt['availability_and_use_of_data_tool'] ?? 0) +
+                                ($lis_mgt['availability_of_hmis_reports'] ?? 0) +
+                                ($lis_mgt['timeliness_of_hmis_reports'] ?? 0) +
+                                ($lis_mgt['completeness_and_accuracy_of_hmis105_report'] ?? 0) +
+                                ($lis_mgt['lab_data_use'] ?? 0) +
+                                ($lis_mgt['report_filing'] ?? 0)
+                            }}
+                        </td>
+                        <td>
+                            {{
+                                round((
+                                    ($lis_mgt['availability_and_use_of_data_tool'] ?? 0) +
+                                    ($lis_mgt['availability_of_hmis_reports'] ?? 0) +
+                                    ($lis_mgt['timeliness_of_hmis_reports'] ?? 0) +
+                                    ($lis_mgt['completeness_and_accuracy_of_hmis105_report'] ?? 0) +
+                                    ($lis_mgt['lab_data_use'] ?? 0) +
+                                    ($lis_mgt['report_filing'] ?? 0)
+                                ) * 20,2) . '%'
+                            }}
+                            
+                        </td>
+                    </tr>
+                    <tr class="spider-row">
+                        <td colspan="3">
+                            <strong>
+                                Spider Graph Score (TOTAL/6) x 5 = {{ 
+                                round(((
+                                    ($lis_mgt['availability_and_use_of_data_tool'] ?? 0) +
+                                    ($lis_mgt['availability_of_hmis_reports'] ?? 0) +
+                                    ($lis_mgt['timeliness_of_hmis_reports'] ?? 0) +
+                                    ($lis_mgt['completeness_and_accuracy_of_hmis105_report'] ?? 0) +
+                                    ($lis_mgt['lab_data_use'] ?? 0) +
+                                    ($lis_mgt['report_filing'] ?? 0)
+                                ) / 6) * 5, 2)
 
-            }}
+                                }}
 
-        </strong>
-    </td>
-</tr>
-
-
+                            </strong>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
           
@@ -429,6 +428,4 @@
         <p>Laboratory Quality Management System | SPARS Dashboard v2.0</p>
         <p>© Central Public Health Laboratories. All rights reserved.</p>
     </footer>
-    <!-- Radar Chart -->
-
 </div>

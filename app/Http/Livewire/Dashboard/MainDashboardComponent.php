@@ -1503,8 +1503,8 @@ public function hmisCompletenessAndAccuracy(): array
 
         $result[] = [
             'visit_id' => $visitId,
-            'label' => "Visit-$visitId LIS Management Total Score (0-5)",
-            'score' => [$roundedScore],
+            'label' => "Visit-$visitId completeness_and_accuracy_score",
+            'data' => [$roundedScore],
             'component_scores' => $paddedScores,
         ];
     }
@@ -1617,6 +1617,7 @@ public function hmisCompletenessAndAccuracy(): array
 
 public function fvLisTotalScorePerVisit(): array
 {
+    // dd($this->hmisCompletenessAndAccuracy());
     // Get all component scores
     $scoreSets = [
         $this->fvLisDataToolScores(),
@@ -1624,9 +1625,10 @@ public function fvLisTotalScorePerVisit(): array
         $this->fvLisTimelinessOfHmis105Reports(),
 
         // keep these 3 separate, we'll merge later
-        $this->fvLisCompletenessAndAccuracyOfHmis105Reports(),
-        $this->fvLisCompStockStatusScores(),
-        $this->fvLisCompServiceStatsScores(),
+        // $this->fvLisCompletenessAndAccuracyOfHmis105Reports(),
+        // $this->fvLisCompStockStatusScores(),
+        // $this->fvLisCompServiceStatsScores(),
+        $this->hmisCompletenessAndAccuracy(),
         
         $this->fvLisLabDataUseScores(),
         $this->fvLisReportFillingScores(),
@@ -1634,19 +1636,19 @@ public function fvLisTotalScorePerVisit(): array
 
     // Flatten all score entries into one collection
     $allScores = collect($scoreSets)->flatten(1);
-
     // Group scores by visit_id
     $grouped = $allScores->groupBy('visit_id');
-
+    
     // Apply dynamic formula per visit
     $finalScores = $grouped->map(function ($items, $visitId) {
         $visitScores = collect($items)->pluck('data')->flatten()->filter(fn($s) => $s !== null);
 
         $numberOfFunctions = $visitScores->count();
-
+        
         $finalScore = $numberOfFunctions > 0
-            ? round(($visitScores->sum() / $numberOfFunctions) * 5, 2)
-            : 0;
+        ? round(($visitScores->sum() / $numberOfFunctions) * 5, 2)
+        : 0;
+        // dd($finalScore);
 
         // Initialize component scores
         $componentScores = [
@@ -1674,13 +1676,9 @@ public function fvLisTotalScorePerVisit(): array
             if ($label === "Visit-$visitId timeliness_of_hmis105_report") {
                 $componentScores['timeliness_of_hmis_reports'] = $value;
             }
-            if (in_array($label, [
-                "Visit-$visitId completeness_and_accuracy_of_hmis105_report",
-                "Visit-$visitId lis_stock_status_scores",
-                "Visit-$visitId lis_comp_service_scores"
-            ])) {
-                $completenessParts[] = $value;
-            }
+            if ($label === "Visit-$visitId completeness_and_accuracy_score") {
+                $componentScores['completeness_and_accuracy_of_hmis105_report'] = $value;
+            }          
             if ($label === "Visit-$visitId lab_data_use") {
                 $componentScores['lab_data_use'] = $value;
             }
@@ -1692,13 +1690,13 @@ public function fvLisTotalScorePerVisit(): array
         // Combine completeness-related parts into one averaged score
         if (!empty($completenessParts)) {
             $componentScores['completeness_and_accuracy_of_hmis105_report'] =
-                round(collect($completenessParts)->avg(), 2);
+            round(collect($completenessParts)->avg(), 2);
         }
 
         return [
             'visit_id' => $visitId,
             'label'    => "Visit-$visitId total_score (scaled):",
-            'data'     => [$finalScore],
+            'score'     => [$finalScore],
             'color'    => $this->randomColor($visitId),
             'component_scores' => $componentScores
         ];
@@ -1706,7 +1704,6 @@ public function fvLisTotalScorePerVisit(): array
 
     return $finalScores;
 }
-
 
 
 private function getFacilityNamesByVisit(): array
@@ -1741,7 +1738,7 @@ private function getFacilityNamesByVisit(): array
 ];
     }
 
-    return $labels; // [visit_id => "Facility Name (V-x)"]
+    return $labels;
 }
 
 
@@ -1762,7 +1759,7 @@ public function getSpiderGraphData(): array
 
     foreach ($scores as $entry) {
         if (!isset($entry['visit_id']) || !is_numeric($entry['visit_id']) || $entry['visit_id'] <= 0) {
-            continue; // ✅ Skip invalid or zero visit_id
+            continue; // Skip invalid or zero visit_id
         }
 
         $visitId = (int) $entry['visit_id'];
@@ -1780,7 +1777,7 @@ public function getSpiderGraphData(): array
     $storage   = $normalize($storageScores, 'score');
     $ordering  = $normalize($orderScores, 'score');
     $equipment = $normalize($equipmentScores);
-    $lis       = $normalize($lisScores);
+    $lis       = $normalize($lisScores,'score');
 
     // Collect all unique visit IDs
     $visitIds = collect(array_merge(
