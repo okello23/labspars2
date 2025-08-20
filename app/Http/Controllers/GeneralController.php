@@ -30,6 +30,7 @@ use App\Models\Facility\Visits\FvStorageSystemManagement;
 use App\Models\Facility\Visits\FvCompServiceStatisticsAcc;
 use App\Models\Facility\Visits\FvStoragePracticeManagement;
 use App\Models\Facility\Visits\FvStorageConditionManagement;
+use App\Http\Livewire\Dashboard\MainDashboardComponent;
 
 class GeneralController extends Controller
 {
@@ -72,6 +73,27 @@ class GeneralController extends Controller
         $data['ordering'] = FvOrderManagement::where('visit_id', $active_visit->id)->first();
         // fourthStepSubmit
         $data['equipmentMgt'] = FvEquipmentManagement::where('visit_id', $active_visit->id)->first();
+        
+        // Stock Management scores
+        $stockMgtScores = (new MainDashboardComponent())->stockMgtScores();
+        $data['stock_management'] = collect($stockMgtScores)->firstWhere('visit_id', $active_visit->id)['components'] ?? [];
+        
+        // Storage scores
+        $StorageMgtScore = (new MainDashboardComponent())->fvTotalStorageScore();
+        $data['storage_management'] = collect($StorageMgtScore)->firstWhere('visit_id', $active_visit->id)['component_scores'] ?? [];
+        
+        // Order Scores
+        $orderMgtScore = (new MainDashboardComponent())->fvTotalOrderMgtScore();
+        $data['ordering_management'] = collect($orderMgtScore)->firstWhere('visit_id', $active_visit->id)['component_scores'] ?? []; 
+
+        // Equipment Mgt Scores
+        $equipmentMgtScore = (new MainDashboardComponent())->getCombinedEquipmentScores();
+        $data['equipment_management'] = collect($equipmentMgtScore)->firstWhere('visit_id', $active_visit->id)['component_scores'] ?? [];
+        
+        // LIS Mgt Scores
+        $lisMgtScore = (new MainDashboardComponent())->fvLisTotalScorePerVisit();
+        $data['lis_mgt'] = collect($lisMgtScore)->firstWhere('visit_id', $active_visit->id)['component_scores'] ?? [];
+
         // return View('livewire.facility.visits.facility-visit-view-component', $data);
         $pdf = $pdf->loadView('livewire.facility.visits.facility-visit-view-component', $data);
         $pdf->setPaper('a4', 'portrait');   //horizontal

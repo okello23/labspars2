@@ -115,6 +115,7 @@ class FacilityVisitViewComponent extends Component
         $this->consumption_reconciliation = $this->active_visit->consumption_reconciliation ?? null;
         $this->use_stock_cards            = $this->active_visit->use_stock_cards ?? 0;
         $this->limsData                   = FvLisHmisReport::where('visit_id', $this->active_visit->id)->first();
+        
         // firstStepSubmit
         $this->stkScores = FvStockMgtScore::where('visit_id', $this->active_visit->id)->first();
 

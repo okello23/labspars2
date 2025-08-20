@@ -177,7 +177,4 @@
       @include('livewire.facility.visits.report.facility-visit-ordering')
       @include('livewire.facility.visits.report.facility-visit-equipment')
       @include('livewire.facility.visits.report.facility-visit-lims')
-
-      <a target="_blank" href="{{ route('facility-visit_print', $active_visit->visit_code) }}"
-          class=" btn btn-sm btn-info fa fa-print"></a>
   </div>

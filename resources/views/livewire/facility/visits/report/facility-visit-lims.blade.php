@@ -40,7 +40,8 @@
             <td></td>
             <td></td>
             <td>
-                <textarea class="form-control" wire:model="lis_tools_comments"></textarea>
+                {{ $limsData?->lis_tools_comments }}
+                <!-- <textarea class="form-control" wire:model="lis_tools_comments"></textarea> -->
             </td>
         </tr>
 
@@ -72,33 +73,38 @@
             <td>1</td>
             <td>Does the laboratory keep copies of the Laboratory HMIS 105 Health Unit Outpatient Monthly Report Section
                 10 pages 26 & 27?</td>
-            <td>
-                <select class="form-control" id="hmis_105_outpatient_report" wire:model='hmis_105_outpatient_report'>
+                <td>
+                {{ checkYesNoNA($limsData?->hmis_105_outpatient_report) }}
+                <!-- <select class="form-control" id="hmis_105_outpatient_report" wire:model='hmis_105_outpatient_report'>
                     <option value="">Select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
-                </select>
+                </select> -->
             </td>
         </tr>
         <tr>
             <td>2</td>
             <td>Does the facility have HMIS 105 Monthly reports for the previous 2 months?</td>
             <td>
-                <select class="form-control" id="hmis_105_previous_months" wire:model='hmis_105_previous_months'>
+                {{ checkYesNoNA($limsData?->hmis_105_previous_months) }}
+
+                <!-- <select class="form-control" id="hmis_105_previous_months" wire:model='hmis_105_previous_months'>
                     <option value="">Select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
-                </select>
+                </select> -->
             </td>
             <td rowspan="2">
-                <textarea class="form-control" wire:model="lis_availability_comments"></textarea>
+                {{ $limsData?->lis_availability_comments }}
+                <!-- <textarea class="form-control" wire:model="lis_availability_comments"> </textarea> -->
             </td>
         </tr>
     </tbody>
 </table>
 <div class="mb-3">
-    <label for="">Availability of HMIS 105 Report Comment</label>
-    <textarea class="form-control" wire:model="hmis_105_report_comments"></textarea>
+    <label for="">Availability of HMIS 105 Report Comment: </label>
+        
+    <!-- <textarea class="form-control" wire:model="hmis_105_report_comments"></textarea> -->
 </div>
 <p>
     <strong>Score:</strong> Sum of 2 divided by 2: ______
@@ -121,12 +127,14 @@
             <td>1</td>
             <td>Date HMIS 105 Section 10 pages 26 & 27 report was submitted to the district?</td>
             <td>
+                {{ checkYesNoNA($limsData?->t_reports_submitted_to_district) }}        
+<!--                        
                 <select class="form-control" id="t_reports_submitted_to_district"
                     wire:model='t_reports_submitted_to_district'>
                     <option value="">Select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
-                </select>
+                </select> -->
             </td>
             {{-- <td><input type="text" wire:model="comments_submitted_on_time"></td> --}}
         </tr>
@@ -134,14 +142,17 @@
             <td>3</td>
             <td>Was the HMIS 105 Section 10 pages 26 & 27 report submitted to the district on time?</td>
             <td>
+                {{ checkYesNoNA($limsData?->t_reports_submitted_on_time) }}
+<!--                 
                 <select class="form-control" id="t_reports_submitted_on_time" wire:model='t_reports_submitted_on_time'>
                     <option value="">Select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
-                </select>
+                </select> -->
             </td>
             <td>
-                <textarea class="form-control" wire:model="timeliness_comments"></textarea>
+                {{ $limsData?->timeliness_comments }}
+                <!-- <textarea class="form-control" wire:model="timeliness_comments"></textarea> -->
             </td>
         </tr>
     </tbody>
@@ -164,21 +175,25 @@
     <tbody>
         <tr>
             <td>HMIS 105 report section 6 is completely filled (No blanks left)</td>
-            <td><select class="form-control" wire:model="hmis_section_6_complete">
+            <td>
+                 {{ checkYesNoNA($limsData?->hmis_section_6_complete) }}
+                <!-- <select class="form-control" wire:model="hmis_section_6_complete">
                     <option value="">Select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
-                </select>
+                </select> -->
             </td>
         </tr>
         <tr>
             <td>HMIS 105 report section 10 is completely filled (No blanks left)</td>
             <td>
-                <select class="form-control" wire:model="hmis_section_10_complete">
+                {{ checkYesNoNA($limsData?->hmis_section_6_complete) }}
+
+                <!-- <select class="form-control" wire:model="hmis_section_10_complete">
                     <option value="">Select</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
-                </select>
+                </select> -->
             </td>
         </tr>
     </tbody>
@@ -326,7 +341,7 @@
                 <tr>
                     <td>{{ $key + 1 }}</td>
                     <td>{{ $filedReport->report->name }}</td>
-                    <td>{{ $filedReport->filling_score }}
+                    <td>{{ checkYesNoNA($filedReport->filling_score)}}
                     </td>
                     {{-- <td><input type="text" wire:model="comments_hmis_105_section_10"></td> --}}
                 </tr>
@@ -336,7 +351,7 @@
         </tbody>
     </table>
     <div class="mb-3">
-        <label for="">Filing of Reports omment</label>
+        <label for="">Filing of Reports Comment</label>
         <p>{{ $limsData?->reports_filling_comments }}</p>
     </div>
     <p>
