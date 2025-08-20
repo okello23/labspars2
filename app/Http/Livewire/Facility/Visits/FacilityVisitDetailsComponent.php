@@ -1879,6 +1879,7 @@ class FacilityVisitDetailsComponent extends Component
     public $reports_filling_percentage;
     public $lab_data_usage_score;
     public $last_report_filling_date;
+
     public function loadLimsData()
     {
         $lims                                  = FvLisHmisReport::where('visit_id', $this->active_visit->id)->first();

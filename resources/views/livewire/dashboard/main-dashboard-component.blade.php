@@ -325,7 +325,7 @@ async function plotSpiderChart() {
     removeItemButton: true,
     searchEnabled: true,
     placeholder: true,
-    placeholderValue: 'Select facilities to plot the Spider graph...',
+    placeholderValue: 'Select facilities to plot the ...',
     shouldSort: false
   });
 
