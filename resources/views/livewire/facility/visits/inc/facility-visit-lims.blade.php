@@ -377,7 +377,7 @@
                 <tr>
                     <td>{{ $key + 1 }}</td>
                     <td>{{ $filedReport->report->name }}</td>
-                    <td>{{ $filedReport->filling_score }}
+                    <td>{{ checkYesNoNA($filedReport->filling_score) }}
                         <a href="javascript:void(0)"
                             wire:click="confirmDelete({{ $filedReport->id }}, '{{ addslashes(get_class($filedReport)) }}')"
                             class="text-danger float-right fa fa-trash"></a>

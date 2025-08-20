@@ -29,12 +29,12 @@
         }
     </style>
 
-    <h1>Lab SPARS Data Collection & Support Supervision Visit Tool</h1>
+    <h3>Lab SPARS Data Collection & Support Supervision Visit Tool</h3>
 
     <!-- Basic Information -->
     @if (isset($active_visit) && $active_visit)
         <div>
-            <h2>Basic Information</h2>
+            <h4>Basic Information</h4>
             <table>
                 <tr>
                     <th>Health Region</th>
