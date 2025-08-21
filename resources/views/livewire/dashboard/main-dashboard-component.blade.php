@@ -232,7 +232,7 @@
                     height: 400
                 },
                 labels: @json($regionWiseStats->pluck('regionName')),
-                colors: ['#6366F1', '#F59E0B', '#10B981', '#EF4444']
+                colors: ['#14B8A6', '#2DD4BF', '#5EEAD4', '#99F6E4']
             };
             new ApexCharts(document.querySelector("#regionalDistributionChart"), regionalDistributionOptions).render();
 
