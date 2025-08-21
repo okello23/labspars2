@@ -377,7 +377,7 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Spider Graph Score',
+                    label: 'Score',
                     data: spiderScores,
                     backgroundColor: 'rgba(40, 116, 166, 0.2)',
                     borderColor: '#2874a6',
