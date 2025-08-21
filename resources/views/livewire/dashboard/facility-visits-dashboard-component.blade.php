@@ -267,6 +267,64 @@
                 </tbody>
             </table>
 
+            <table border="1" cellspacing="0" cellpadding="6" style="border-collapse: collapse; width: 100%; text-align: center;">
+    <thead>
+         <tr class="category-header"><td colspan="4">Thematic Areas Score Summary</td></tr>
+        <tr>
+            <th>Assessment area</th>
+            <th>Maximum score (minus-NA)</th>
+            <th>Total scored (Y÷Maximum score)</th>
+            <th>SPIDO graph value scaled</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="text-align: left;">Stock Management</td>
+            <td>6</td>
+            <td>{{ round(collect($stock_management)->sum()/6,2) }}</td>
+            <td>{{ round((collect($stock_management)->sum()/6)*5 ,2) }}</td>
+        </tr>
+        <tr>
+            <td style="text-align: left;">Storage Areas &amp; Lab Facilities Management</td>
+            <td>5</td>
+            <td>{{ round(safe_div(collect($storage_management)->sum(), 5)/5,2) }}</td>
+            <td>{{ round((collect($storage_management)->avg() ?? 0), 2) }} </td>
+        </tr>
+        <tr>
+            <td style="text-align: left;">Ordering</td>
+            <td>3</td>
+            <td>{{ safe_div(round(collect($ordering_management)->sum()/3), 5) }}</td>
+            <td>{{ round((collect($ordering_management)->avg() ?? 0), 2) }} </td>
+            
+        </tr>
+        <tr>
+            <td style="text-align: left;">Laboratory Equipment</td>
+            <td>4</td>
+            <td> {{ round(collect($equipment_management)->sum()/2,2) }} </td>
+            <td> {{ round((collect($equipment_management)->avg()*5 ?? 0), 2) }}  </td>
+        </tr>
+        <tr>
+            <td style="text-align: left;">Laboratory Information systems</td>
+            <td>6</td>
+            <td>{{ round($lis_total/6,3) }}</td>
+            <td>{{ round(safe_div($lis_total, 6) * 5, 2) }} </td>
+        </tr>
+        <tr class="spider-row">
+            <td colspan="3" style="text-align: left; font-weight: bold;">Total Spider Graph Score (Max score is 25)</td>
+            @php
+                $spider_total = 
+                    round(safe_div($lis_total, 6) * 5, 2) +
+                    round((collect($equipment_management)->avg() * 5 ?? 0), 2) +
+                    round((collect($ordering_management)->avg() ?? 0), 2) +
+                    round((collect($storage_management)->avg() ?? 0), 2) +
+                    round((collect($stock_management)->avg() ?? 0) * 5, 2);
+            @endphp
+            <td>{{ $spider_total }}</td>
+        </tr>
+    </tbody>
+</table>
+
+
             <div class="row" wire:ignore>
                 <div class="col-lg-6 col-md-6">
                     <div class="card">
@@ -310,7 +368,7 @@
             'Stock management',
             'Storage',
             'Ordering',
-            'Equipment Mgt',
+            'Equipment',
             'LIS'
         ];
         const ctx = document.getElementById('spiderChart').getContext('2d');
@@ -340,7 +398,7 @@
                         angleLines: { display: true },
                         suggestedMin: 0,
                         suggestedMax: 5,
-                        pointLabels: { font: { size: 14 } },
+                        pointLabels: { font: { size: 10 } },
                         ticks: { stepSize: 1, color: '#2c3e50' }
                     }
                 }
