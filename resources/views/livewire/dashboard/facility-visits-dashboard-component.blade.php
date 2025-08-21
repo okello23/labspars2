@@ -255,7 +255,7 @@
                     <tr class="total-row">
                         <td><strong>TOTAL (Add 20-25)</strong></td>
                         <td>{{ $lis_total }}</td>
-                        <td>{{ round($lis_total * 20, 2) . '%' }}</td>
+                        <td>{{ round($lis_total/6 * 100, 2) . '%' }}</td>
                     </tr>
                     <tr class="spider-row">
                         <td colspan="3">
