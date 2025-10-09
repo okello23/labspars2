@@ -31,9 +31,21 @@ class POCEquipmentDetailController extends Controller
             'device_software_version' => 'nullable|string',
             'device_mode' => 'nullable|string',
             'test_summary' => 'nullable|string',
+            'sample_id' => 'nullable|string',
+            'facility_id' => 'required|integer'
             ]);
 
-            $pocEquipmentDetail = PocEquipmentDetail::create($validatedData);
+            $pocEquipmentDetail = PocEquipmentDetail::updateOrCreate(
+            [
+            'test_date' => $validatedData['test_date'],
+            'test_time' => $validatedData['test_time'],
+            'equipment_serial_number' => $validatedData['equipment_serial_number'],
+            'catridge_serial_number' => $validatedData['catridge_serial_number'],
+            'sample_id' => $validatedData['sample_id'],
+            'facility_id' => $validatedData['facility_id']
+            ],
+            $validatedData
+            );
 
             \Log::info('POC Equipment Detail stored successfully', ['id' => $pocEquipmentDetail->id]);
 
