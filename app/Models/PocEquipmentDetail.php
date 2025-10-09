@@ -26,5 +26,7 @@ class PocEquipmentDetail extends Model
         'device_software_version',
         'device_mode',
         'test_summary',
+        'facility_id',
+        'sample_id'
     ];
 }
