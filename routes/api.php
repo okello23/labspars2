@@ -6,7 +6,7 @@ use App\Http\Livewire\Api\ApiComponent;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
 use App\Http\Livewire\Dashboard\MainDashboardComponent;
-use App\Http\Livewire\Microbiology\SamplesComponent;
+use App\Http\Controllers\API\POCEquipmentDetailController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ApiAuthController;
 
@@ -21,6 +21,7 @@ use App\Http\Controllers\Auth\ApiAuthController;
 |
 */
 
+Route::post('/poc-device', [POCEquipmentDetailController::class, 'store']);
 
 Route::group(['middleware' => ['auth:api']], function () {
 
