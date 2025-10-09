@@ -47,10 +47,10 @@ class POCEquipmentDetailController extends Controller
             $validatedData
             );
 
-            \Log::info('POC Equipment Detail stored successfully', ['id' => $pocEquipmentDetail->id]);
+            \Log::info('POC Equipment Detail stored/updated successfully', ['id' => $pocEquipmentDetail->id]);
 
             return response()->json([
-            'message' => 'POC Equipment Detail recorded successfully',
+            'message' => 'POC Equipment Detail recorded/updated successfully',
             'data' => $pocEquipmentDetail
             ], 201);
         } catch (\Exception $e) {
