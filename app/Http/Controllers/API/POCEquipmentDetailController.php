@@ -12,58 +12,81 @@ class POCEquipmentDetailController extends Controller
 {
     public function getStats(Request $request)
     {
-        // Optional filters
-        $facilityId   = $request->input('facility_id');
-        $serialNumber = $request->input('equipment_serial_number');
-        $dateRange    = $request->input('date_range'); // e.g. ['2025-10-01','2025-10-09']
+      try {
+            // Filters
+            $facilityId   = $request->query('facility_id');
+            $serialNumber = $request->query('serial_number');
+            $startDate    = $request->query('start_date');
+            $endDate      = $request->query('end_date');
 
-        // Base query
-        $query = PocEquipmentDetail::query();
+            // Base query
+            $query = PocEquipmentDetail::query();
 
-        // Apply filters dynamically
-        if ($facilityId) {
-            $query->where('facility_id', $facilityId);
+            if ($facilityId) $query->where('facility_id', $facilityId);
+            if ($serialNumber) $query->where('equipment_serial_number', $serialNumber);
+            if ($startDate && $endDate) $query->whereBetween('test_date', [$startDate, $endDate]);
+
+            // Time boundaries
+            $today = Carbon::today();
+            $yesterday = Carbon::yesterday();
+            $startOfWeek = Carbon::now()->startOfWeek();
+            $endOfWeek = Carbon::now()->endOfWeek();
+
+            // Clone for metrics
+            $baseQuery = clone $query;
+
+            // ---- OVERALL METRICS ----
+            $totalDevices = $baseQuery->distinct('equipment_serial_number')->count('equipment_serial_number');
+            $totalTestsConducted = $baseQuery->distinct('sample_id')->count('sample_id');
+            $reportedToday = (clone $query)->whereDate('test_date', $today)->count();
+            $reportedYesterday = (clone $query)->whereDate('test_date', $yesterday)->count();
+            $reportedThisWeek = (clone $query)->whereBetween('test_date', [$startOfWeek, $endOfWeek])->count();
+
+            // Last reported overall
+            $lastReportedRow = (clone $query)->orderByDesc('test_date')->orderByDesc('test_time')->first();
+            $lastReported = $lastReportedRow ? $lastReportedRow->test_date . ' ' . ($lastReportedRow->test_time ?? '') : null;
+
+            // ---- PER FACILITY BREAKDOWN ----
+            $facilityBreakdown = PocEquipmentDetail::select(
+                    'facility_id',
+                    DB::raw('COUNT(DISTINCT equipment_serial_number) as total_devices'),
+                    DB::raw('SUM(CASE WHEN DATE(test_date) = CURDATE() THEN 1 ELSE 0 END) as reported_today'),
+                    DB::raw('SUM(CASE WHEN DATE(test_date) = DATE_SUB(CURDATE(), INTERVAL 1 DAY) THEN 1 ELSE 0 END) as reported_yesterday'),
+                    DB::raw('SUM(CASE WHEN YEARWEEK(test_date, 1) = YEARWEEK(CURDATE(), 1) THEN 1 ELSE 0 END) as reported_this_week'),
+                    DB::raw('MAX(CONCAT(test_date, " ", IFNULL(test_time, ""))) as last_reported')
+                )
+                ->when($facilityId, fn($q) => $q->where('facility_id', $facilityId))
+                ->when($serialNumber, fn($q) => $q->where('equipment_serial_number', $serialNumber))
+                ->when($startDate && $endDate, fn($q) => $q->whereBetween('test_date', [$startDate, $endDate]))
+                ->groupBy('facility_id')
+                ->get();
+
+            return response()->json([
+                'status' => 'success',
+                'filters' => [
+                    'facility_id' => $facilityId,
+                    'serial_number' => $serialNumber,
+                    'date_range' => $startDate && $endDate ? [$startDate, $endDate] : null
+                ],
+                'summary' => [
+                    'total_devices' => $totalDevices,
+                    'total_tests_conducted' => $totalTestsConducted,
+                    'devices_reported_today' => $reportedToday,
+                    'devices_reported_yesterday' => $reportedYesterday,
+                    'devices_reported_this_week' => $reportedThisWeek,
+                    'last_reported' => $lastReported,
+                ],
+                'facility_breakdown' => $facilityBreakdown
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error fetching POC Equipment statistics: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to fetch statistics',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        if ($serialNumber) {
-            $query->where('equipment_serial_number', $serialNumber);
-        }
-
-        if ($dateRange && is_array($dateRange) && count($dateRange) === 2) {
-            $query->whereBetween('test_date', [$dateRange[0], $dateRange[1]]);
-        }
-
-        // Date calculations
-        $today     = Carbon::today();
-        $yesterday = Carbon::yesterday();
-        $weekStart = Carbon::now()->startOfWeek();
-        $weekEnd   = Carbon::now()->endOfWeek();
-
-        // Clone query to reuse base filters
-        $totalQuery     = clone $query;
-        $todayQuery     = clone $query;
-        $yesterdayQuery = clone $query;
-        $weekQuery      = clone $query;
-
-        // Stats computation
-        $stats = [
-            'total_devices' => $totalQuery->distinct('equipment_serial_number')->count('equipment_serial_number'),
-            'reported_today' => $todayQuery->whereDate('test_date', $today)
-                ->distinct('equipment_serial_number')->count('equipment_serial_number'),
-            'reported_yesterday' => $yesterdayQuery->whereDate('test_date', $yesterday)
-                ->distinct('equipment_serial_number')->count('equipment_serial_number'),
-            'reported_this_week' => $weekQuery->whereBetween('test_date', [$weekStart, $weekEnd])
-                ->distinct('equipment_serial_number')->count('equipment_serial_number'),
-        ];
-
-        return response()->json([
-            'filters' => [
-                'facility_id' => $facilityId,
-                'equipment_serial_number' => $serialNumber,
-                'date_range' => $dateRange,
-            ],
-            'data' => $stats,
-        ]);
     }
 
     public function store(Request $request)
