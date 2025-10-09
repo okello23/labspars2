@@ -22,6 +22,7 @@ use App\Http\Controllers\Auth\ApiAuthController;
 */
 
 Route::post('/poc-device', [POCEquipmentDetailController::class, 'store']);
+Route::get('/poc-equipment/stats', [POCEquipmentDetailController::class, 'getStats']);
 
 Route::group(['middleware' => ['auth:api']], function () {
 
