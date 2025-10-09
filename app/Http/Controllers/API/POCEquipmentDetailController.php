@@ -11,6 +11,7 @@ class POCEquipmentDetailController extends Controller
     //
     public function store(Request $request)
     {
+        
 
         try {
             $validatedData = $request->validate([
@@ -21,7 +22,7 @@ class POCEquipmentDetailController extends Controller
             'equipment_used' => 'required|string',
             'equipment_serial_number' => 'required|string',
             'catridge_serial_number' => 'required|string',
-            'machine_sample_detection' => 'nullable|boolean',
+            'machine_sample_detection' => 'nullable|in:pass,fail',
             'device_status' => 'nullable|string',
             'hiv1_positive_control' => 'required|string',
             'hiv2_positive_control' => 'required|string',
