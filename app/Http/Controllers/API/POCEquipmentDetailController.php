@@ -34,11 +34,15 @@ class POCEquipmentDetailController extends Controller
 
             $pocEquipmentDetail = PocEquipmentDetail::create($validatedData);
 
+            \Log::info('POC Equipment Detail stored successfully', ['id' => $pocEquipmentDetail->id]);
+
             return response()->json([
             'message' => 'POC Equipment Detail recorded successfully',
             'data' => $pocEquipmentDetail
             ], 201);
         } catch (\Exception $e) {
+
+            \Log::error('Error storing POC Equipment Detail: ' . $e->getMessage());
             return response()->json([
             'message' => 'Failed to persist POC Equipment Detail',
             'error' => $e->getMessage()
