@@ -22,7 +22,7 @@ class POCEquipmentDetailController extends Controller
             'equipment_used' => 'required|string',
             'equipment_serial_number' => 'required|string',
             'catridge_serial_number' => 'required|string',
-            'machine_sample_detection' => 'nullable|in:pass,fail',
+            'machine_sample_detection' => 'nullable|string',
             'device_status' => 'nullable|string',
             'hiv1_positive_control' => 'required|string',
             'hiv2_positive_control' => 'required|string',
