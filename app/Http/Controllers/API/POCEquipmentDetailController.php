@@ -37,7 +37,7 @@ class POCEquipmentDetailController extends Controller
 
             // ---- OVERALL METRICS ----
             $totalDevices = $baseQuery->distinct('equipment_serial_number')->count('equipment_serial_number');
-            $totalTestsConducted = $baseQuery->distinct('sample_id')->count('sample_id');
+            $totalTestsConducted = $baseQuery->distinct('catridge_serial_number')->count('catridge_serial_number');
             $reportedToday = (clone $query)->whereDate('test_date', $today)->count();
             $reportedYesterday = (clone $query)->whereDate('test_date', $yesterday)->count();
             $reportedThisWeek = (clone $query)->whereBetween('test_date', [$startOfWeek, $endOfWeek])->count();
