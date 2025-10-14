@@ -95,7 +95,7 @@ class POCEquipmentDetailController extends Controller
 public function pocEquipmentStat($facilityId, $serialNumber, $startDate, $endDate){
 $rawData = PocEquipmentDetail::select(
         'poc_equipment_details.facility_id',
-        'facilities.name as facility_name',
+        'facility as facility_name',
         'equipment_serial_number',
         DB::raw('COUNT(DISTINCT catridge_serial_number) as total_tests_done'),
         DB::raw('SUM(CASE WHEN DATE(test_date) = CURDATE() THEN 1 ELSE 0 END) as reported_today'),
@@ -103,11 +103,11 @@ $rawData = PocEquipmentDetail::select(
         DB::raw('SUM(CASE WHEN YEARWEEK(test_date, 1) = YEARWEEK(CURDATE(), 1) THEN 1 ELSE 0 END) as reported_this_week'),
         DB::raw('MAX(CONCAT(test_date, " ", IFNULL(test_time, ""))) as last_reported')
     )
-    ->join('facilities', 'facilities.id', '=', 'poc_equipment_details.facility_id')
+    ->join('alis_facilities', 'alis_facilities.id', '=', 'poc_equipment_details.facility_id')
     ->when($facilityId, fn($q) => $q->where('facility_id', $facilityId))
     ->when($serialNumber, fn($q) => $q->where('equipment_serial_number', $serialNumber))
     ->when($startDate && $endDate, fn($q) => $q->whereBetween('test_date', [$startDate, $endDate]))
-    ->groupBy('poc_equipment_details.facility_id', 'facilities.name', 'equipment_serial_number')
+    ->groupBy('poc_equipment_details.facility_id', 'alis_facilities.facility', 'equipment_serial_number')
     ->orderBy('poc_equipment_details.facility_id')
     ->orderByDesc(DB::raw('MAX(CONCAT(test_date, " ", IFNULL(test_time, "")))'))
     ->get();
