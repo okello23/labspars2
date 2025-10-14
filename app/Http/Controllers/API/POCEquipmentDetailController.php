@@ -92,78 +92,107 @@ class POCEquipmentDetailController extends Controller
         }
     }
 
-public function pocEquipmentStat($facilityId, $serialNumber, $startDate, $endDate){
-$rawData = PocEquipmentDetail::select(
+public function pocEquipmentStat($facilityId = null, $serialNumber = null, $startDate = null, $endDate = null)
+{
+    $rawData = PocEquipmentDetail::select(
         'poc_equipment_details.facility_id',
-        'facility as facility_name',
-        'equipment_serial_number',
-        DB::raw('COUNT(DISTINCT catridge_serial_number) as total_tests_done'),
-        DB::raw('SUM(CASE WHEN DATE(test_date) = CURDATE() THEN 1 ELSE 0 END) as reported_today'),
-        DB::raw('SUM(CASE WHEN DATE(test_date) = DATE_SUB(CURDATE(), INTERVAL 1 DAY) THEN 1 ELSE 0 END) as reported_yesterday'),
-        DB::raw('SUM(CASE WHEN YEARWEEK(test_date, 1) = YEARWEEK(CURDATE(), 1) THEN 1 ELSE 0 END) as reported_this_week'),
-        DB::raw('MAX(CONCAT(test_date, " ", IFNULL(test_time, ""))) as last_reported')
+        'alis_facilities.facility as facility_name',
+        'poc_equipment_details.equipment_serial_number',
+
+        // Total tests
+        DB::raw('COUNT(DISTINCT catridge_serial_number) AS total_tests'),
+
+        // Error tracking
+        DB::raw('SUM(CASE WHEN error_code > 0 THEN 1 ELSE 0 END) AS total_errors'),
+        DB::raw('ROUND(SUM(CASE WHEN error_code > 0 THEN 1 ELSE 0 END) / COUNT(DISTINCT catridge_serial_number) * 100, 2) AS error_rate'),
+
+        // Reporting activity
+        DB::raw('SUM(CASE WHEN DATE(test_date) = CURDATE() THEN 1 ELSE 0 END) AS reported_today'),
+        DB::raw('SUM(CASE WHEN DATE(test_date) = DATE_SUB(CURDATE(), INTERVAL 1 DAY) THEN 1 ELSE 0 END) AS reported_yesterday'),
+        DB::raw('SUM(CASE WHEN YEARWEEK(test_date, 1) = YEARWEEK(CURDATE(), 1) THEN 1 ELSE 0 END) AS reported_this_week'),
+
+        // Latest report timestamp
+        DB::raw('MAX(CONCAT(test_date, " ", IFNULL(test_time, ""))) AS last_reported'),
+
+        // Device status classification
+        DB::raw("
+            CASE
+                WHEN (SUM(CASE WHEN error_code > 0 THEN 1 ELSE 0 END) / COUNT(DISTINCT catridge_serial_number) * 100) < 5 THEN 'Healthy'
+                WHEN (SUM(CASE WHEN error_code > 0 THEN 1 ELSE 0 END) / COUNT(DISTINCT catridge_serial_number) * 100) BETWEEN 5 AND 10 THEN 'Warning'
+                ELSE 'Critical'
+            END AS device_status
+        ")
     )
     ->join('alis_facilities', 'alis_facilities.id', '=', 'poc_equipment_details.facility_id')
-    ->when($facilityId, fn($q) => $q->where('facility_id', $facilityId))
+    ->when($facilityId, fn($q) => $q->where('poc_equipment_details.facility_id', $facilityId))
     ->when($serialNumber, fn($q) => $q->where('equipment_serial_number', $serialNumber))
     ->when($startDate && $endDate, fn($q) => $q->whereBetween('test_date', [$startDate, $endDate]))
-    ->groupBy('poc_equipment_details.facility_id', 'alis_facilities.facility', 'equipment_serial_number')
-    ->orderBy('poc_equipment_details.facility_id')
-    ->orderByDesc(DB::raw('MAX(CONCAT(test_date, " ", IFNULL(test_time, "")))'))
+    ->groupBy(
+        'poc_equipment_details.facility_id',
+        'alis_facilities.facility',
+        'poc_equipment_details.equipment_serial_number'
+    )
     ->get();
 
-$facilityBreakdown = [];
+    $facilityBreakdown = [];
 
-foreach ($rawData as $row) {
-    $fid = $row->facility_id;
+    foreach ($rawData as $row) {
+        $fid = $row->facility_id;
 
-    if (!isset($facilityBreakdown[$fid])) {
-        $facilityBreakdown[$fid] = [
-            'facility_id' => $fid,
-            'facility_name' => $row->facility_name,
-            'total_devices' => 0,
-            'total_tests_done' => 0,
-            'reported_today' => 0,
-            'reported_yesterday' => 0,
-            'reported_this_week' => 0,
-            'last_reported' => null,
-            'devices' => [] // container for per-device stats
+        if (!isset($facilityBreakdown[$fid])) {
+            $facilityBreakdown[$fid] = [
+                'facility_id' => $fid,
+                'facility_name' => $row->facility_name,
+                'total_devices' => 0,
+                'total_device_error' => 0,
+                'error_rate' => '0%',
+                'total_tests_done' => 0,
+                'reported_today' => 0,
+                'reported_yesterday' => 0,
+                'reported_this_week' => 0,
+                'last_reported' => null,
+                'devices' => []
+            ];
+        }
+
+        $facilityBreakdown[$fid]['total_devices']++;
+        $facilityBreakdown[$fid]['total_tests_done'] += (int) $row->total_tests;
+        $facilityBreakdown[$fid]['total_device_error'] += (int) $row->total_errors;
+        $facilityBreakdown[$fid]['reported_today'] += (int) $row->reported_today;
+        $facilityBreakdown[$fid]['reported_yesterday'] += (int) $row->reported_yesterday;
+        $facilityBreakdown[$fid]['reported_this_week'] += (int) $row->reported_this_week;
+
+        // Device-level details
+        $facilityBreakdown[$fid]['devices'][] = [
+            'device_serial_number' => $row->equipment_serial_number,
+            'total_tests' => (int) $row->total_tests,
+            'total_errors' => (int) $row->total_errors,
+            'error_rate' => $row->error_rate . '%',
+            'device_status' => $row->device_status,
+            'last_reported' => $row->last_reported,
         ];
+
+        // Track the most recent report
+        if (!$facilityBreakdown[$fid]['last_reported'] || $row->last_reported > $facilityBreakdown[$fid]['last_reported']) {
+            $facilityBreakdown[$fid]['last_reported'] = $row->last_reported;
+        }
     }
 
-    $facilityBreakdown[$fid]['total_devices']++;
-    $facilityBreakdown[$fid]['total_tests_done'] += $row->total_tests_done;
+    // Compute facility-level error rate and sort devices
+    foreach ($facilityBreakdown as &$facility) {
+        $facility['error_rate'] = $facility['total_tests_done'] > 0
+            ? round(($facility['total_device_error'] / $facility['total_tests_done']) * 100, 2) . '%'
+            : '0%';
 
-    // Add the device and its test count
-    $facilityBreakdown[$fid]['devices'][] = [
-        'device_serial_number' => $row->equipment_serial_number,
-        'total_tests' => (int) $row->total_tests_done,
-        'last_reported' => $row->last_reported
-    ];
-
-    // Aggregate totals
-    $facilityBreakdown[$fid]['reported_today'] += $row->reported_today;
-    $facilityBreakdown[$fid]['reported_yesterday'] += $row->reported_yesterday;
-    $facilityBreakdown[$fid]['reported_this_week'] += $row->reported_this_week;
-
-    // Track most recent report
-    if (!$facilityBreakdown[$fid]['last_reported'] || $row->last_reported > $facilityBreakdown[$fid]['last_reported']) {
-        $facilityBreakdown[$fid]['last_reported'] = $row->last_reported;
+        usort($facility['devices'], fn($a, $b) => strtotime($b['last_reported']) <=> strtotime($a['last_reported']));
     }
+
+    // Return structured JSON
+    return response()->json([
+        'facility_breakdown' => array_values($facilityBreakdown)
+    ]);
 }
 
-// Sort devices for each facility by most recent report time
-foreach ($facilityBreakdown as &$facility) {
-    usort($facility['devices'], function ($a, $b) {
-        return strtotime($b['last_reported']) <=> strtotime($a['last_reported']);
-    });
-}
-
-// Return clean JSON
-return response()->json([
-    'facility_breakdown' => array_values($facilityBreakdown)
-]);
-}
     public function store(Request $request)
     {
 	\Log::info($request);
