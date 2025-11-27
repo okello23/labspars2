@@ -55,18 +55,8 @@
               <a href="#Payments" class="has-arrow"><i class="fa fa-bar-chart-o"></i>
                 <span>Reports</span></a>
                 <ul>
-                  <li>
-                    <a href="#scores" class="has-arrow">
-                      <span>Scores</span></a>
-                      <ul>
-                        <li><a href="#">Survey Summary</a></li>
-                        <li><a href="#">Scores Summary</a></li>
-                        <li><a href="#">Extract By Indicator</a></li>
-                      </ul>
-                    </li>
-
-                    <li><a href="#">League Table</a></li>
-                    <li><a href="#">Facility Performance</a></li>
+                    <li><a href="{{ route('league-table') }}">League Table</a></li>
+                    <li><a href="{{ route('facility-performance') }}">Facility Performance</a></li>
                   </ul>
                   <li>
                     <a href="#Room" class="has-arrow"><i class="fa fa-cog"></i><span>System Settings</span></a>

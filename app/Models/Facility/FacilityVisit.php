@@ -3,12 +3,14 @@
 namespace App\Models\Facility;
 
 use App\Models\User;
+use App\Traits\VisitFiltersTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
 class FacilityVisit extends Model
 {
+     use VisitFiltersTrait;
     use HasFactory;
 
     protected $fillable = [
@@ -54,6 +56,9 @@ class FacilityVisit extends Model
     {
         return empty($search) ? static::query()
         : static::query()
-            ->where('visit_number', 'like', '%'.$search.'%');
+        ->where('visit_number', 'like', '%'.$search.'%')
+        ->orWhereHas('facility', function ($query) use ($search) {
+            $query->where('name', 'like', '%'.$search.'%');
+        });
     }
 }

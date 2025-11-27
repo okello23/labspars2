@@ -106,7 +106,8 @@
                 <div class="stat-value text-warning"><h2>
                     {{ $facilityStats['total'] ? number_format(($facilityStats['visited'] / $facilityStats['total']) * 100, 1) : 0 }}%</h2>
                 </div>
-                <div class="stat-label">LSS Facility Coverage</div>
+                <div class="stat-label">LSS Facility Coverage ( {{ number_format(($facilityStats['visited'])) }} of {{  $facilityStats['total'] }} Health Facilities)
+                </div>
                 <div class="absolute top-2 right-2">
                     <i class="fa fa-spinner text-warning text-3xl"></i>
                 </div>
@@ -144,6 +145,17 @@
                 <div class="body">
                     <div class="card-body">
                         <div class="chart-container" id="regionalDistributionChart"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="header">
+                    <h4>LSS Regional Distribution</h4>
+                </div>
+                <div class="body">
+                    <div class="card-body">
+                        <div class="chart-container" id="visitStatusChart"></div>
                     </div>
                 </div>
             </div> 
@@ -232,7 +244,8 @@
                     height: 400
                 },
                 labels: @json($regionWiseStats->pluck('regionName')),
-                colors: ['#14B8A6', '#2DD4BF', '#5EEAD4', '#99F6E4']
+                colors: ['#f37736', '#f68b55', '#f7a574', '#f9bf93']
+                
             };
             new ApexCharts(document.querySelector("#regionalDistributionChart"), regionalDistributionOptions).render();
 

@@ -39,8 +39,8 @@
     <a type="button" class="btn btn-sm btn-outline-success me-2" wire:click="export()"><i
       class="fa fa-file-excel-o"></i> {{__('Export')}}</a>
 
-      <a type="button" class="btn btn-sm btn-outline-info me-2" wire:click="addEntry">
-        <i class="fa fa-plus"></i> {{__('New')}}</a>
+      <!-- <a type="button" class="btn btn-sm btn-outline-info me-2" wire:click="addEntry">
+        <i class="fa fa-plus"></i> {{__('New')}}</a> -->
 
       <!-- <a type="button" class="btn btn-sm btn-outline-primary me-2"
       wire:click="refresh()"><i class="fa fa-refresh"></i> Refresh Page </a> -->
