@@ -3,13 +3,13 @@
 namespace App\Http\Livewire\Reports;
 
 use Carbon\Carbon;
+use App\Traits\LeagueDataTrait; 
 use App\Models\Settings\Region;
 use Illuminate\Support\Collection;
 use App\Models\District;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Component;
-use App\Traits\LeagueDataTrait; 
 use Livewire\WithPagination;
 
 class FacilityPerformanceComponent extends Component

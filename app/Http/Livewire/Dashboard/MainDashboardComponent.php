@@ -2,6 +2,7 @@
 namespace App\Http\Livewire\Dashboard;
 
 use App\Models\District;
+use App\Traits\LeagueDataTrait;
 use App\Models\Facility\Facility;
 use App\Models\Facility\FacilityVisit;
 use App\Models\Settings\Region;
@@ -13,6 +14,7 @@ use Livewire\WithPagination;
 class MainDashboardComponent extends Component
 {
     use WithPagination;
+    use LeagueDataTrait;
 
     public $perPage          = 10;
     public $search           = '';
@@ -36,6 +38,7 @@ class MainDashboardComponent extends Component
     public $adherenceScores   = [];
     public $storageConditions = [];
     public $facilityStats     = [];
+    public $trend_data;
 
     //spider graph
  public $categories = [
@@ -1967,7 +1970,6 @@ public function getSpiderGraphData(): array
     
     public function loadDashboardData()
     {
-
         // Basic Statistics
         $this->totalVisits     = $this->query()->count();
         $this->pendingVisits   = $this->query()->where('status', 'Pending')->count();
@@ -2017,6 +2019,8 @@ public function getSpiderGraphData(): array
             'visited_by_level' => $this->query()->distinct('facility_id')->groupBy('facilities.level'),
             'active'  => Facility::where('is_active', true)->count(),
         ];
+        // Trend Data
+        $this->trend_data = $this->getBaselineCurrentTrendLast3Months();
     }
     public function loadDashboardData3()
     {

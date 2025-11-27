@@ -144,31 +144,66 @@ trait LeagueDataTrait
         });
     }
 
-      private function transformScoresToRows($allScores)
-    {
-        $grouped = $allScores->groupBy('visit_id');
+    //   private function transformScoresToRows($allScores)
+    // {
+    //     $grouped = $allScores->groupBy('visit_id');
 
-        return $grouped->map(function ($items, $visitId) {
-            $stock = optional($items->firstWhere('thematic_area', 'Stock Management'))['score'][0] ?? null;
-            $storage = optional($items->firstWhere('thematic_area', 'Storage Management'))['score'][0] ?? null;
-            $order = optional($items->firstWhere('thematic_area', 'Order Management'))['score'][0] ?? null;
-            $equipment = optional($items->firstWhere('thematic_area', 'Equipment Management'))['score'][0] ?? null;
-            $lis = optional($items->firstWhere('thematic_area', 'Lab Information System'))['score'][0] ?? null;
+    //     return $grouped->map(function ($items, $visitId) {
+    //         $stock = optional($items->firstWhere('thematic_area', 'Stock Management'))['score'][0] ?? null;
+    //         $storage = optional($items->firstWhere('thematic_area', 'Storage Management'))['score'][0] ?? null;
+    //         $order = optional($items->firstWhere('thematic_area', 'Order Management'))['score'][0] ?? null;
+    //         $equipment = optional($items->firstWhere('thematic_area', 'Equipment Management'))['score'][0] ?? null;
+    //         $lis = optional($items->firstWhere('thematic_area', 'Lab Information System'))['score'][0] ?? null;
 
-            $total_thematic = collect([$stock, $storage, $order, $equipment, $lis])->filter()->sum();
+    //         $total_thematic = collect([$stock, $storage, $order, $equipment, $lis])->filter()->sum();
 
-            return [
-                'visit_id'       => $visitId,
-                // 'facility_id'    => $items->first()['facility_id'],
-                'stock_mgt'      => $stock,
-                'storage_mgt'    => $storage,
-                'order_mgt'      => $order,
-                'equipment_mgt'  => $equipment,
-                'lis_mgt'        => $lis,
-                'total_thematic' => round($total_thematic, 2),
-            ];
-        })->values();
-    }
+    //         return [
+    //             'visit_id'       => $visitId,
+    //             'facility_id'    => $items->first()['facility_id'],
+    //             'created_at'     => $items->first()['created_at'] ?? null,
+    //             'stock_mgt'      => $stock,
+    //             'storage_mgt'    => $storage,
+    //             'order_mgt'      => $order,
+    //             'equipment_mgt'  => $equipment,
+    //             'lis_mgt'        => $lis,
+    //             'total_thematic' => round($total_thematic, 2),
+    //         ];
+    //     })->values();
+    // }
+
+    private function transformScoresToRows($allScores)
+{
+    $grouped = $allScores->groupBy('visit_id');
+
+    return $grouped->map(function ($items, $visitId) {
+
+        // Fetch actual visit to pull created_at
+        $visit = FacilityVisit::find($visitId);
+
+        $stock = optional($items->firstWhere('thematic_area', 'Stock Management'))['score'][0] ?? null;
+        $storage = optional($items->firstWhere('thematic_area', 'Storage Management'))['score'][0] ?? null;
+        $order = optional($items->firstWhere('thematic_area', 'Order Management'))['score'][0] ?? null;
+        $equipment = optional($items->firstWhere('thematic_area', 'Equipment Management'))['score'][0] ?? null;
+        $lis = optional($items->firstWhere('thematic_area', 'Lab Information System'))['score'][0] ?? null;
+
+        $total_thematic = collect([$stock, $storage, $order, $equipment, $lis])
+            ->filter()
+            ->sum();
+
+        return [
+            'visit_id'       => $visitId,
+            'facility_id'    => $items->first()['facility_id'],
+            'created_at'     => date('Y-m-d', strtotime($visit->created_at)) ?? null,
+            'stock_mgt'      => $stock,
+            'storage_mgt'    => $storage,
+            'order_mgt'      => $order,
+            'equipment_mgt'  => $equipment,
+            'lis_mgt'        => $lis,
+            'total_thematic' => round($total_thematic, 2),
+        ];
+    })->values();
+}
+
     
      private function attachVisitMetaData($rows, $filters = [])
     {
@@ -191,7 +226,7 @@ trait LeagueDataTrait
 
             return (object) [
                 'visit_id'            => $row['visit_id'],
-                // 'facility_id'         => $row['facility_id'],
+                'facility_id'         => $row['facility_id'],
                 'facility'            => $visit?->facility,
                 'visit_number'        => $visit?->visit_number,
                 'date_of_visit'       => $visit?->date_of_visit,
@@ -269,6 +304,7 @@ trait LeagueDataTrait
             $current  = $sorted->first()->total_score;
         } else {
             $baseline = $sorted->slice(0, $sorted->count() - 1)->avg('total_score');
+            // $current = $sorted->slice(0, $sorted->count() - 1)->avg('total_score');
             $current  = $sorted->last()->total_score;
         }
 
@@ -365,4 +401,46 @@ trait LeagueDataTrait
             ['path' => request()->url(), 'query' => request()->query()]
         );
     }
+
+    public function getBaselineCurrentTrendLast3Months()
+{
+    $threeMonthsAgo = now()->subMonths(6);
+
+    // load raw data
+    $allScores = $this->loadAllScores();
+    $rows = $this->transformScoresToRows($allScores);
+
+    // filter last 3 months only
+    $last3Months = $rows->filter(function ($row) use ($threeMonthsAgo) {
+        // dd($row);
+        return \Carbon\Carbon::parse($row['created_at'])->greaterThanOrEqualTo($threeMonthsAgo);
+    });
+
+    $leagueData = $this->attachVisitMetaData($last3Months);
+
+    // group by district for dashboard trend
+    $district_grouped = $leagueData->groupBy('district');
+    return $district_grouped->map(function ($visits, $district) {
+        
+        $sorted = $visits->sortBy('created_at')->values();
+        
+        if ($sorted->count() == 1) {
+            $baseline = $sorted->first()->total_score;
+            $current = $sorted->first()->total_score;
+        } else {
+            $baseline = $sorted->slice(0, $sorted->count() - 1)->avg('total_score');
+            $current = $sorted->last()->total_score;
+        }
+        
+        return [
+            'district'        => $district,
+            'baseline_score'  => round($baseline * 5, 2),
+            'current_score'   => round($current * 5, 2),
+            'current_date'    => $sorted->last()->date_of_visit,
+            'change'          => round(($current - $baseline) * 5, 2),
+            'percent_change'  => $baseline > 0 ? round((($current - $baseline) / $baseline) * 100, 2) : null,
+        ];
+    })->values();
+}
+
 }
