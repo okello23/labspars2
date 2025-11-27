@@ -256,69 +256,97 @@ trait LeagueDataTrait
     /** ---------------------------------------------------------
      *  DISTRICT LEAGUE LOGIC
      * ---------------------------------------------------------*/
-      public function computeDistrictLeague($leagueData)
-    {
-        $district_grouped_visits = $leagueData->groupBy('district');
-        
-        $district_summaries = $district_grouped_visits->map(function ($visits, $district_name) {
+    public function computeDistrictLeague($leagueData)
+{
+    $district_grouped_visits = $leagueData->groupBy('district');
+
+    $district_summaries = $district_grouped_visits->map(function ($visits, $district_name) {
+
+        $sorted = $visits->sortBy('created_at')->values();
+
+        if ($sorted->count() == 1) {
+            $baseline = $sorted->first()->total_score;
+            $current  = $sorted->first()->total_score;
+        } else {
+            $baseline = $sorted->slice(0, $sorted->count() - 1)->avg('total_score');
+            $current  = $sorted->last()->total_score;
+        }
+
+        $change = round($current - $baseline, 2);
+        $percent_change = $baseline > 0
+            ? round((($current - $baseline) / $baseline) * 100, 2)
+            : null;
+
+        $average_score = round($visits->avg('total_score'), 2);
+
+        return (object) [
+            'district'        => $district_name,
+            'region'          => $visits->first()->region ?? null,
+            'visits_count'    => $visits->count(),
+            'facilities'      => $visits->pluck('facility_id')->unique()->count(),
             
-            // Sort visits chronologically (oldest to newest)
-            $sorted = $visits->sortBy('created_at')->values();
-            
-            // If only one visit exists, baseline = current
-            if ($sorted->count() == 1) {
-                $baseline = $sorted->first()->total_score;
-                $current  = $sorted->first()->total_score;
-            } else {
-                // Baseline = average of all previous visits except the latest
-                $baseline = $sorted->slice(0, $sorted->count() - 1)->avg('total_score');
-                
-                // Current = last (most recent) visit's total_score
-                $current = $sorted->last()->total_score;
-            }
-            
-            // Compute improvement / decline
-            $change = round($current - $baseline, 2);
-            $percent_change = $baseline > 0 ? round((($current - $baseline) / $baseline) * 100, 2) : null;
-            
-            // Overall district average across all visits
-            $average_score = round($visits->avg('total_score'), 2);
-            
-            return (object) [
-                'district'        => $district_name,
-                'region'          => $visits->first()->region ?? null,
-                'visits_count'    => $visits->count(),
-                'facilities'      => $visits->pluck('facility_id')->unique()->count(),
-                'baseline_score'  => round($baseline, 2)*5,
-                'current_score'   => round($current, 2)*5,
-                'change'          => $change,
-                'percent_change'  => $percent_change,
-                'average_score'   => $average_score*5,
-                'trend_icon' => $change > 0 ? '▲' : ($change < 0 ? '▼' : '➝')
-            ];
-        });
-        
-        $sorted = $district_summaries->sortByDesc('current_score')->values();
-        
-        // Add ranking
-        $rank = 0;
-        $density = 0;
-        $last_score = null;
-        
-        $ranked = $sorted->map(function ($row) use (&$rank, &$last_score, &$density) {
-            
-            $density++;
-            if ($last_score === null || $last_score != $row->current_score) {
-                $rank = $density;
-            }
-            
-            $last_score = $row->current_score;
-            $row->rank = $rank;
-            return $row;
-        });
-        
-        return $ranked;
+            // multiply by 5 (SPARS mac scoring scale)
+            'baseline_score'  => round($baseline, 2) * 5,
+            'current_score'   => round($current, 2) * 5,
+            'change'          => $change * 5,
+            'percent_change'  => $percent_change,
+            'average_score'   => $average_score * 5,
+            'trend_icon'      => $change > 0 ? '▲' : ($change < 0 ? '▼' : '➝')
+        ];
+    });
+
+    /**
+     * --------------------------
+     * 1. RANK BY CURRENT SCORE
+     * --------------------------
+     */
+    $sorted = $district_summaries->sortByDesc('current_score')->values();
+
+    $rank = 0;
+    $density = 0;
+    $last_score = null;
+
+    $ranked = $sorted->map(function ($row) use (&$rank, &$last_score, &$density) {
+
+        $density++;
+
+        if ($last_score === null || $last_score !== $row->current_score) {
+            $rank = $density;
+        }
+
+        $last_score = $row->current_score;
+        $row->rank = $rank;
+
+        return $row;
+    });
+
+
+    /**
+     * --------------------------
+     * 2. COMPUTE BASELINE RANK
+     * --------------------------
+     */
+    $baseline_sorted = $ranked->sortByDesc('baseline_score')->values();
+
+    $baseline_rank = 0;
+    $baseline_density = 0;
+    $last_baseline = null;
+
+    foreach ($baseline_sorted as $row) {
+
+        $baseline_density++;
+
+        if ($last_baseline === null || $last_baseline !== $row->baseline_score) {
+            $baseline_rank = $baseline_density;
+        }
+
+        $last_baseline = $row->baseline_score;
+        $row->baseline_rank = $baseline_rank;
     }
+
+    return $baseline_sorted;
+}
+
     
 
     /** ---------------------------------------------------------

@@ -65,13 +65,14 @@
                                 <th>District</th>
                                 <th>Region</th>
                                 <th>Baseline Score</th>
-                                <th>Current Score</th>
+                                <th>Baseline Rank</th>
                                 <th>Change</th>
                                 <th>% Change</th>
+                                <th>Current Score</th>
+                                <th>Current Rank</th>
                                 <th>Average Score</th>
                                 <th>Facilities visited</th>
                                 <th>Total Visits</th>
-                                <th>Rank</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -80,7 +81,8 @@
                                 <td>{{ $district->district }}</td>
                                 <td>{{ $district->region }}</td>
                                 <td>{{ $district->baseline_score }}</td>
-                                <td>{{ $district->current_score }}</td>
+                                <td>{{ $district->baseline_rank }}</td>
+                                
                                 <td>
                                     @if($district->change > 0)
                                         <span class="text-success fw-bold">
@@ -95,7 +97,8 @@
                                             {{ $district->change }} ➝
                                         </span>
                                     @endif
-                                </td>                                    
+                                </td>   
+
                                 <td>
                                    @if($district->percent_change > 0)
                                        <span class="text-success fw-bold">
@@ -107,15 +110,15 @@
                                        </span>
                                    @else
                                        <span class="text-muted">
-                                           {{ $district->percent_change }}% ➝
+                                           {{ $district->percent_change }} % ➝
                                        </span>
                                    @endif
                                </td>
-
-                                <td>{{ number_format($district->average_score, 1) }}</td>
-                                <td>{{ $district->facilities }}</td>
-                                <td>{{ $district->visits_count }}</td>
-                                <td>{{ $district->rank }}</td>
+                                <td> {{ $district->current_score }}</td>
+                                <td> {{ $district->rank }}</td>
+                                <td> {{ number_format($district->average_score, 1) }}</td>
+                                <td> {{ $district->facilities }}</td>
+                                <td> {{ $district->visits_count }}</td>
                             </tr>
                             @endforeach
                         </tbody>
