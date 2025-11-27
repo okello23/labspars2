@@ -27,7 +27,6 @@ class FacilityPerformanceComponent extends Component
             ),
             'regions'              => Region::all(),
             'health_sub_districts' => [],
-            'district_performance' => $this->computeDistrictLeague($leagueData),
         ];
         
         return view('livewire.reports.facility-performance-component', $data);

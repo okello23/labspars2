@@ -5,7 +5,7 @@
             <div class="info-box-content">
                 <h4>
                     LSS District League Table
-                    (<span class="text-danger fw-bold">{{ $facility_performance->total() }}</span>)
+                    (<span class="text-danger fw-bold">{{ $district_performance->count() }}</span>)
                 </h4>
                 <div class="progress">
                     <div class="progress-bar bg-info" style="width:100%; height:25%;"></div>

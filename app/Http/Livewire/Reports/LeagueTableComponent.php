@@ -22,9 +22,6 @@ class LeagueTableComponent extends Component
         $leagueData = $this->prepareLeagueData();
         
         $data = [
-            'facility_performance' => $this->paginateCollection(
-                $this->rankFacilities($leagueData)
-            ),
             'regions'              => Region::all(),
             'health_sub_districts' => [],
             'district_performance' => $this->computeDistrictLeague($leagueData),
