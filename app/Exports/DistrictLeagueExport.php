@@ -21,30 +21,32 @@ class DistrictLeagueExport implements FromCollection, WithHeadings
             'District',
             'Region',
             'Baseline Score',
-            'Current Score',
+            'Baseline Rank',
             'Change',
             '% Change',
+            'Current Score',
+            'Current Rank',
             'Average Score',
             'Facilities',
             'Total Visits',
-            'Rank',
         ];
     }
-
+    
     public function collection()
     {
         return $this->data->map(function ($row) {
             return [
-                $row->district,
-                $row->region,
-                $row->baseline_score,
-                $row->current_score,
-                $row->change,
-                $row->percent_change,
-                $row->average_score,
-                $row->facilities,
-                $row->visits_count,
-                $row->rank,
+                $row['district'] ?? '',
+                $row['region'] ?? '',
+                $row['baseline_score'] ?? '',
+                $row['baseline_rank'] ?? '',
+                $row['change'] ?? '',
+                $row['percent_change'].'%' ?? '',
+                $row['current_score'] ?? '',
+                $row['rank'] ?? '',
+                $row['average_score'] ?? '',
+                $row['facilities'] ?? '',
+                $row['visits_count'] ?? '',
             ];
         });
     }

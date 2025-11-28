@@ -39,6 +39,7 @@ class MainDashboardComponent extends Component
     public $storageConditions = [];
     public $facilityStats     = [];
     public $trend_data;
+    public $trendChartInstance;
 
     //spider graph
  public $categories = [

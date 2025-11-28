@@ -3,19 +3,31 @@
 namespace App\Http\Livewire\Reports;
 
 use Carbon\Carbon;
-use App\Models\Settings\Region;
-use Illuminate\Support\Collection;
-use App\Models\District;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Component;
-use App\Traits\LeagueDataTrait; 
+use App\Models\District;
 use Livewire\WithPagination;
+use App\Traits\LeagueDataTrait; 
+use App\Models\Settings\Region;
+use App\Traits\ExportsLeagueData; 
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
+use App\Exports\DistrictLeagueExport;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class LeagueTableComponent extends Component
 {
     use WithPagination;
-     use LeagueDataTrait;
+    use LeagueDataTrait;
+    use ExportsLeagueData;
+    public $export_data;   
+
+    public function export()
+    {
+        return $this->exportToExcel(
+            new DistrictLeagueExport(collect($this->export_data))
+        );
+    }
+
 
     public function render()
     {
@@ -26,7 +38,8 @@ class LeagueTableComponent extends Component
             'health_sub_districts' => [],
             'district_performance' => $this->computeDistrictLeague($leagueData),
         ];
-        
+        $this->export_data = $data['district_performance'];
+
         return view('livewire.reports.league-table-component', $data);
     }
 }
