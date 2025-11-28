@@ -11,7 +11,7 @@ trait ExportsLeagueData
 
     protected function exportToExcel($exportClass, $fileName)
     {
-        return Excel::download($exportClass, 'district_league.xlsx');
+        return Excel::download($exportClass, $fileName);
     }
 }
 
