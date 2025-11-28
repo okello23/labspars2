@@ -24,7 +24,7 @@ class LeagueTableComponent extends Component
     public function export()
     {
         return $this->exportToExcel(
-            new DistrictLeagueExport(collect($this->export_data))
+            new DistrictLeagueExport(collect($this->export_data)), "district_league.xlsx"
         );
     }
 

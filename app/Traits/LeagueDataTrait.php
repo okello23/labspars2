@@ -8,6 +8,7 @@ use App\Models\Facility\Facility;
 use App\Models\District;
 use App\Models\Facility\FacilityVisit;
 use Carbon\Carbon;
+use \Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -143,33 +144,6 @@ trait LeagueDataTrait
                 ->merge($dashboard->fvLisTotalScorePerVisit());
         });
     }
-
-    //   private function transformScoresToRows($allScores)
-    // {
-    //     $grouped = $allScores->groupBy('visit_id');
-
-    //     return $grouped->map(function ($items, $visitId) {
-    //         $stock = optional($items->firstWhere('thematic_area', 'Stock Management'))['score'][0] ?? null;
-    //         $storage = optional($items->firstWhere('thematic_area', 'Storage Management'))['score'][0] ?? null;
-    //         $order = optional($items->firstWhere('thematic_area', 'Order Management'))['score'][0] ?? null;
-    //         $equipment = optional($items->firstWhere('thematic_area', 'Equipment Management'))['score'][0] ?? null;
-    //         $lis = optional($items->firstWhere('thematic_area', 'Lab Information System'))['score'][0] ?? null;
-
-    //         $total_thematic = collect([$stock, $storage, $order, $equipment, $lis])->filter()->sum();
-
-    //         return [
-    //             'visit_id'       => $visitId,
-    //             'facility_id'    => $items->first()['facility_id'],
-    //             'created_at'     => $items->first()['created_at'] ?? null,
-    //             'stock_mgt'      => $stock,
-    //             'storage_mgt'    => $storage,
-    //             'order_mgt'      => $order,
-    //             'equipment_mgt'  => $equipment,
-    //             'lis_mgt'        => $lis,
-    //             'total_thematic' => round($total_thematic, 2),
-    //         ];
-    //     })->values();
-    // }
 
     private function transformScoresToRows($allScores)
 {
@@ -388,17 +362,19 @@ trait LeagueDataTrait
     /** ---------------------------------------------------------
      *  PAGINATION FOR COLLECTIONS
      * ---------------------------------------------------------*/
-    protected function paginateCollection(Collection $items, $perPage=10)
+  private function paginateCollection($items)
     {
-        $page = request()->get('page', 1);
-        $offset = ($page - 1) * $perPage;
+        $page = (int) ($this->facility_performance_table ?? 1);
+        $perPage = (int) $this->perPage;
+        $total = $items->count();
+        $slice = $items->forPage($page, $perPage)->values();
 
-        return new \Illuminate\Pagination\LengthAwarePaginator(
-            $items->slice($offset, $perPage)->values(),
-            $items->count(),
+        return new LengthAwarePaginator(
+            $slice,
+            $total,
             $perPage,
             $page,
-            ['path' => request()->url(), 'query' => request()->query()]
+            ['path' => request()->url(), 'query' => request()->query(), 'pageName' => 'facility_performance_table']
         );
     }
 

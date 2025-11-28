@@ -9,9 +9,9 @@ use Maatwebsite\Excel\Facades\Excel;
 trait ExportsLeagueData
 {
 
-    protected function exportToExcel($export)
+    protected function exportToExcel($exportClass, $fileName)
     {
-        return Excel::download($export, 'district_league.xlsx');
+        return Excel::download($exportClass, 'district_league.xlsx');
     }
 }
 

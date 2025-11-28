@@ -21,9 +21,16 @@ class FacilityPerformanceExport implements FromCollection, WithHeadings
             'Facility Name',
             'District',
             'Region',
-            'Score',
-            'Rank',
-            'Total Visits',
+            'Stock Management',
+            'Storage',
+            'Ordering',
+            'Equipment',
+            'LIS',
+            'Spider Graph Value (Scaled)',
+            'Total Spider Score (Max =25)',
+            'Overall Score (%)',
+            'Date of Visit',
+            'Date Entered',
         ];
     }
 
@@ -31,12 +38,19 @@ class FacilityPerformanceExport implements FromCollection, WithHeadings
     {
         return $this->data->map(function ($row) {
             return [
-                $row->facility_name,
-                $row->district,
-                $row->region,
-                $row->total_thematic,
-                $row->rank,
-                $row->visits_count,
+                $row['facility']['name'].' '.$row['facility']['level']  ?? '',
+                $row['district'] ?? '',
+                $row['region'] ?? '',
+                $row['stock_management'] ?? '',
+                $row['storage_management'] ?? '',
+                $row['ordering_management'] ?? '',
+                $row['equipment_management'] ?? '',
+                $row['lis_mgt'] ?? '',
+                $row['total_score'] ?? '',
+                $row['total_thematic'] ?? '',
+                ($row['total_thematic']/25)*100 . '%' ?? '',
+                $row['date_of_visit'] ?? '',
+                $row['created_at'] ?? '',
             ];
         });
     }
