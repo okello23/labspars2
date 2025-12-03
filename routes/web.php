@@ -7,6 +7,8 @@ use App\Http\Livewire\Dashboard\MainDashboardComponent;
 use App\Http\Livewire\Facility\FacilityComponent;
 use App\Http\Livewire\Facility\Visits\FacilityVisitDetailsComponent;
 use App\Http\Livewire\Facility\Visits\FacilityVisitsComponent;
+use App\Http\Livewire\Reports\LeagueTableComponent;
+use App\Http\Livewire\Reports\FacilityPerformanceComponent;
 use App\Http\Livewire\Facility\Visits\FacilityVisitViewComponent;
 use App\Http\Livewire\Settings\DistrictsComponent;
 use App\Http\Livewire\Settings\HealthFacilitiesComponent;
@@ -73,6 +75,11 @@ Route::group(['middleware' => ['auth', 'password_expired', 'suspended_user']], f
             Route::get('visit/{code}/view', FacilityVisitViewComponent::class)->name('facility-visit_view');
             Route::get('visit/{code}/dashboard', FacilityVisitsDashboardComponent::class)->name('facility-visit_dashboard');
             Route::get('visit/{code}/print', [GeneralController::class, 'generateVisit'])->name('facility-visit_print');
+        });
+        
+        Route::group(['prefix' => 'report'], function () {
+            Route::get('league-table', LeagueTableComponent::class)->name('league-table');
+            Route::get('facility-performance', FacilityPerformanceComponent::class)->name('facility-performance');
         });
         require __DIR__ . '/user_mgt.php';
     });

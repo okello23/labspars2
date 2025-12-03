@@ -106,7 +106,8 @@
                 <div class="stat-value text-warning"><h2>
                     {{ $facilityStats['total'] ? number_format(($facilityStats['visited'] / $facilityStats['total']) * 100, 1) : 0 }}%</h2>
                 </div>
-                <div class="stat-label">LSS Facility Coverage</div>
+                <div class="stat-label">LSS Facility Coverage ( {{ number_format(($facilityStats['visited'])) }} of {{  $facilityStats['total'] }} Health Facilities)
+                </div>
                 <div class="absolute top-2 right-2">
                     <i class="fa fa-spinner text-warning text-3xl"></i>
                 </div>
@@ -144,6 +145,17 @@
                 <div class="body">
                     <div class="card-body">
                         <div class="chart-container" id="regionalDistributionChart"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="header">
+                    <h4>District Baseline vs Current League Trend (Last 6 Months)</h4>
+                </div>
+                <div class="body">
+                    <div class="card-body">
+                        <div class="chart-container" id="trendChart"></div>
                     </div>
                 </div>
             </div> 
@@ -194,10 +206,11 @@
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
+
             // Visit Trends Chart
             var visitTrendsOptions = {
                 series: [{
@@ -232,7 +245,8 @@
                     height: 400
                 },
                 labels: @json($regionWiseStats->pluck('regionName')),
-                colors: ['#14B8A6', '#2DD4BF', '#5EEAD4', '#99F6E4']
+                colors: ['#f37736', '#f68b55', '#f7a574', '#f9bf93']
+                
             };
             new ApexCharts(document.querySelector("#regionalDistributionChart"), regionalDistributionOptions).render();
 
@@ -399,6 +413,89 @@ async function plotSpiderChart() {
 
 plotSpiderChart();
 
-        </script>
-    @endpush
+document.addEventListener('livewire:load', function () {
+
+    function renderTrendChart(trendData) {
+
+        // Remove existing chart instance
+        if (window.trendChartInstance) {
+            window.trendChartInstance.destroy();
+        }
+
+        const labels = trendData.map(item => item.district);
+        const baselineScores = trendData.map(item => item.baseline_score);
+        const currentScores = trendData.map(item => item.current_score);
+
+        var options = {
+            chart: {
+                height: 360,
+                type: 'line',
+                toolbar: { show: true },
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    speed: 700,
+                }
+            },
+            stroke: {
+                width: 3,
+                curve: 'smooth'
+            },
+            series: [
+                {
+                    name: 'Baseline Score',
+                    data: baselineScores
+                },
+                {
+                    name: 'Current Score',
+                    data: currentScores
+                }
+            ],
+            xaxis: {
+                categories: labels,
+                title: { text: 'District' },
+                labels: { rotate: -45 }
+            },
+            yaxis: {
+                title: { text: 'Score' },
+                decimalsInFloat: 1
+            },
+            colors: ['#FF9F40', '#4BC0C0'],
+            markers: {
+                size: 5,
+                hover: { size: 7 }
+            },
+            tooltip: {
+                shared: true,
+                intersect: false,
+                y: {
+                    formatter: function (value) {
+                        return value.toFixed(1);
+                    }
+                }
+            },
+            legend: {
+                position: 'top'
+            }
+        };
+
+        window.trendChartInstance = new ApexCharts(
+            document.querySelector("#trendChart"),
+            options
+        );
+
+        window.trendChartInstance.render();
+    }
+
+    // Initial render
+    renderTrendChart(@json($trend_data));
+
+    // Re-render chart when Livewire updates trend data
+    Livewire.on('trendDataUpdated', (trendData) => {
+        renderTrendChart(trendData);
+    });
+
+});
+</script>
+@endpush
 </div>

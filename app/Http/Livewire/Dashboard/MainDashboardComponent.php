@@ -2,6 +2,7 @@
 namespace App\Http\Livewire\Dashboard;
 
 use App\Models\District;
+use App\Traits\LeagueDataTrait;
 use App\Models\Facility\Facility;
 use App\Models\Facility\FacilityVisit;
 use App\Models\Settings\Region;
@@ -13,6 +14,7 @@ use Livewire\WithPagination;
 class MainDashboardComponent extends Component
 {
     use WithPagination;
+    use LeagueDataTrait;
 
     public $perPage          = 10;
     public $search           = '';
@@ -36,6 +38,8 @@ class MainDashboardComponent extends Component
     public $adherenceScores   = [];
     public $storageConditions = [];
     public $facilityStats     = [];
+    public $trend_data;
+    public $trendChartInstance;
 
     //spider graph
  public $categories = [
@@ -100,6 +104,9 @@ public function stockMgtScores(): array
             $q->where('facility_id', $user->facility_id);
         });
     }
+    else{
+        $visitQuery = $this->query()->where('status','Submitted');
+    }
 
     $visitIds = $visitQuery->pluck('id');
 
@@ -107,15 +114,17 @@ public function stockMgtScores(): array
         return [];
     }
 
-    $scores = DB::table('fv_stock_mgt_scores')
-        ->select(
-            'visit_id',
-            'availability_score',
-            'stock_card_score',
-            'correct_filling_score',
-            'physical_agrees_score',
-            'amc_well_calculated_score',
-            'emr_usage_score'
+      $scores = DB::table('fv_stock_mgt_scores AS s')
+        ->join('facility_visits AS fv', 'fv.id', '=', 's.visit_id')
+    ->select(
+        'facility_id',
+        'visit_id',
+        'availability_score',
+        'stock_card_score',
+        'correct_filling_score',
+        'physical_agrees_score',
+        'amc_well_calculated_score',
+        'emr_usage_score'
         )
         ->whereIn('visit_id', $visitIds)
         ->orderBy('visit_id')
@@ -140,9 +149,11 @@ public function stockMgtScores(): array
         : 0;
 
         return [
+            'facility_id' => $score->facility_id,
+            'thematic_area' => 'Stock Management',
             'visit_id' => $score->visit_id,  // Use actual visit_id from DB
             'label' => 'Visit-' . $score->visit_id . ' Score:',  // Use actual visit_id
-            'data' => [$finalScore],
+            'score' => [$finalScore],
             'color' => $this->randomColor($score->visit_id),
              'components' => $fields,
         ];
@@ -158,6 +169,9 @@ public function fvStorageAreaCleanlinessScore() : array {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
             $q->where('facility_id', $user->facility_id);
         });
+    }
+      else{
+        $visitQuery = $this->query()->where('status','Submitted');
     }
 
     $visitIds = $visitQuery->pluck('id');
@@ -210,6 +224,10 @@ public function fvHygieneManagementScore() : array {
             $q->where('facility_id', $user->facility_id);
         });
     }
+      else{
+        $visitQuery = $this->query()->where('status','Submitted');
+    }
+
     $visitIds = $visitQuery->pluck('id');
     if ($visitIds->isEmpty()) {
         return [];
@@ -265,6 +283,9 @@ public function fvStorageSystemMgtMainLabScore() : array {
             $q->where('facility_id', $user->facility_id);
         });
     }
+      else{
+        $visitQuery = $this->query()->where('status','Submitted');
+    }
 
     $visitIds = $visitQuery->pluck('id');
 
@@ -319,6 +340,9 @@ public function fvStorageSystemMgtLabStoreScore() : array {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
             $q->where('facility_id', $user->facility_id);
         });
+    }
+      else{
+        $visitQuery = $this->query()->where('status','Submitted');
     }
 
     $visitIds = $visitQuery->pluck('id');
@@ -412,6 +436,10 @@ public function fvMainLabStorageConditionScore() : array {
             $q->where('facility_id', $user->facility_id);
         });
     }
+      else{
+        $visitQuery = $this->query()->where('status','Submitted');
+    }
+
     $visitIds = $visitQuery->pluck('id');
     if ($visitIds->isEmpty()) {
         return [];
@@ -480,6 +508,10 @@ function fvLabStorageConditionScore() : array {
             $q->where('facility_id', $user->facility_id);
         });
     }
+      else{
+        $visitQuery = $this->query()->where('status','Submitted');
+    }
+
     $visitIds = $visitQuery->pluck('id');
     if ($visitIds->isEmpty()) {
         return [];
@@ -587,6 +619,10 @@ public function fvMainStoragePracticeManagementScore() : array {
             $q->where('facility_id', $user->facility_id);
         });
     }
+      else{
+        $visitQuery = $this->query()->where('status','Submitted');
+    }
+
     $visitIds = $visitQuery->pluck('id');
     if ($visitIds->isEmpty()) {
         return [];
@@ -646,6 +682,10 @@ public function fvLabStoragePracticeManagementScore() : array {
             $q->where('facility_id', $user->facility_id);
         });
     }
+      else{
+        $visitQuery = $this->query()->where('status','Submitted');
+    }
+
     $visitIds = $visitQuery->pluck('id');
     if ($visitIds->isEmpty()) {
         return [];
@@ -751,6 +791,7 @@ public function fvTotalStorageScore(): array
 
         foreach ($scores as $score) {
             $visitId = $score['visit_id'] ?? null;
+            $this->facility_id = $score['facility_id'] ?? null;
             if ($visitId === null) continue;
 
             if (!isset($allScoresByVisitId[$visitId])) {
@@ -773,8 +814,12 @@ public function fvTotalStorageScore(): array
 
         $totalScore = array_sum($paddedScores) / $numberOfFunctions * 5;
         $roundedScore = round($totalScore, 2);
+        $facility_id = FacilityVisit::where('id', $visitId)->value('facility_id');
+
 
         $result[] = [
+            'facility_id' => $facility_id ?? null,
+            'thematic_area' => 'Storage Management',
             'visit_id' => $visitId,
             'label' => "Visit-$visitId Total Score (0-5)",
             'score' => [$roundedScore],
@@ -801,6 +846,10 @@ public function fvOrderManagement() : array {
             $q->where('facility_id', $user->facility_id);
         });
     }
+      else{
+        $visitQuery = $this->query()->where('status','Submitted');
+    }
+
     $visitIds = $visitQuery->pluck('id');
     if ($visitIds->isEmpty()) {
         return [];
@@ -850,6 +899,10 @@ public function fvAdherenceToOrderPracticesManagement() : array {
             $q->where('facility_id', $user->facility_id);
         });
     }
+      else{
+        $visitQuery = $this->query()->where('status','Submitted');
+    }
+
     $visitIds = $visitQuery->pluck('id');
     if ($visitIds->isEmpty()) {
         return [];
@@ -896,6 +949,10 @@ public function fvOrderingAvailabilityOfProcurementPlan() : array {
             $q->where('facility_id', $user->facility_id);
         });
     }
+      else{
+        $visitQuery = $this->query()->where('status','Submitted');
+    }
+
     $visitIds = $visitQuery->pluck('id');
     if ($visitIds->isEmpty()) {
         return [];
@@ -972,8 +1029,11 @@ public function fvTotalOrderMgtScore(): array
         $paddedScores = array_pad($visitScores, $numberOfFunctions, 0);
         $totalScore = array_sum($paddedScores) / $numberOfFunctions * 5;
         $roundedScore = round($totalScore, 2);
+        $facility_id = FacilityVisit::where('id', $visitId)->value('facility_id');
 
         $result[] = [
+            'facility_id' => $facility_id ?? null,
+            'thematic_area' => 'Order Management',            
             'visit_id' => $visitId,
             'label' => "Visit-$visitId Total Score (0-5)",
             'score' => [$roundedScore],
@@ -997,6 +1057,9 @@ public function fvEquipmentManagementScore(): array {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
             $q->where('facility_id', $user->facility_id);
         });
+    }
+      else{
+        $visitQuery = $this->query()->where('status','Submitted');
     }
 
     $visitIds = $visitQuery->pluck('id');
@@ -1053,6 +1116,9 @@ public function fvEquipmentUtilizationScores(): array {
         $visitQuery->whereHas('facility', function ($q) use ($user) {
             $q->where('facility_id', $user->facility_id);
         });
+    }
+      else{
+        $visitQuery = $this->query()->where('status','Submitted');
     }
 
     $visitIds = $visitQuery->pluck('id');
@@ -1135,10 +1201,13 @@ public function getCombinedEquipmentScores(): array {
             ? round($availableScores->avg()*5, 2)
             : 0;
 
+        $facility_id = FacilityVisit::where('id', $visitId)->value('facility_id');
         $final[] = [
+            'facility_id' => $facility_id ?? null,
+            'thematic_area' => 'Equipment Management',
             'visit_id' => $visitId,
             'label' => "Visit-$visitId Combined Score:",
-            'data' => [$averageScore],
+            'score' => [$averageScore],
             'color' => $this->randomColor($visitId),
             'component_scores' => [
                 'management_score' => $management,
@@ -1161,6 +1230,10 @@ public function fvLisDataToolScores() : array {
             $q->where('facility_id', $user->facility_id);
         });
     }
+      else{
+        $visitQuery = $this->query()->where('status','Submitted');
+    }
+
     $visitIds = $visitQuery->pluck('id');
     if ($visitIds->isEmpty()) {
         return [];
@@ -1210,6 +1283,10 @@ public function fvLisAvailabilityOfHims105Reports() : array {
             $q->where('facility_id', $user->facility_id);
         });
     }
+      else{
+        $visitQuery = $this->query()->where('status','Submitted');
+    }
+
     $visitIds = $visitQuery->pluck('id');
     if ($visitIds->isEmpty()) {
         return [];
@@ -1262,6 +1339,10 @@ public function fvLisTimelinessOfHmis105Reports() : array {
             $q->where('facility_id', $user->facility_id);
         });
     }
+      else{
+        $visitQuery = $this->query()->where('status','Submitted');
+    }
+
     $visitIds = $visitQuery->pluck('id');
     if ($visitIds->isEmpty()) {
         return [];
@@ -1307,6 +1388,10 @@ public function fvLisCompletenessAndAccuracyOfHmis105Reports() : array {
             $q->where('facility_id', $user->facility_id);
         });
     }
+      else{
+        $visitQuery = $this->query()->where('status','Submitted');
+    }
+
     $visitIds = $visitQuery->pluck('id');
     if ($visitIds->isEmpty()) {
         return [];
@@ -1351,6 +1436,10 @@ public function fvLisCompStockStatusScores() : array {
             $q->where('facility_id', $user->facility_id);
         });
     }
+      else{
+        $visitQuery = $this->query()->where('status','Submitted');
+    }
+
     $visitIds = $visitQuery->pluck('id');
     if ($visitIds->isEmpty()) {
         return [];
@@ -1400,7 +1489,10 @@ public function fvLisCompStockStatusScores() : array {
             $q->where('facility_id', $user->facility_id);
         });
     }
-    
+      else{
+        $visitQuery = $this->query()->where('status','Submitted');
+    }
+
     $visitIds = $visitQuery->pluck('id');
     if ($visitIds->isEmpty()) {
         return [];
@@ -1522,6 +1614,10 @@ public function hmisCompletenessAndAccuracy(): array
             $q->where('facility_id', $user->facility_id);
         });
     }
+      else{
+        $visitQuery = $this->query()->where('status','Submitted');
+    }
+
     $visitIds = $visitQuery->pluck('id');
     if ($visitIds->isEmpty()) {
         return [];
@@ -1574,6 +1670,10 @@ public function hmisCompletenessAndAccuracy(): array
             $q->where('facility_id', $user->facility_id);
         });
     }
+      else{
+        $visitQuery = $this->query()->where('status','Submitted');
+    }
+
     $visitIds = $visitQuery->pluck('id');
     if ($visitIds->isEmpty()) {
         return [];
@@ -1617,7 +1717,6 @@ public function hmisCompletenessAndAccuracy(): array
 
 public function fvLisTotalScorePerVisit(): array
 {
-    // dd($this->hmisCompletenessAndAccuracy());
     // Get all component scores
     $scoreSets = [
         $this->fvLisDataToolScores(),
@@ -1692,8 +1791,11 @@ public function fvLisTotalScorePerVisit(): array
             $componentScores['completeness_and_accuracy_of_hmis105_report'] =
             round(collect($completenessParts)->avg(), 2);
         }
+        $facility_id = FacilityVisit::where('id', $visitId)->value('facility_id');
 
         return [
+            'facility_id' => $facility_id,
+            'thematic_area' => 'Lab Information System',
             'visit_id' => $visitId,
             'label'    => "Visit-$visitId total_score (scaled):",
             'score'     => [$finalScore],
@@ -1773,10 +1875,10 @@ public function getSpiderGraphData(): array
 };
 
 
-    $stock     = $normalize($stockScores);
+    $stock     = $normalize($stockScores,'score');
     $storage   = $normalize($storageScores, 'score');
     $ordering  = $normalize($orderScores, 'score');
-    $equipment = $normalize($equipmentScores);
+    $equipment = $normalize($equipmentScores,'score');
     $lis       = $normalize($lisScores,'score');
 
     // Collect all unique visit IDs
@@ -1818,6 +1920,7 @@ public function getSpiderGraphData(): array
     {
         return redirect(request()->header('Referer'));
     }
+
     public function query()
     {
     $user = \Auth()->user();
@@ -1865,13 +1968,13 @@ public function getSpiderGraphData(): array
         // Region and District filters
 
     }
+    
     public function loadDashboardData()
     {
-
         // Basic Statistics
         $this->totalVisits     = $this->query()->count();
         $this->pendingVisits   = $this->query()->where('status', 'Pending')->count();
-        $this->completedVisits = $this->query()->where('status', 'Approved')->count();
+        $this->completedVisits = $this->query()->where('status', 'Submitted')->count();
 
         // Visit Status Distribution
         $this->visitsByStatus = $this->query()->select('status', DB::raw('count(*) as count'))
@@ -1886,7 +1989,6 @@ public function getSpiderGraphData(): array
             ->join('regions', 'districts.region_id', '=', 'regions.id')
             ->groupBy('regions.name')
             ->get();
-
         // Equipment Functionality Statistics
         $this->equipmentStats = DB::table('fv_equipment_functionalities')
             ->select('equipment_type', DB::raw('count(*) as count'))
@@ -1915,8 +2017,11 @@ public function getSpiderGraphData(): array
         $this->facilityStats = [
             'total'   => Facility::count(),
             'visited' => $this->query()->distinct('facility_id')->count('facility_id'),
+            'visited_by_level' => $this->query()->distinct('facility_id')->groupBy('facilities.level'),
             'active'  => Facility::where('is_active', true)->count(),
         ];
+        // Trend Data
+        $this->trend_data = $this->getBaselineCurrentTrendLast3Months();
     }
     public function loadDashboardData3()
     {
@@ -2023,7 +2128,6 @@ public function getSpiderGraphData(): array
 
     public function render()
     {
-        // dd($this->fvLisTotalScorePerVisit());
         $regions   = Region::all();
         $districts = $this->selectedRegion ? District::where('region_id', $this->selectedRegion)->get() : collect();
 
