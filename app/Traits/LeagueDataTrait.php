@@ -17,7 +17,7 @@ use App\Http\Livewire\Dashboard\MainDashboardComponent;
 
 trait LeagueDataTrait
 {
-     public $from_date;
+    public $from_date;
     public $to_date;
     public $perPage = 10;
     public $search = '';
@@ -120,8 +120,8 @@ trait LeagueDataTrait
             'filter_region_id'   => $this->filter_region_id,
         ];
     }
-
-      private function loadAllScores()
+    
+    private function loadAllScores()
     {
         $cache_key = 'league_scores_' . md5(json_encode([
             $this->from_date,
@@ -144,42 +144,41 @@ trait LeagueDataTrait
                 ->merge($dashboard->fvLisTotalScorePerVisit());
         });
     }
-
-    private function transformScoresToRows($allScores)
-{
-    $grouped = $allScores->groupBy('visit_id');
-
-    return $grouped->map(function ($items, $visitId) {
-
-        // Fetch actual visit to pull created_at
-        $visit = FacilityVisit::find($visitId);
-
-        $stock = optional($items->firstWhere('thematic_area', 'Stock Management'))['score'][0] ?? null;
-        $storage = optional($items->firstWhere('thematic_area', 'Storage Management'))['score'][0] ?? null;
-        $order = optional($items->firstWhere('thematic_area', 'Order Management'))['score'][0] ?? null;
-        $equipment = optional($items->firstWhere('thematic_area', 'Equipment Management'))['score'][0] ?? null;
-        $lis = optional($items->firstWhere('thematic_area', 'Lab Information System'))['score'][0] ?? null;
-
-        $total_thematic = collect([$stock, $storage, $order, $equipment, $lis])
-            ->filter()
-            ->sum();
-
-        return [
-            'visit_id'       => $visitId,
-            'facility_id'    => $items->first()['facility_id'],
-            'created_at'     => date('Y-m-d', strtotime($visit->created_at)) ?? null,
-            'stock_mgt'      => $stock,
-            'storage_mgt'    => $storage,
-            'order_mgt'      => $order,
-            'equipment_mgt'  => $equipment,
-            'lis_mgt'        => $lis,
-            'total_thematic' => round($total_thematic, 2),
-        ];
-    })->values();
-}
-
     
-     private function attachVisitMetaData($rows, $filters = [])
+    private function transformScoresToRows($allScores)
+    {
+        $grouped = $allScores->groupBy('visit_id');
+        
+        return $grouped->map(function ($items, $visitId) {
+            
+            // Fetch actual visit to pull created_at
+            $visit = FacilityVisit::find($visitId);
+    
+            $stock = optional($items->firstWhere('thematic_area', 'Stock Management'))['score'][0] ?? null;
+            $storage = optional($items->firstWhere('thematic_area', 'Storage Management'))['score'][0] ?? null;
+            $order = optional($items->firstWhere('thematic_area', 'Order Management'))['score'][0] ?? null;
+            $equipment = optional($items->firstWhere('thematic_area', 'Equipment Management'))['score'][0] ?? null;
+            $lis = optional($items->firstWhere('thematic_area', 'Lab Information System'))['score'][0] ?? null;
+            
+            $total_thematic = collect([$stock, $storage, $order, $equipment, $lis])
+                ->filter()
+                ->sum();
+                
+                return [
+                    'visit_id'       => $visitId,
+                    'facility_id'    => $items->first()['facility_id'],
+                    'created_at'     => date('Y-m-d', strtotime($visit->created_at)) ?? null,
+                    'stock_mgt'      => $stock,
+                    'storage_mgt'    => $storage,
+                    'order_mgt'      => $order,
+                    'equipment_mgt'  => $equipment,
+                    'lis_mgt'        => $lis,
+                    'total_thematic' => round($total_thematic, 2),
+                ];
+            })->values();
+        }
+        
+    private function attachVisitMetaData($rows, $filters = [])
     {
         $visitIds = $rows->pluck('visit_id')->unique()->values()->all();
         
@@ -265,110 +264,124 @@ trait LeagueDataTrait
     /** ---------------------------------------------------------
      *  DISTRICT LEAGUE LOGIC
      * ---------------------------------------------------------*/
-    public function computeDistrictLeague($leagueData)
-{
-    $district_grouped_visits = $leagueData->groupBy('district');
-
-    $district_summaries = $district_grouped_visits->map(function ($visits, $district_name) {
-
-        $sorted = $visits->sortBy('created_at')->values();
-
-        if ($sorted->count() == 1) {
-            $baseline = $sorted->first()->total_score;
-            $current  = $sorted->first()->total_score;
-        } else {
-            $baseline = $sorted->slice(0, $sorted->count() - 1)->avg('total_score');
-            // $current = $sorted->slice(0, $sorted->count() - 1)->avg('total_score');
-            $current  = $sorted->last()->total_score;
-        }
-
-        $change = round($current - $baseline, 2);
-        $percent_change = $baseline > 0
-            ? round((($current - $baseline) / $baseline) * 100, 2)
-            : null;
-
-        $average_score = round($visits->avg('total_score'), 2);
-
-        return (object) [
-            'district'        => $district_name,
-            'region'          => $visits->first()->region ?? null,
-            'visits_count'    => $visits->count(),
-            'facilities'      => $visits->pluck('facility_id')->unique()->count(),
-            
-            // multiply by 5 (SPARS mac scoring scale)
-            'baseline_score'  => round($baseline, 2) * 5,
-            'current_score'   => round($current, 2) * 5,
-            'change'          => $change * 5,
-            'percent_change'  => $percent_change,
-            'average_score'   => $average_score * 5,
-            'trend_icon'      => $change > 0 ? '▲' : ($change < 0 ? '▼' : '➝')
-        ];
-    });
-
-    /**
-     * --------------------------
-     * 1. RANK BY CURRENT SCORE
-     * --------------------------
-     */
-    $sorted = $district_summaries->sortByDesc('current_score')->values();
-
-    $rank = 0;
-    $density = 0;
-    $last_score = null;
-
-    $ranked = $sorted->map(function ($row) use (&$rank, &$last_score, &$density) {
-
-        $density++;
-
-        if ($last_score === null || $last_score !== $row->current_score) {
-            $rank = $density;
-        }
-
-        $last_score = $row->current_score;
-        $row->rank = $rank;
-
-        return $row;
-    });
-
-
-    /**
-     * --------------------------
-     * 2. COMPUTE BASELINE RANK
-     * --------------------------
-     */
-    $baseline_sorted = $ranked->sortByDesc('baseline_score')->values();
-
-    $baseline_rank = 0;
-    $baseline_density = 0;
-    $last_baseline = null;
-
-    foreach ($baseline_sorted as $row) {
-
-        $baseline_density++;
-
-        if ($last_baseline === null || $last_baseline !== $row->baseline_score) {
-            $baseline_rank = $baseline_density;
-        }
-
-        $last_baseline = $row->baseline_score;
-        $row->baseline_rank = $baseline_rank;
-    }
-
-    return $baseline_sorted;
-}
-
+   public function computeDistrictLeague($leagueData)
+   {
+       $district_grouped_visits = $leagueData->groupBy('district');
+       
+       $district_summaries = $district_grouped_visits->map(function ($visits, $district_name) {
+           
+           // All visits sorted by date
+           $sorted = $visits->sortBy('date_of_visit')->values();
+           if ($sorted->isEmpty()) {
+               return null;
+           }
+           
+           // 1. Determine the quarter of the most recent visit
+           $latestVisit = Carbon::parse($sorted->last()->date_of_visit);
+           $currentQuarter = $latestVisit->quarter;
+           $currentYear = $latestVisit->year;
+   
+           // 2. Previous quarter & year
+           if ($currentQuarter == 1) {
+               $previousQuarter = 4;
+               $previousYear = $currentYear - 1;
+           } else {
+               $previousQuarter = $currentQuarter - 1;
+               $previousYear = $currentYear;
+           }
+           
+           // 3. Filter visits into quarters
+           $currentQuarterVisits = $sorted->filter(function ($v) use ($currentQuarter, $currentYear) {
+               $dt = Carbon::parse($v->date_of_visit);
+               return $dt->quarter == $currentQuarter && $dt->year == $currentYear;
+           });
+   
+           $previousQuarterVisits = $sorted->filter(function ($v) use ($previousQuarter, $previousYear) {
+               $dt = Carbon::parse($v->date_of_visit);
+               return $dt->quarter == $previousQuarter && $dt->year == $previousYear;
+           });
+   
+           // 4. Compute averages
+           $baseline = $previousQuarterVisits->avg('total_score');
+           $current  = $currentQuarterVisits->avg('total_score');
+   
+           // If no previous quarter, baseline stays null
+           if ($current === null) {
+               // fallback: use latest score if nothing exists
+               $current = $sorted->last()->total_score;
+           }
+   
+           $change = ($current !== null && $baseline !== null)
+               ? round($current - $baseline, 2)
+               : null;
+   
+           $percent_change = ($baseline > 0)
+               ? round((($current - $baseline) / $baseline) * 100, 2)
+               : null;
+   
+           return (object) [
+               'district'        => $district_name,
+               'region'          => $visits->first()->region,
+               'visits_count'    => $sorted->count(),
+               'facilities'      => $sorted->pluck('facility_id')->unique()->count(),
+   
+               'baseline_score'  => $baseline ? round($baseline * 5, 2) : null,
+               'current_score'   => $current  ? round($current * 5, 2) : null,
+               'change'          => $change ? $change * 5 : null,
+               'percent_change'  => $percent_change,
+               'average_score'   => round($sorted->avg('total_score') * 5, 2),
+               'trend_icon'      => ($change > 0 ? '▲' : ($change < 0 ? '▼' : '➝'))
+           ];
+           
+        })->filter();
+        
+        /**
+         * ---------- RANK BY CURRENT SCORE ----------
+        */
+        $sorted = $district_summaries->sortByDesc('current_score')->values();
+        $rank = 0;
+        $density = 0;
+        $last_score = null;
+        
+        $ranked = $sorted->map(function ($row) use (&$rank, &$last_score, &$density) {
+            $density++;
+            if ($last_score === null || $last_score !== $row->current_score) {
+                $rank = $density;
+            }
+            $last_score = $row->current_score;
+            $row->rank = $rank;
+            return $row;
+        });
+        
+        /**
+         * ---------- BASELINE RANK ----------
+        */
+        $baseline_sorted = $ranked->sortByDesc('baseline_score')->values();
     
-
+        $baseline_rank = 0;
+        $baseline_density = 0;
+        $last_baseline = null;
+        
+        foreach ($baseline_sorted as $row) {
+            $baseline_density++;
+            if ($last_baseline === null || $last_baseline !== $row->baseline_score) {
+                $baseline_rank = $baseline_density;
+            }
+            $last_baseline = $row->baseline_score;
+            $row->baseline_rank = $baseline_rank;
+        }
+        return $baseline_sorted;
+    }
+    
     /** ---------------------------------------------------------
      *  PAGINATION FOR COLLECTIONS
      * ---------------------------------------------------------*/
-  private function paginateCollection($items)
+    private function paginateCollection($items)
     {
         $page = (int) ($this->facility_performance_table ?? 1);
         $perPage = (int) $this->perPage;
         $total = $items->count();
         $slice = $items->forPage($page, $perPage)->values();
-
         return new LengthAwarePaginator(
             $slice,
             $total,
@@ -376,47 +389,95 @@ trait LeagueDataTrait
             $page,
             ['path' => request()->url(), 'query' => request()->query(), 'pageName' => 'facility_performance_table']
         );
+    }    
+    
+    public function getBaselineCurrentTrendLast3Months()
+    {
+        $threeMonthsAgo = now()->subMonths(6);
+        
+        // load raw data
+        $allScores = $this->loadAllScores();
+        $rows = $this->transformScoresToRows($allScores);
+        
+        // filter last 3 months only
+        $last3Months = $rows->filter(function ($row) use ($threeMonthsAgo) {
+            return \Carbon\Carbon::parse($row['created_at'])->greaterThanOrEqualTo($threeMonthsAgo);
+        });
+        
+        $leagueData = $this->attachVisitMetaData($last3Months);
+        
+        // group by district for dashboard trend
+        $district_grouped = $leagueData->groupBy('district');
+        
+        return $district_grouped->map(function ($visits, $district) {
+            
+            $sorted = $visits->sortBy('created_at')->values();
+            
+            if ($sorted->count() == 1) {
+                $baseline = $sorted->first()->total_score;
+                $current = $sorted->first()->total_score;
+            } else {
+                $baseline = $sorted->slice(0, $sorted->count() - 1)->avg('total_score');
+                $current = $sorted->last()->total_score;
+            }
+            
+            return [
+                'district'        => $district,
+                'baseline_score'  => round($baseline * 5, 2),
+                'current_score'   => round($current * 5, 2),
+                'current_date'    => $sorted->last()->date_of_visit,
+                'change'          => round(($current - $baseline) * 5, 2),
+                'percent_change'  => $baseline > 0 ? round((($current - $baseline) / $baseline) * 100, 2) : null,
+            ];
+        })->values();
+        
+    }
+    
+    /**
+     * ---------------------------------------------------------
+     *  RETURN DISTRICT PERFORMANCE FOR MAP ( Choropleth )
+     * ---------------------------------------------------------
+    */
+    
+    public function getDistrictPerformance()
+    {
+        // Build cache key based on filters
+        $cacheKey = 'district_performance_' . md5(json_encode([
+            $this->from_date,
+            $this->to_date,
+            $this->filter_region_id,
+            $this->filter_district_id,
+            $this->search,
+        ]));
+        
+        // return Cache::remember($cacheKey, now()->addMinutes(30), function () {
+            
+            // Step 1: Load raw scores
+            $scores = $this->loadAllScores();
+            
+            // Step 2: Convert all thematic area rows into visit rows
+            $rows = $this->transformScoresToRows($scores);
+            
+            // Step 3: Attach facility metadata (district, region, etc.)
+            $leagueData = $this->attachVisitMetaData($rows, $this->buildFilters());
+            
+            // Step 4: Group by district and compute average district score
+            return $leagueData
+            ->filter(fn ($v) => $v->district)   // ensure district exists
+            ->groupBy('district')
+            ->map(function ($visits) {
+                
+                // average of total_thematic per district
+                return round($visits->avg('total_thematic')/25*100, 2);
+            })
+            ->sortKeys() // alphabetical district order
+            ->toArray();
+        // });
+        
     }
 
-    public function getBaselineCurrentTrendLast3Months()
-{
-    $threeMonthsAgo = now()->subMonths(6);
+    
+    }
+                
 
-    // load raw data
-    $allScores = $this->loadAllScores();
-    $rows = $this->transformScoresToRows($allScores);
 
-    // filter last 3 months only
-    $last3Months = $rows->filter(function ($row) use ($threeMonthsAgo) {
-        // dd($row);
-        return \Carbon\Carbon::parse($row['created_at'])->greaterThanOrEqualTo($threeMonthsAgo);
-    });
-
-    $leagueData = $this->attachVisitMetaData($last3Months);
-
-    // group by district for dashboard trend
-    $district_grouped = $leagueData->groupBy('district');
-    return $district_grouped->map(function ($visits, $district) {
-        
-        $sorted = $visits->sortBy('created_at')->values();
-        
-        if ($sorted->count() == 1) {
-            $baseline = $sorted->first()->total_score;
-            $current = $sorted->first()->total_score;
-        } else {
-            $baseline = $sorted->slice(0, $sorted->count() - 1)->avg('total_score');
-            $current = $sorted->last()->total_score;
-        }
-        
-        return [
-            'district'        => $district,
-            'baseline_score'  => round($baseline * 5, 2),
-            'current_score'   => round($current * 5, 2),
-            'current_date'    => $sorted->last()->date_of_visit,
-            'change'          => round(($current - $baseline) * 5, 2),
-            'percent_change'  => $baseline > 0 ? round((($current - $baseline) / $baseline) * 100, 2) : null,
-        ];
-    })->values();
-}
-
-}

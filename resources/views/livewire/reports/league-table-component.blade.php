@@ -64,12 +64,12 @@
                             <tr>
                                 <th>District</th>
                                 <th>Region</th>
-                                <th>Baseline Score</th>
-                                <th>Baseline Rank</th>
+                                <th>Baseline Score <br> <samll style="font-size:12px">(Previous Quarter)</small> </th>
+                                <th>Baseline Rank <br> <samll style="font-size:12px">(Previous Quarter)</small></i></th>
                                 <th>Change</th>
                                 <th>% Change</th>
-                                <th>Current Score</th>
-                                <th>Current Rank</th>
+                                <th>Current Score <br> <samll style="font-size:12px">(This Quarter)</small></th>
+                                <th>Current Rank <br> <samll style="font-size:12px">(This Quarter)</small></th>
                                 <th>Average Score</th>
                                 <th>Facilities visited</th>
                                 <th>Total Visits</th>
