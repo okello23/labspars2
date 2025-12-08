@@ -121,23 +121,24 @@
     <div class="row" wire:ignore>
         <!-- Visit Trends Chart -->
         <div class="col-lg-6 col-md-6">
-            <div class="card">
-                <div class="header"> <h4>Spider Graph</h4> </div>
-                <div class="body">
-                    <div class="card-body"> <div>
-                        <select id="facilityFilter" multiple class="form-control" style="margin-bottom: 1rem; width: 100%;"></select>
-                        <button id="deselectAllBtn" class="btn btn-sm btn-danger mt-2">Deselect All</button>
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border"> Spider Graph </legend>
 
-                        <canvas id="spiderChart" width="600" height="600"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>     
+                <select id="facilityFilter" multiple class="form-control" style="margin-bottom: 1rem; width: 100%;"></select>
+                <button id="deselectAllBtn" class="btn btn-sm btn-danger mt-2">Deselect All</button>
+                <canvas id="spiderChart" width="850" height="850"></canvas>
+            </fieldset>
+        </div>
+                
+
+  
         
         <!-- Regional Distribution Chart -->
         <div class="col-lg-6 col-md-6">
-
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border">LSS District Distribution & Scores</legend>
+                <div id="districtMap" style="height: 500px; width: 100%;"></div>
+            </fieldset>
          <div class="card">
                 <div class="header">
                     <h4>LSS Regional Distribution</h4>
@@ -205,8 +206,11 @@
     </div>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
 
     @push('scripts')
         <script>
@@ -495,6 +499,56 @@ document.addEventListener('livewire:load', function () {
         renderTrendChart(trendData);
     });
 
+});
+
+document.addEventListener('livewire:load', function () {
+
+    var performance = @json($district_performance);
+
+    var map = L.map('districtMap').setView([1.3733, 32.2903], 7); // Uganda center
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+    }).addTo(map);
+
+    // Load district GeoJSON
+    fetch('/maps/uganda_districts.geojson')
+        .then(response => response.json())
+        .then(data => {
+
+            function getColor(score) {
+                return score > 80 ? '#006837' :
+                       score > 50 ? '#eba40cff' :
+                       score > 0 ? '#ef2c00ff' :
+                    //    score > 20 ? '#c2e699' :
+                    //    score > 0  ? '#ffffcc' :
+                                    '#f2f2f2';
+            }
+
+            L.geoJSON(data, {
+                style: function(feature) {
+                    let district = feature.properties.shapeName;
+                    let score = performance[district] ?? 0;
+
+                    return {
+                        fillColor: getColor(score),
+                        fillOpacity: 0.8,
+                        weight: 1,
+                        color: '#555'
+                    };
+                },
+                onEachFeature: function(feature, layer) {
+                    let district = feature.properties.shapeName;
+                    let score = performance[district] ?? 0;
+
+                    layer.bindPopup(
+                        "<strong>" + district + "</strong><br>" +
+                        "Current LSS Score: " + score + "%"
+                    );
+                }
+            }).addTo(map);
+        });
+        
 });
 </script>
 @endpush
