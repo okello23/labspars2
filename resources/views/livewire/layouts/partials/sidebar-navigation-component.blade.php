@@ -39,6 +39,8 @@
               <i class="fa fa-dashboard"></i><span>Dashboard</span></a>
                 <ul>
                   <li><a href="{{ route('home') }}">Main Dashboard</a></li>
+                  <li> <a href="{{ route('stock-status', ['type' => 'stock_status']) }}"> Stock Status Dashboard </a> </li>
+
                 </ul>
               </li>
 
