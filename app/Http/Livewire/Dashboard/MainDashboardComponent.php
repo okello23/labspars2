@@ -5,6 +5,7 @@ use App\Models\District;
 use App\Traits\LeagueDataTrait;
 use App\Models\Facility\Facility;
 use App\Models\Facility\FacilityVisit;
+use App\Models\Facility\Visits\FvStockManagement;
 use App\Models\Settings\Region;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -41,6 +42,8 @@ class MainDashboardComponent extends Component
     public $trend_data = [];
     public $district_performance = [];
 
+    public $type;
+
     //spider graph
  public $categories = [
     'Stock Management',
@@ -74,6 +77,7 @@ public $scoreSets = [
         'dateRange'        => ['except' => 'all'],
         'selectedRegion'   => ['except' => null],
         'selectedDistrict' => ['except' => null],
+        'type'             => ['except' => null],
     ];
 
     private function randomColor($index)
@@ -2025,8 +2029,6 @@ public function getSpiderGraphData(): array
         $this->trend_data = $this->getBaselineCurrentTrendLast3Months()->toArray();
 
         $this->district_performance = $this->getDistrictPerformance();     
-        // dd($this->getDistrictPerformance());   
-
     }
 
     public function updatedDateRange()
@@ -2044,15 +2046,34 @@ public function getSpiderGraphData(): array
     {
         $this->loadDashboardData();
     }
-
+    
     public function render()
     {
-        $regions   = Region::all();
-        $districts = $this->selectedRegion ? District::where('region_id', $this->selectedRegion)->get() : collect();
+    $regions   = Region::all();
+    $stock_status = FvStockManagement::get();
+
+    $districts = $this->selectedRegion
+        ? District::where('region_id', $this->selectedRegion)->get()
+        : collect();
+
+    if ($this->type === 'stock_status') {
+
+        // ⭐ GROUP STOCK LINES BY FACILITY
+        $grouped_stock = $stock_status->groupBy(function ($item) {
+            return $item->visit->facility->id;
+        });
+
+        return view('livewire.dashboard.stock-status-dashboard-component', [
+            'regions'        => $regions,
+            'districts'      => $districts,
+            'grouped_stock'  => $grouped_stock,
+        ]);
+    } else {
 
         return view('livewire.dashboard.main-dashboard-component', [
             'regions'   => $regions,
             'districts' => $districts,
         ]);
     }
+}
 }

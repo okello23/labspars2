@@ -47,16 +47,15 @@ Route::get('lang/{locale}', function ($locale) {
 
 Route::group(['middleware' => ['auth', 'password_expired', 'suspended_user']], function () {
 
-    // Route::get('/home', function () {
-    //     return view('home');
-    //   })->middleware(['auth', 'verified'])->name('home');
     Route::get('dashboard', MainDashboardComponent::class)->name('home');
+    Route::get('stock-status-dashboard', MainDashboardComponent::class)->name('stock-status');
 
     Route::group(['prefix' => 'admin'], function () {
         //User Management
         Route::get('/manage', function () {
             return view('admin.dashboard');
-        })->middleware(['auth', 'verified'])->name('admin-dashboard');
+        })->middleware(['auth', 'verified'])->name('admin-dashboard'); 
+    
         Route::group(['prefix' => 'manage'], function () {
             Route::get('regions', RegionsComponent::class)->name('regions');
             Route::get('districts', DistrictsComponent::class)->name('districts');

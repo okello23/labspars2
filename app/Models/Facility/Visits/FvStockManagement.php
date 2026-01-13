@@ -3,6 +3,7 @@
 namespace App\Models\Facility\Visits;
 
 use App\Models\Settings\Reagent;
+use App\Models\Facility\FacilityVisit;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -35,6 +36,11 @@ class FvStockManagement extends Model
     {
         return $this->belongsTo(Reagent::class, 'reagent_id', 'id');
     }
+
+    public function visit()
+    {
+        return $this->belongsTo(FacilityVisit::class, 'visit_id', 'id');
+    }   
     
     public static function boot()
     {
