@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\GeneralController;
 use App\Http\Livewire\Dashboard\FacilityVisitsDashboardComponent;
 use App\Http\Livewire\Dashboard\MainDashboardComponent;
+use App\Http\Livewire\Dashboard\StockStatusDashboardComponent;
 use App\Http\Livewire\Facility\FacilityComponent;
 use App\Http\Livewire\Facility\Visits\FacilityVisitDetailsComponent;
 use App\Http\Livewire\Facility\Visits\FacilityVisitsComponent;
@@ -48,7 +49,7 @@ Route::get('lang/{locale}', function ($locale) {
 Route::group(['middleware' => ['auth', 'password_expired', 'suspended_user']], function () {
 
     Route::get('dashboard', MainDashboardComponent::class)->name('home');
-    Route::get('stock-status-dashboard', MainDashboardComponent::class)->name('stock-status');
+    Route::get('stock-status-dashboard', StockStatusDashboardComponent::class)->name('stock-status');
 
     Route::group(['prefix' => 'admin'], function () {
         //User Management

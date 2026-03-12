@@ -26,7 +26,10 @@ class StockStatusDashboardComponent extends Component
     public $dateRange        = 'all';
     public $customStartDate  = null;
     public $customEndDate    = null;
+    public $exportIds;
     public $type;
+    public $districts_list = [];
+    public $filter_region_id;
     
     public $scoreSets = [
         [
@@ -38,7 +41,7 @@ class StockStatusDashboardComponent extends Component
             'label' => 'Visit-2 Score:',
             'data' => [4.0, 3.5, 4.2, 4.8, 4.7],
             'color' => 'rgba(54, 162, 235, 1)'
-        ],
+        ],#metro34
         [
             'label' => 'Visit-3 Score:',
             'data' => [4.5, 4.0, 4.6, 5.0, 4.9],
@@ -123,37 +126,92 @@ class StockStatusDashboardComponent extends Component
                     break;
             }
             return $data;
-            // Region and District filters
     }
+
     public function updatedDateRange(){
         $this->loadDashboardData();
     }
     
-    public function updatedSelectedRegion(){
-        $this->selectedDistrict = null;
-        $this->loadDashboardData();
+    public function updatedFilterRegionId(){
+        $this->districts_list = District::where('region_id', $this->filter_region_id)->orderBy('name')->get('name','id');
     }
 
     public function updatedSelectedDistrict(){
-        $this->loadDashboardData();
+
     }
     
-    public function render(){
-        $regions   = Region::all();
-        $stock_status = FvStockManagement::get();
-        
-        $districts = $this->selectedRegion
-        ? District::where('region_id', $this->selectedRegion)->get()
-        : collect();
-        
-        $grouped_stock = $stock_status->groupBy(function ($item) {
-            return $item->visit->facility->id;
-        });
-        
-        return view('livewire.dashboard.stock-status-dashboard-component', [
-            'regions'        => $regions,
-            'districts'      => $districts,
-            'grouped_stock'  => $grouped_stock,
-            ]);
+  
+     public function mainQuery()
+    {
+      $stock = FvStockManagement::query()
+    ->filterSearch($this->search)
+    ->with(['visit.facility.healthSubDistrict.district.region', 'reagent'])
+            ->when($this->filter_region_id, function ($query) {
+                $query->whereHas('visit.facility.healthSubDistrict.district', function ($q) {
+                    $q->where('region_id', $this->filter_region_id);
+                });
+            })
+            ->when($this->selectedDistrict, function ($query) {
+                $query->whereHas('visit.facility.healthSubDistrict', function ($q) {
+                    $q->where('district_id', $this->selectedDistrict);
+                });
+            })
+            ->when($this->dateRange === 'today', function ($query) {
+                $query->whereDate('created_at', Carbon::today());
+            })
+            ->when($this->dateRange === 'week', function ($query) {
+                $query->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+            })
+            ->when($this->dateRange === 'month', function ($query) {
+                $query->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()]);
+            })
+            ->when($this->dateRange === 'custom' && $this->customStartDate && $this->customEndDate, function ($query) {
+                $query->whereBetween('created_at', [$this->customStartDate, $this->customEndDate]);
+            })
+            ->when($this->type, function ($query) {
+                if ($this->type === 'performing') {
+                    $query->where('test_performed', true);
+                } elseif ($this->type === 'non-performing') {
+                    $query->where('test_performed', false);
+                }
+            })
+            ->when($this->dateRange === 'Qtr1', function ($query) {
+                $query->whereBetween('created_at', [Carbon::now()->startOfYear(), Carbon::now()->startOfYear()->addMonths(2)->endOfMonth()]);
+            })
+            ->when($this->dateRange === 'Qtr2', function ($query) {
+                $query->whereBetween('created_at', [Carbon::now()->startOfYear()->addMonths(3), Carbon::now()->startOfYear()->addMonths(5)->endOfMonth()]);
+            })
+            ->when($this->dateRange === 'Qtr3', function ($query) {
+                $query->whereBetween('created_at', [Carbon::now()->startOfYear()->addMonths(6), Carbon::now()->startOfYear()->addMonths(8)->endOfMonth()]);
+            })
+            ->when($this->dateRange === 'Qtr4', function ($query) {
+                $query->whereBetween('created_at', [Carbon::now()->startOfYear()->addMonths(9), Carbon::now()->endOfYear()]);
+            });
+
+        return $stock;
     }
+
+
+  public function render()
+    {
+         $stock_status = $this->mainQuery()->get(); // Apply all filters first
+         
+         $grouped_stock = $stock_status->groupBy(function ($item) {
+             return $item->visit->facility->id ?? 'unknown';
+         });
+
+
+        $regions = Region::orderBy('name')->get();
+
+        $this->districts = District::when($this->selectedRegion, function ($query) {
+            $query->where('region_id', $this->selectedRegion);
+        })->orderBy('name')->get();
+
+        return view('livewire.dashboard.stock-status-dashboard-component', [
+            'grouped_stock'    => $grouped_stock,
+            'regions'   => $regions,
+            'districts' => $this->districts,
+        ])->layout('layouts.app');
+    }
+
 }
