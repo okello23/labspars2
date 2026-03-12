@@ -21,6 +21,7 @@ use App\Http\Livewire\Settings\RegionsComponent;
 use App\Http\Livewire\Settings\StoreTypeComponent;
 use App\Http\Livewire\Settings\TestingCategoryComponent;
 use App\Http\Livewire\UserManagement\UserProfileComponent;
+use App\Http\Livewire\UserManagement\EnrollmentApprovalsComponent;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
@@ -84,6 +85,7 @@ Route::group(['middleware' => ['auth', 'password_expired', 'suspended_user']], f
         require __DIR__ . '/user_mgt.php';
     });
 });
+Route::get('users/enrollments', EnrollmentApprovalsComponent::class)->name('enrollments');
 
     Route::get('/spider-graph-data', function () {
     return response()->json(app(MainDashboardComponent::class)->getSpiderGraphData());

@@ -137,14 +137,18 @@
                 <!-- <td>{{ $user->department?->name ?? '-' }}</td> -->
                 @if ($user->is_active == 0)
                 <td><span class="badge bg-danger">Suspended</span></td>
-                @else
+                @elseif ($user->is_active == 1)
                 <td><span class="badge bg-success">Active</span></td>
+                @elseif ($user->is_active == 2)
+                <td><span class="badge bg-warning">Pending Approval</span></td>
                 @endif
                 <td>{{ date('d-m-Y', strtotime($user->created_at)) }}</td>
                 <td class="table-action">
                   <button class="action-ico btn btn-sm btn-success mx-1">
-                    <i class="fa fa-edit"
-                    wire:click="editdata({{ $user->id }})"></i></button>
+                    <i class="fa fa-edit" wire:click="editdata({{ $user->id }})" title="Update"></i></button>
+                    
+                    <button class="action-ico btn btn-sm btn-info mx-1">
+                    <i class="fa fa-check" wire:click="editdata({{ $user->id }})" title="Approve"></i></button>
                   </td>
                 </tr>
                 @endforeach
@@ -163,6 +167,7 @@
     </div> <!-- end card -->
   </div><!-- end col-->
 </div>
+@include('livewire.user-management.partials.user-approval-modal')
 @push('scripts')
 <script src="{{ asset('assets/plugins/select2/js/select2.min.js') }}"></script>
 <script>
@@ -184,6 +189,11 @@
     var data = e.params.data;
     @this.set('is_active', data.id);
   });
+  
+
+    window.addEventListener('show-approve-modal', event => {
+                    $('#approve_user_modal').modal('show');
+                });
 
   window.addEventListener('livewire:update', () => {
     $('.select2').select2('destroy'); //destroy the previous instances of select2

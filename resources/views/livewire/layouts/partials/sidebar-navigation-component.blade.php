@@ -82,6 +82,9 @@
                             <li> <a href="{{ route('usermanagement') }}"><i
                               class="fa fa-right-arrow-alt"></i>{{ __('public.users') }}</a>
                             </li>
+                            <li> <a href="{{ route('enrollments') }}"><i
+                              class="fa fa-right-arrow-alt"></i> Self Enrollment Requests</a>
+                            </li>
                             <li> <a href="{{ route('user-roles.index') }}"><i
                               class="fa fa-right-arrow-alt"></i>{{ __('public.roles') }}</a>
                             </li>

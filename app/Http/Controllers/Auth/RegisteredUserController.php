@@ -61,7 +61,7 @@ class RegisteredUserController extends Controller
             'facility_id' => $request->facility_id,
             'category'    => 'Institution',
             'password'    => bcrypt(\Illuminate\Support\Str::random(32)), // placeholder; reset on approval
-            'is_active'   => 0,
+            'is_active'   => 2,
             'status'      => 'pending',
         ]);
 
