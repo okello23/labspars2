@@ -47,3 +47,4 @@
 <!-- Vedor js file and create bundle with grunt  -->
 </body>
 </html>
+@stack('scripts')

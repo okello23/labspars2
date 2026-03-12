@@ -98,6 +98,23 @@ class UsersComponent extends Component
         'is_active' => 'status',
     ];
 
+    public function approveUser($id)
+    {
+        $user = User::findOrFail($id);
+        $user->is_active = 1;
+        $user->status = 'approved';
+        $user->password = bcrypt(GeneratorService::password());
+        $user->save();
+        
+        $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => 'User approved successfully!']);
+    }
+
+    public function approveUserModal($id)
+    {
+        $this->edit_id = $id;
+        $this->dispatchBrowserEvent('show-approve-modal');
+    }
+    
     public function updated($fields)
     {
         $this->validateOnly($fields, [

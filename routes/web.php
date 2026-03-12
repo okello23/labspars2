@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\GeneralController;
 use App\Http\Livewire\Dashboard\FacilityVisitsDashboardComponent;
 use App\Http\Livewire\Dashboard\MainDashboardComponent;
+use App\Http\Livewire\Dashboard\StockStatusDashboardComponent;
 use App\Http\Livewire\Facility\FacilityComponent;
 use App\Http\Livewire\Facility\Visits\FacilityVisitDetailsComponent;
 use App\Http\Livewire\Facility\Visits\FacilityVisitsComponent;
@@ -20,6 +21,7 @@ use App\Http\Livewire\Settings\RegionsComponent;
 use App\Http\Livewire\Settings\StoreTypeComponent;
 use App\Http\Livewire\Settings\TestingCategoryComponent;
 use App\Http\Livewire\UserManagement\UserProfileComponent;
+use App\Http\Livewire\UserManagement\EnrollmentApprovalsComponent;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
@@ -48,7 +50,7 @@ Route::get('lang/{locale}', function ($locale) {
 Route::group(['middleware' => ['auth', 'password_expired', 'suspended_user']], function () {
 
     Route::get('dashboard', MainDashboardComponent::class)->name('home');
-    Route::get('stock-status-dashboard', MainDashboardComponent::class)->name('stock-status');
+    Route::get('stock-status-dashboard', StockStatusDashboardComponent::class)->name('stock-status');
 
     Route::group(['prefix' => 'admin'], function () {
         //User Management
@@ -83,6 +85,7 @@ Route::group(['middleware' => ['auth', 'password_expired', 'suspended_user']], f
         require __DIR__ . '/user_mgt.php';
     });
 });
+Route::get('users/enrollments', EnrollmentApprovalsComponent::class)->name('enrollments');
 
     Route::get('/spider-graph-data', function () {
     return response()->json(app(MainDashboardComponent::class)->getSpiderGraphData());

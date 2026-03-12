@@ -53,4 +53,20 @@ class FvStockManagement extends Model
             });
         }
     }
+
+    public function scopeFilterSearch($query, $searchTerm)
+    {
+    if ($searchTerm) {
+        $query->where(function ($q) use ($searchTerm) {
+            $q->whereHas('reagent', function ($sub) use ($searchTerm) {
+                $sub->where('name', 'like', '%'.$searchTerm.'%');
+            })
+            ->orWhereHas('visit.facility', function ($sub) use ($searchTerm) {
+                $sub->where('name', 'like', '%'.$searchTerm.'%');
+            });
+        });
+    }
+
+    return $query;
+}
 }

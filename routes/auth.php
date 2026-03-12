@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
   Route::get('register', [RegisteredUserController::class, 'create'])
-  ->name('register');
+  ->name('register.user');
 
   Route::post('register', [RegisteredUserController::class, 'store']);
 
@@ -38,6 +38,7 @@ Route::middleware('guest')->group(function () {
   // Registration of 3rd party applications
   Route::get('register-application', [ApiAuthController::class, 'create'])
   ->name('register.application');
+
   Route::post('save-registration', [ApiAuthController::class, 'register'])
   ->name('save.registration');
 });

@@ -39,10 +39,12 @@ class User extends Authenticatable
      * The attributes that are mass assignable.
      *\Auth::user()->actions;
      *
+     * 
+     * 
      * @var array<int, string>
      */
     protected $fillable = [
-        'employee_id',
+        'facility_id',
         'emp_id',
         'surname',
         'first_name',
