@@ -116,17 +116,21 @@
             </div>
 
             {{-- Facility — Select2 searchable --}}
-            <div class="mb-3">
+            <div class="input-group mb-3">
                 <select name="facility_id" id="facilitySelect" required
                         class="form-control @error('facility_id') is-invalid @enderror">
                     <option value="">-- Select Facility / Lab *--</option>
                     @foreach ($facilities as $facility)
                         <option value="{{ $facility->id }}"
                             {{ old('facility_id') == $facility->id ? 'selected' : '' }}>
-                            {{ $facility->name }}
+                            {{ $facility->name }} {{ $facility->level }}
                         </option>
                     @endforeach
                 </select>
+
+                 <div class="input-group-append">
+                    <div class="input-group-text"><span class="fa fa-home"></span></div>
+                </div>
                 @error('facility_id')
                     <div class="invalid-feedback d-block">{{ $message }}</div>
                 @enderror
@@ -159,6 +163,7 @@
     &copy; Central Public Health Laboratories (CPHL)
 </div>
 
+<script src="{{ asset('assets/plugins/select2/js/select2.min.js') }}"></script>
 @push('scripts')
 <script>
     $(document).ready(function () {

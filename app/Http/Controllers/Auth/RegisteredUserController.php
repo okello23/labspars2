@@ -20,7 +20,7 @@ class RegisteredUserController extends Controller
     {
         $facilities = Facility::orderBy('name')
         ->with('healthSubDistrict') // eager load level relationship
-        ->get(['id', 'name']);
+        ->get(['id', 'name','level']);
         $districts = $facilities->pluck('healthSubDistrict.name', 'healthSubDistrict.name')->unique()->sort();
 
         // If you have a District model, swap in the correct namespace below
