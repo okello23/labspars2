@@ -106,9 +106,6 @@
       </div>
     </div>
 
-    {{-- ═══════════════════════════════════════════════════
-         APPROVAL CONFIRMATION MODAL
-    ════════════════════════════════════════════════════ --}}
     @if ($confirmingApproval)
         <div class="modal fade show d-block" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -158,9 +155,7 @@
         </div>
     @endif
 
-    {{-- ═══════════════════════════════════════════════════
-         REJECTION CONFIRMATION MODAL
-    ════════════════════════════════════════════════════ --}}
+    {{--      REJECTION CONFIRMATION MODAL --}}
     @if ($confirmingRejection)
         <div class="modal fade show d-block" tabindex="-1" role="dialog"
              style="background: rgba(0,0,0,0.5);">

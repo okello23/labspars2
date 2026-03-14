@@ -146,9 +146,6 @@
                 <td class="table-action">
                   <button class="action-ico btn btn-sm btn-success mx-1">
                     <i class="fa fa-edit" wire:click="editdata({{ $user->id }})" title="Update"></i></button>
-                    
-                    <button class="action-ico btn btn-sm btn-info mx-1">
-                    <i class="fa fa-check" wire:click="editdata({{ $user->id }})" title="Approve"></i></button>
                   </td>
                 </tr>
                 @endforeach
