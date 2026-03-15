@@ -47,6 +47,10 @@ Route::get('lang/{locale}', function ($locale) {
     return redirect()->back();
 })->name('lang');
 
+Route::get('/monitor-deployment', function () {
+    return view('monitor.dashboard');
+});
+
 Route::group(['middleware' => ['auth', 'password_expired', 'suspended_user']], function () {
 
     Route::get('dashboard', MainDashboardComponent::class)->name('home');

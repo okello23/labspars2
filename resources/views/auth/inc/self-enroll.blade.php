@@ -1,5 +1,11 @@
 @extends('layouts.guest')
 @section('title', 'Self Enroll')
+
+{{-- Select2 CSS pushed into <head> --}}
+@push('styles')
+    <link href="{{ asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
+@endpush
+
 @section('content')
 
 <div class="card-body shadow p-3 mb-5">
@@ -96,29 +102,11 @@
                 @enderror
             </div>
 
-            {{-- District--}}
-            <div class="input-group mb-3">
-                <select name="category" required
-                        class="form-control @error('district') is-invalid @enderror">
-                    <option value="">-- District *--</option>
-                    @foreach ($districts as $dist)
-                        <option value="{{ $dist }}" {{ old('district') == $dist ? 'selected' : '' }}>
-                            {{ $dist }}
-                        </option>
-                    @endforeach
-                </select>
-                <div class="input-group-append">
-                    <div class="input-group-text"><span class="fa fa-id-badge"></span></div>
-                </div>
-                @error('category')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-
-            {{-- Facility — Select2 searchable --}}
-            <div class="input-group mb-3">
+            {{-- Facility — Select2 searchable (no input-group wrapper) --}}
+                       {{-- Facility — Select2 with icon --}}
+            <div class="input-group select2-facility mb-3">
                 <select name="facility_id" id="facilitySelect" required
-                        class="form-control @error('facility_id') is-invalid @enderror">
+                        class="@error('facility_id') is-invalid @enderror">
                     <option value="">-- Select Facility / Lab *--</option>
                     @foreach ($facilities as $facility)
                         <option value="{{ $facility->id }}"
@@ -127,15 +115,13 @@
                         </option>
                     @endforeach
                 </select>
-
-                 <div class="input-group-append">
+                <div class="input-group-append">
                     <div class="input-group-text"><span class="fa fa-home"></span></div>
                 </div>
                 @error('facility_id')
-                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                    <div class="text-danger small mt-1 w-100">{{ $message }}</div>
                 @enderror
             </div>
-
             {{-- Info notice --}}
             <div class="alert alert-info py-2 small mb-3">
                 <i class="fa fa-info-circle"></i>
@@ -163,17 +149,18 @@
     &copy; Central Public Health Laboratories (CPHL)
 </div>
 
-<script src="{{ asset('assets/plugins/select2/js/select2.min.js') }}"></script>
+@endsection
+
+{{-- Select2 JS + init — pushed after jQuery bundles --}}
 @push('scripts')
+<script src="{{ asset('assets/plugins/select2/js/select2.min.js') }}"></script>
 <script>
     $(document).ready(function () {
         $('#facilitySelect').select2({
-            placeholder: '-- Select Facility / Lab *--',
+            placeholder: '-- Select Facility / Lab --',
             allowClear: true,
-            width: '100%',
+            width: '87.5%',
         });
     });
 </script>
 @endpush
-
-@endsection
