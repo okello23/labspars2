@@ -19,6 +19,7 @@ class RegisteredUserController extends Controller
     public function create()
     {
         $facilities = Facility::orderBy('name')
+        
         ->with('healthSubDistrict') // eager load level relationship
         ->get(['id', 'name','level']);
         $districts = $facilities->pluck('healthSubDistrict.name', 'healthSubDistrict.name')->unique()->sort();
@@ -26,10 +27,9 @@ class RegisteredUserController extends Controller
         // If you have a District model, swap in the correct namespace below
         // $districts = \App\Models\District::orderBy('name')->get(['id', 'name']);
 
-        $titles     = ['Mr', 'Mrs', 'Ms', 'Dr', 'Prof'];
+        $titles     = ['Mr', 'Mrs', 'Ms', 'Dr', 'Prof','DLFP', 'Other'];
         $toggleForm = false;
         $category = ['Lab Technician', 'Lab Technologist', 'Medical Officer', 'Data Officer','DLFP', 'Hub Coordinator','Other'];
-
         return view('auth.inc.self-enroll', compact('facilities', 'titles', 'category','toggleForm', 'districts'));
     }
 
