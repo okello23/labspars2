@@ -1,0 +1,154 @@
+name: Deploy LabSpars to Server
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      facility:
+        description: 'Target facility runner label (e.g. facility-mulago). Leave empty to deploy to all.'
+        required: false
+        default: ''
+
+jobs:
+  deploy:
+    name: Deploy → ${{ matrix.facility }}
+    runs-on: [self-hosted, "${{ matrix.facility }}"]
+    strategy:
+      fail-fast: false   # one facility failing won't cancel the others
+      matrix:
+        facility:
+          - facility-mulago
+          - facility-kawempe
+          - facility-entebbe
+          # Add more facility labels here as you register new runners
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ── Notify: Deployment Starting ──────────────────────────────────────
+      - name: Telegram → Deploy starting
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            🚀 *Deployment started*
+            Facility: `${{ matrix.facility }}`
+            Commit: `${{ github.sha }}`
+            Branch: `${{ github.ref_name }}`
+            Triggered by: ${{ github.actor }}
+
+      # ── Post deployment START to monitoring dashboard ────────────────────
+      - name: Monitor → Record deployment start
+        run: |
+          curl -s -X POST ${{ secrets.MONITOR_URL }}/api/deployments \
+            -H "Content-Type: application/json" \
+            -H "X-Monitor-Key: ${{ secrets.MONITOR_API_KEY }}" \
+            -d '{
+              "facility": "${{ matrix.facility }}",
+              "status": "running",
+              "commit": "${{ github.sha }}",
+              "branch": "${{ github.ref_name }}",
+              "actor": "${{ github.actor }}",
+              "run_id": "${{ github.run_id }}",
+              "started_at": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+            }' || true
+
+      # ── Deploy ───────────────────────────────────────────────────────────
+      - name: Deploy application
+        run: |
+          set -e
+          cd ${{ secrets.APP_PATH }}
+
+          echo "==> Maintenance mode ON"
+          php artisan down --retry=60
+
+          echo "==> Pulling latest code"
+          git fetch --all
+          git reset --hard origin/main
+
+          echo "==> Composer install"
+          composer install --no-dev --optimize-autoloader --no-interaction
+
+          echo "==> Caching config, routes, views"
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+
+          echo "==> Running migrations"
+          php artisan migrate --force
+
+          echo "==> Restarting queue workers"
+          php artisan queue:restart || true
+
+          echo "==> Fixing permissions"
+          chown -R www-data:www-data storage bootstrap/cache
+          chmod -R 775 storage bootstrap/cache
+
+          echo "==> Maintenance mode OFF"
+          php artisan up
+
+      # ── Post-deploy Health Check ─────────────────────────────────────────
+      - name: Health check
+        run: |
+          sleep 5
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.APP_URL }}/up)
+          if [ "$STATUS" != "200" ]; then
+            echo "Health check failed — HTTP $STATUS"
+            exit 1
+          fi
+          echo "Health check passed — HTTP $STATUS"
+
+      # ── Notify: Success ──────────────────────────────────────────────────
+      - name: Telegram → Deploy success
+        if: success()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            ✅ *Deployment successful*
+            Facility: `${{ matrix.facility }}`
+            Commit: `${{ github.sha }}`
+
+      - name: Monitor → Record success
+        if: success()
+        run: |
+          curl -s -X PATCH ${{ secrets.MONITOR_URL }}/api/deployments/${{ github.run_id }} \
+            -H "Content-Type: application/json" \
+            -H "X-Monitor-Key: ${{ secrets.MONITOR_API_KEY }}" \
+            -d '{
+              "facility": "${{ matrix.facility }}",
+              "status": "success",
+              "finished_at": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+            }' || true
+
+      # ── Notify: Failure ──────────────────────────────────────────────────
+      - name: Telegram → Deploy failed
+        if: failure()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            ❌ *Deployment FAILED*
+            Facility: `${{ matrix.facility }}`
+            Commit: `${{ github.sha }}`
+            Branch: `${{ github.ref_name }}`
+            Triggered by: ${{ github.actor }}
+            Logs: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Monitor → Record failure
+        if: failure()
+        run: |
+          curl -s -X PATCH ${{ secrets.MONITOR_URL }}/api/deployments/${{ github.run_id }} \
+            -H "Content-Type: application/json" \
+            -H "X-Monitor-Key: ${{ secrets.MONITOR_API_KEY }}" \
+            -d '{
+              "facility": "${{ matrix.facility }}",
+              "status": "failed",
+              "finished_at": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+            }' || true
