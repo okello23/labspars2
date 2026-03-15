@@ -28,7 +28,7 @@ class EnrollmentPendingAdminNotification extends Notification
             ->line('**Email:** ' . $this->enrollee->email)
             ->line('**Contact:** ' . $this->enrollee->contact)
             ->line('**Submitted:** ' . $this->enrollee->created_at->format('d M Y H:i'))
-            ->action('Review Enrollment', url('/admin/manage/users/enrollments'))
+            ->action('Review Enrollment', url('/users/enrollments'))
             ->salutation('Lab SPARS System');
     }
 }

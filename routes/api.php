@@ -55,4 +55,4 @@ Route::group([
 Route::post('/login', [ApiAuthController::class,'login']);
 Route::post('/register', [ApiAuthController::class,'register']);
 
-// Route::post('/login', 'Auth\UserAuthController@login');
+require __DIR__ . '/monitor.php';
