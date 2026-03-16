@@ -164,7 +164,6 @@
     </div> <!-- end card -->
   </div><!-- end col-->
 </div>
-@include('livewire.user-management.partials.user-approval-modal')
 @push('scripts')
 <script src="{{ asset('assets/plugins/select2/js/select2.min.js') }}"></script>
 <script>

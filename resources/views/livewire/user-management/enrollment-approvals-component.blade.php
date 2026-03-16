@@ -64,7 +64,7 @@
                         <td>
                             <span class="badge badge-info">{{ $user->category }}</span>
                         </td>
-                        <td>{{ $user->facility->name ?? '—' }}</td>
+                        <td>{{ $user->facility->name ?? '—' }} {{ $user->facility->level ?? '—' }}</td>
                         <td>{{ $user->created_at->format('d M Y H:i') }}</td>
                         @if ($user->is_active == 2)
                         <td class="text-center">
