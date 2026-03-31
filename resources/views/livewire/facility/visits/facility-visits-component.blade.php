@@ -66,7 +66,7 @@
                                         <th>District</th>
                                         <th>Health Sub District</th>
                                         <th>Region</th>
-                                        <th>Create By</th>
+                                        <th>Entered By</th>
                                         <th>Stage</th>
                                         <th>Status</th>
                                         <th>Actions</th>
@@ -85,7 +85,7 @@
                                             <td>{{ $facilityvisit->facility?->healthSubDistrict->district->name ?? 'N/A' }}</td>
                                             <td>{{ $facilityvisit->facility->healthSubDistrict->name ?? 'N/A' }}</td>
                                             <td>{{ $facilityvisit->facility->healthSubDistrict?->district->region?->name}}</td>
-                                            <td>{{ $facilityvisit->createdBy->name }}</td>
+                                            <td>{{ $facilityvisit->createdBy->surname }} {{ $facilityvisit->createdBy->first_name }}</td>
                                             <td>{{ $facilityvisit->stage }}</td>
                                             <td><span class="badge badge-primary">{{ $facilityvisit->status }}</span></td>
                                             <td>
