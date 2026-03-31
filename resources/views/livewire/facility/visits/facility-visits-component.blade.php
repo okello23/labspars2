@@ -57,15 +57,15 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Facility Name</th>
                                         <th>Visit Number</th>
-                                        <th>In Charge Name</th>
-                                        <th>In Charge Contact</th>
-                                        <th>Date Of Visit</th>
-                                        <th>Date Of Next Visit</th>
+                                        <th>Region</th>
                                         <th>District</th>
                                         <th>Health Sub District</th>
-                                        <th>Region</th>
+                                        <th>Facility Name</th>
+                                        <th>In Charge Name</th>
+                                        <!-- <th>In Charge Contact</th> -->
+                                        <th>Date Of Visit</th>
+                                        <th>Date Of Next Visit</th>
                                         <th>Entered By</th>
                                         <th>Stage</th>
                                         <th>Status</th>
@@ -76,15 +76,15 @@
                                     @foreach ($visits as $key => $facilityvisit)
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
-                                            <td>{{ $facilityvisit->facility->name }} {{ $facilityvisit->facility?->level}}</td>
                                             <td>{{ $facilityvisit->visit_number ?? 'N/A' }}</td>
-                                            <td>{{ $facilityvisit->in_charge_name ?? 'N/A' }}</td>
-                                            <td>{{ $facilityvisit->in_charge_contact }}</td>
-                                            <td>{{ $facilityvisit->date_of_visit }}</td>
-                                            <td>{{ $facilityvisit->date_of_next_visit }}</td>
+                                            <td>{{ $facilityvisit->facility->healthSubDistrict?->district->region?->name}}</td>
                                             <td>{{ $facilityvisit->facility?->healthSubDistrict->district->name ?? 'N/A' }}</td>
                                             <td>{{ $facilityvisit->facility->healthSubDistrict->name ?? 'N/A' }}</td>
-                                            <td>{{ $facilityvisit->facility->healthSubDistrict?->district->region?->name}}</td>
+                                            <td>{{ $facilityvisit->facility->name }} {{ $facilityvisit->facility?->level}}</td>
+                                            <td>{{ $facilityvisit->in_charge_name ?? 'N/A' }}</td>
+                                            <!-- <td>{{ $facilityvisit->in_charge_contact }}</td> -->
+                                            <td>{{ $facilityvisit->date_of_visit }}</td>
+                                            <td>{{ $facilityvisit->date_of_next_visit }}</td>
                                             <td>{{ $facilityvisit->createdBy->surname }} {{ $facilityvisit->createdBy->first_name }}</td>
                                             <td>{{ $facilityvisit->stage }}</td>
                                             <td><span class="badge badge-primary">{{ $facilityvisit->status }}</span></td>
