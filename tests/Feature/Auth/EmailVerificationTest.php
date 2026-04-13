@@ -14,6 +14,11 @@ class EmailVerificationTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_email_verification_feature_is_pending_for_this_app()
+    {
+        $this->markTestSkipped('Email verification tests are not implemented for this customized application.');
+    }
+
     // public function test_email_verification_screen_can_be_rendered()
     // {
     //     $user = User::factory()->create([

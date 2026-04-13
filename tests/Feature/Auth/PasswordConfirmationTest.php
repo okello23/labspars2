@@ -10,6 +10,11 @@ class PasswordConfirmationTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_password_confirmation_feature_is_pending_for_this_app()
+    {
+        $this->markTestSkipped('Password confirmation tests are not implemented for this customized application.');
+    }
+
     // public function test_confirm_password_screen_can_be_rendered()
     // {
     //     $user = User::factory()->create();

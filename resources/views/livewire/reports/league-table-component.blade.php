@@ -5,7 +5,7 @@
             <div class="info-box-content">
                 <h4>
                     LSS District League Table
-                    (<span class="text-danger fw-bold">{{ $district_performance->count() }}</span>)
+                    (<span class="text-danger fw-bold">{{ $district_performance->total() }}</span>)
                 </h4>
                 <div class="progress">
                     <div class="progress-bar bg-info" style="width:100%; height:25%;"></div>
@@ -56,12 +56,25 @@
                                     <input id="to_date" type="date" class="form-control" wire:model.lazy="to_date">
                                 </div>
                             </div>
+
+                            <div class="md-3">
+                                <div class="mb-1 col-md-12">
+                                    <label for="per_page" class="form-label">Per Page</label>
+                                    <select id="per_page" class="form-control" wire:model="perPage">
+                                        <option value="10">10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select>
+                                </div>
+                            </div>
                         </x-table-utilities>
 
                         {{-- TABLE --}}
                         <table class="table table-striped table-sm table-bordered mb-0 w-100 sortable">
                            <thead>
                             <tr>
+                                <th>#</th>
                                 <th>District</th>
                                 <th>Region</th>
                                 <th>Baseline Score <br> <samll style="font-size:12px">(Previous Quarter)</small> </th>
@@ -78,6 +91,7 @@
                         <tbody>
                             @foreach ($district_performance as $district)
                             <tr>
+                                <td>{{ ($district_performance->currentPage() - 1) * $district_performance->perPage() + $loop->iteration }}</td>
                                 <td>{{ $district->district }}</td>
                                 <td>{{ $district->region }}</td>
                                 <td>{{ $district->baseline_score }}</td>
@@ -123,6 +137,14 @@
                             @endforeach
                         </tbody>
                     </table>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="btn-group float-right">
+                            {{ $district_performance->links('vendor.livewire.bootstrap') }}
+                        </div>
+                    </div>
                 </div>
             </span>
         </div>

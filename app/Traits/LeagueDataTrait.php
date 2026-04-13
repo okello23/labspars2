@@ -70,9 +70,25 @@ trait LeagueDataTrait
      * --------------------------------------------------------- */
     public function updatedFilterRegionId($value)
     {
+        $this->resetPage('facility_performance_table');
         $this->filter_district_id = '';
         $this->filter_health_sub_district_id = '';
         $this->districts_list = District::where('region_id', $value)->orderBy('name', 'ASC')->get();
+    }
+
+    public function updatingFilterDistrictId()
+    {
+        $this->resetPage('facility_performance_table');
+    }
+
+    public function updatingFromDate()
+    {
+        $this->resetPage('facility_performance_table');
+    }
+
+    public function updatingToDate()
+    {
+        $this->resetPage('facility_performance_table');
     }
 
     /** ---------------------------------------------------------
@@ -123,6 +139,10 @@ trait LeagueDataTrait
     
     private function loadAllScores()
     {
+        if (!Auth::check()) {
+            return collect();
+        }
+
         $cache_key = 'league_scores_' . md5(json_encode([
             $this->from_date,
             $this->to_date,
@@ -271,13 +291,15 @@ trait LeagueDataTrait
        $district_summaries = $district_grouped_visits->map(function ($visits, $district_name) {
            
            // All visits sorted by date
-           $sorted = $visits->sortBy('date_of_visit')->values();
+           $sorted = $visits->sortBy(function ($visit) {
+               return $this->resolveVisitDate($visit);
+           })->values();
            if ($sorted->isEmpty()) {
                return null;
            }
            
            // 1. Determine the quarter of the most recent visit
-           $latestVisit = Carbon::parse($sorted->last()->date_of_visit);
+           $latestVisit = Carbon::parse($this->resolveVisitDate($sorted->last()));
            $currentQuarter = $latestVisit->quarter;
            $currentYear = $latestVisit->year;
    
@@ -292,12 +314,12 @@ trait LeagueDataTrait
            
            // 3. Filter visits into quarters
            $currentQuarterVisits = $sorted->filter(function ($v) use ($currentQuarter, $currentYear) {
-               $dt = Carbon::parse($v->date_of_visit);
+               $dt = Carbon::parse($this->resolveVisitDate($v));
                return $dt->quarter == $currentQuarter && $dt->year == $currentYear;
            });
    
            $previousQuarterVisits = $sorted->filter(function ($v) use ($previousQuarter, $previousYear) {
-               $dt = Carbon::parse($v->date_of_visit);
+               $dt = Carbon::parse($this->resolveVisitDate($v));
                return $dt->quarter == $previousQuarter && $dt->year == $previousYear;
            });
    
@@ -325,9 +347,9 @@ trait LeagueDataTrait
                'visits_count'    => $sorted->count(),
                'facilities'      => $sorted->pluck('facility_id')->unique()->count(),
    
-               'baseline_score'  => $baseline ? round($baseline * 5, 2) : null,
-               'current_score'   => $current  ? round($current * 5, 2) : null,
-               'change'          => $change ? $change * 5 : null,
+               'baseline_score'  => $baseline !== null ? round($baseline * 5, 2) : null,
+               'current_score'   => $current !== null ? round($current * 5, 2) : null,
+               'change'          => $change !== null ? $change * 5 : null,
                'percent_change'  => $percent_change,
                'average_score'   => round($sorted->avg('total_score') * 5, 2),
                'trend_icon'      => ($change > 0 ? '▲' : ($change < 0 ? '▼' : '➝'))
@@ -391,9 +413,17 @@ trait LeagueDataTrait
         );
     }    
     
-    public function getBaselineCurrentTrendLast3Months()
+    public function getBaselineCurrentTrendLast3Months($rows = null)
     {
-        $threeMonthsAgo = now()->subMonths(6);
+        $threeMonthsAgo = now()->subMonths(3);
+
+        if ($rows instanceof Collection) {
+            return $rows->filter(function ($row) use ($threeMonthsAgo) {
+                $createdAt = data_get($row, 'created_at');
+
+                return $createdAt && Carbon::parse($createdAt)->greaterThanOrEqualTo($threeMonthsAgo);
+            })->values();
+        }
         
         // load raw data
         $allScores = $this->loadAllScores();
@@ -431,6 +461,11 @@ trait LeagueDataTrait
             ];
         })->values();
         
+    }
+
+    private function resolveVisitDate($visit)
+    {
+        return data_get($visit, 'date_of_visit') ?? data_get($visit, 'created_at');
     }
     
     /**
@@ -479,5 +514,3 @@ trait LeagueDataTrait
     
     }
                 
-
-

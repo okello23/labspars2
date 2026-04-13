@@ -19,6 +19,7 @@ class LeagueTableComponent extends Component
     use WithPagination;
     use LeagueDataTrait;
     use ExportsLeagueData;
+
     public $export_data;   
 
     public function export()
@@ -32,13 +33,14 @@ class LeagueTableComponent extends Component
     public function render()
     {
         $leagueData = $this->prepareLeagueData();
+        $districtPerformance = $this->computeDistrictLeague($leagueData);
         
         $data = [
             'regions'              => Region::all(),
             'health_sub_districts' => [],
-            'district_performance' => $this->computeDistrictLeague($leagueData),
+            'district_performance' => $this->paginateCollection($districtPerformance),
         ];
-        $this->export_data = $data['district_performance'];
+        $this->export_data = $districtPerformance;
 
         return view('livewire.reports.league-table-component', $data);
     }

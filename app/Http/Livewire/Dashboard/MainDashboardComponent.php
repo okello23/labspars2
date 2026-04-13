@@ -1927,12 +1927,12 @@ public function getSpiderGraphData(): array
 
     public function query()
     {
-    $user = \Auth()->user();
+    $user = auth()->user();
         $data = FacilityVisit::query()
             ->with(['facility.healthSubDistrict.district.region']);
 
             // Filter for user's Institution if no region/district is selected
-            if ($user->category === 'Institution' && !$this->selectedRegion && !$this->selectedDistrict) {
+            if ($user && $user->category === 'Institution' && !$this->selectedRegion && !$this->selectedDistrict) {
                 $data->whereHas('facility', function ($q) use ($user) {
                     $q->where('facility_id', $user->facility_id);
                 });
