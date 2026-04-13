@@ -10,6 +10,11 @@ class ProfileTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_profile_feature_is_pending_for_this_app()
+    {
+        $this->markTestSkipped('Profile controller routes are not wired into this application yet.');
+    }
+
     // public function test_profile_page_is_displayed()
     // {
     //     $user = User::factory()->create();

@@ -12,6 +12,11 @@ class PasswordResetTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_password_reset_feature_is_pending_for_this_app()
+    {
+        $this->markTestSkipped('Password reset tests are not implemented for this customized application.');
+    }
+
     // public function test_reset_password_link_screen_can_be_rendered()
     // {
     //     $response = $this->get('/forgot-password');

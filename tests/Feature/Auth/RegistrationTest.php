@@ -10,6 +10,11 @@ class RegistrationTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_registration_feature_is_pending_for_this_app()
+    {
+        $this->markTestSkipped('Registration tests are not implemented for this customized application.');
+    }
+
     // public function test_registration_screen_can_be_rendered()
     // {
     //     $response = $this->get('/register');

@@ -21,6 +21,3 @@ Route::group(['prefix' => 'user-mgt', 'middleware' => ['permission:access_user_m
 
 Route::get('company-profile', CompanyProfileComponent::class)->name('company-profile')->middleware('permission:access_user_management');
 Route::get('user-profile', UserProfileComponent::class)->name('profile');
-
-
-// now i want to come up with a laravel code which genarates unquie Ids for samples to be stored in the database but those id should have a Prefix and Suffix but resets after a change in a year lets take this example PGI23AAAA0001A but here PGI is static never changes, 23 is the current year, AAAA keeps on changing but one by one incase the the value reaches like PGI23AAAA9999Z it changes to PGI23AAAB0001A

@@ -31,26 +31,6 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 });
 
-Route::group([
-    'as' => 'passport.',
-    'prefix' => config('passport.path', 'oauth'),
-], function () {
-    // Passport routes...
-    Route::get('/samples', [SamplesComponent::class, 'poi'])->name('microbiology-samples');
-
-});
-
-
-Route::group([
-    'as' => 'microbiology.',
-    'prefix' => config('passport.path', 'microbiology'),
-], function () {
-    // Passport routes...
-    // Route::get('/samples', [SamplesComponent::class, 'poi'])->name('microbiology-samples');
-    Route::post('/test-request', [SamplesComponent::class, 'receiveSampleFromApi'])->middleware(['auth:api','scope:make-test-request']);
-
-});
-
 
 Route::post('/login', [ApiAuthController::class,'login']);
 Route::post('/register', [ApiAuthController::class,'register']);

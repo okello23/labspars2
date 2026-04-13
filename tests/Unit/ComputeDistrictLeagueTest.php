@@ -19,7 +19,7 @@ class ComputeDistrictLeagueTest extends TestCase
                 'region' => 'Central',
                 'total_score' => 4.0,
                 'facility_id' => 1,
-                'created_at' => now()->subDays(5),
+                'created_at' => now()->subQuarter(),
             ],
             (object)[
                 'district' => 'Test District',
