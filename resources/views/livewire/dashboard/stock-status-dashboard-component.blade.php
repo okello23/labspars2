@@ -3,10 +3,17 @@
 <div>
     <div class="container-fluid">
 
-        <div class="row mb-3" wire:ignore>
+        <div class="row mb-3">
             <div class="col-12">
                 <fieldset class="scheduler-border w-100" style="width: 100%;">
                     <legend class="scheduler-border">Stock Status Summaries</legend>
+
+                    @if($quarterNotice)
+                        <div class="alert alert-info border-1 alert-dismissible fade show" role="alert">
+                            {{ $quarterNotice }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
 
                     <!-- ===================== -->
                     <!-- Filters -->
@@ -30,31 +37,57 @@
                         <div class="md-3">
                             <div class="mb-1 col-md-12">
                                 <label class="form-label">District</label>
-                                <select class="form-control"
-                                        wire:model="filter_district_id"
-                                        @if(empty($districts_list)) disabled @endif>
-                                    <option value="">Select District</option>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    list="stock-status-district-options"
+                                    wire:model.debounce.300ms="districtSearch"
+                                    placeholder="Search District"
+                                    @if(empty($districts_list)) disabled @endif
+                                >
+                                <datalist id="stock-status-district-options">
                                     @foreach($districts_list as $district)
-                                        <option value="{{ $district->id }}">{{ $district->name }}</option>
+                                        <option value="{{ $district->name }}"></option>
                                     @endforeach
-                                </select>
+                                </datalist>
                             </div>
                         </div>
 
-                        <!-- Period -->
+                        <!-- Period Mode -->
                         <div class="md-3">
                             <div class="mb-1 col-md-12">
                                 <label class="form-label">Period</label>
                                 <select wire:model="dateRange" class="form-control">
-                                    <option value="all">All Time</option>
-                                    <option value="q1">Qtr 1</option>
-                                    <option value="q2">Qtr 2</option>
-                                    <option value="q3">Qtr 3</option>
-                                    <option value="q4">Qtr 4</option>
+                                    <option value="quarter">Quarter</option>
                                     <option value="custom">Custom Range</option>
                                 </select>
                             </div>
                         </div>
+
+                        @if ($dateRange === 'quarter')
+                            <div class="md-3">
+                                <div class="mb-1 col-md-12">
+                                    <label class="form-label">Year</label>
+                                    <select wire:model="filterYear" class="form-control">
+                                        @foreach($years as $year)
+                                            <option value="{{ $year }}">{{ $year }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="md-3">
+                                <div class="mb-1 col-md-12">
+                                    <label class="form-label">Quarter</label>
+                                    <select wire:model="filterQuarter" class="form-control">
+                                        <option value="q1">Qtr 1</option>
+                                        <option value="q2">Qtr 2</option>
+                                        <option value="q3">Qtr 3</option>
+                                        <option value="q4">Qtr 4</option>
+                                    </select>
+                                </div>
+                            </div>
+                        @endif
 
                         @if ($dateRange === 'custom')
                             <div class="md-3">
@@ -129,6 +162,14 @@
                                     @endforeach
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <div class="btn-group float-right">
+                                {{ $grouped_stock->links('vendor.livewire.bootstrap') }}
+                            </div>
                         </div>
                     </div>
 
