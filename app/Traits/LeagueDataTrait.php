@@ -144,6 +144,7 @@ trait LeagueDataTrait
         }
 
         $cache_key = 'league_scores_' . md5(json_encode([
+            Auth::id(),
             $this->from_date,
             $this->to_date,
             $this->filter_region_id,
@@ -418,26 +419,23 @@ trait LeagueDataTrait
         $threeMonthsAgo = now()->subMonths(3);
 
         if ($rows instanceof Collection) {
-            return $rows->filter(function ($row) use ($threeMonthsAgo) {
-                $createdAt = data_get($row, 'created_at');
-
-                return $createdAt && Carbon::parse($createdAt)->greaterThanOrEqualTo($threeMonthsAgo);
-            })->values();
+            $leagueData = $rows;
+        } else {
+            // load raw data
+            $allScores = $this->loadAllScores();
+            $scoreRows = $this->transformScoresToRows($allScores);
+            $leagueData = $this->attachVisitMetaData($scoreRows);
         }
-        
-        // load raw data
-        $allScores = $this->loadAllScores();
-        $rows = $this->transformScoresToRows($allScores);
-        
+
         // filter last 3 months only
-        $last3Months = $rows->filter(function ($row) use ($threeMonthsAgo) {
-            return \Carbon\Carbon::parse($row['created_at'])->greaterThanOrEqualTo($threeMonthsAgo);
+        $last3Months = $leagueData->filter(function ($row) use ($threeMonthsAgo) {
+            $createdAt = data_get($row, 'created_at');
+
+            return $createdAt && Carbon::parse($createdAt)->greaterThanOrEqualTo($threeMonthsAgo);
         });
-        
-        $leagueData = $this->attachVisitMetaData($last3Months);
-        
+
         // group by district for dashboard trend
-        $district_grouped = $leagueData->groupBy('district');
+        $district_grouped = $last3Months->filter(fn ($row) => !empty(data_get($row, 'district')))->groupBy('district');
         
         return $district_grouped->map(function ($visits, $district) {
             
@@ -474,8 +472,19 @@ trait LeagueDataTrait
      * ---------------------------------------------------------
     */
     
-    public function getDistrictPerformance()
+    public function getDistrictPerformance($rows = null)
     {
+        if ($rows instanceof Collection) {
+            return $rows
+                ->filter(fn ($visit) => !empty(data_get($visit, 'district')))
+                ->groupBy('district')
+                ->map(function ($visits) {
+                    return round($visits->avg('total_thematic') / 25 * 100, 2);
+                })
+                ->sortKeys()
+                ->toArray();
+        }
+
         // Build cache key based on filters
         $cacheKey = 'district_performance_' . md5(json_encode([
             $this->from_date,
