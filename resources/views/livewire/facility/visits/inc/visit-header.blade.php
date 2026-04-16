@@ -1,4 +1,15 @@
     <style>
+        .basic-info-table {
+            table-layout: fixed;
+        }
+
+        .basic-info-table th {
+            width: 18%;
+        }
+
+        .basic-info-table td {
+            width: 32%;
+        }
 
         body {
             font-family: Arial, sans-serif;
@@ -35,7 +46,7 @@
     @if (isset($active_visit) && $active_visit)
         <div>
             <h4>Basic Information</h4>
-            <table>
+            <table class="basic-info-table">
                 <tr>
                     <th>Health Region</th>
                     <td>{{ $active_visit->facility->healthSubDistrict?->district->region?->name ?? 'N/A' }}</td>

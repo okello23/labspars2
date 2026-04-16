@@ -18,13 +18,14 @@
                        <td>
                         {{ checkYesNoNA($equipmentMgt?->inventory_log_available) }}
                        </td>
+                       <td></td>
                    </tr>
                    <tr>
                        <td>b) Did the facility submit the last order to the warehouse electronically?</td>
                        <td>
                         {{ checkYesNoNA($equipmentMgt?->inventory_log_updated) }}
                        </td>
-                       <td colspan="2">
+                       <td>
                         <p>{{ $equipmentMgt?->equipment_maintenance_comment }}</p>
                        </td>
                    </tr>
@@ -52,7 +53,7 @@
                        <td>
                         {{ checkYesNoNA($equipmentMgt?->service_info_available) }}
                        </td>
-                       {{-- <td><input type="text" name="comments_1"></td> --}}
+                       <td></td>
                    </tr>
                    <tr>
                        <td>2</td>
@@ -63,6 +64,7 @@
                         {{ checkYesNoNA($equipmentMgt?->equipment_serviced) }}
 
                        </td>
+                       <td></td>
                    </tr>
                    <tr>
                        <td>3</td>
@@ -70,6 +72,7 @@
                        <td>
                         {{ checkYesNoNA($equipmentMgt?->iqc_performed) }}
                        </td>
+                       <td></td>
                    </tr>
                    <tr>
                        <td>4</td>
@@ -78,9 +81,9 @@
                         {{ checkYesNoNA($equipmentMgt?->operator_manuals_available) }}
 
                        </td>
-                       <td rowspan="4">
+                       <td>
                         <p>{{ $equipmentMgt?->equipment_mgt_comments }}</p>
-                        </td>
+                       </td>
                    </tr>
                </tbody>
            </table>
@@ -172,7 +175,9 @@
                                </td>
                            </tr>
                        @empty
-                           <td colspan="9">No CD4 record entered</td>
+                           <tr>
+                               <td colspan="9">No CD4 record entered</td>
+                           </tr>
                        @endforelse
                        <!-- Repeat for Chemistry and Hematology Equipment -->
                    </tbody>
@@ -214,7 +219,9 @@
                                </td>
                            </tr>
                        @empty
-                           <td colspan="9">No Chemistry record entered</td>
+                           <tr>
+                               <td colspan="9">No Chemistry record entered</td>
+                           </tr>
                        @endforelse
                        <!-- Repeat for Chemistry and Hematology Equipment -->
                    </tbody>
@@ -255,7 +262,9 @@
                               </td>
                            </tr>
                        @empty
-                           <td colspan="9">No Heamatology record entered</td>
+                           <tr>
+                               <td colspan="9">No Heamatology record entered</td>
+                           </tr>
                        @endforelse
                        <!-- Repeat for Chemistry and Hematology Equipment -->
                    </tbody>

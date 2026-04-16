@@ -16,21 +16,21 @@
             <td>
                {{ checkYesNoNA($cleanliness?->lab_store_clean) }}
             </td>
-
+            <td></td>
         </tr>
         <tr>
             <td>The Main store is clean and tidy</td>
             <td>
                 {{ checkYesNoNA($cleanliness?->main_store_clean) }}
             </td>
+            <td></td>
         </tr>
         <tr>
             <td>The Laboratory is clean and tidy</td>
             <td>
                 {{ checkYesNoNA($cleanliness?->laboratory_clean) }}
             </td>
-            <td rowspan="3">
-                
+            <td>
                 {{ $cleanliness?->cleanliness_comments }}
             </td>
         </tr>
@@ -58,32 +58,35 @@
             <td>
                 {{ checkYesNoNA($hygiene?->running_water) }}
             </td>
+            <td></td>
         </tr>
         <tr>
             <td>Is the hand washing area separate from the staining area?</td>
             <td> 
                 {{ checkYesNoNA($hygiene?->hand_washing_separate) }}
             </td>
+            <td></td>
         </tr>
         <tr>
             <td>Is the hand washing facility accessible, hygienic, and functioning?</td>
             <td> 
                 {{ checkYesNoNA($hygiene?->hand_washing_facility) }}
             </td>
+            <td></td>
         </tr>
         <tr>
             <td>Is the drainage system of suitable standards?</td>
             <td> 
                 {{ checkYesNoNA($hygiene?->drainage_system) }}
-            </td>           
+            </td>
+            <td></td>
         </tr>
         <tr>
             <td>Is there soap for hand washing?</td>
             <td> 
                 {{ checkYesNoNA($hygiene?->soap_available) }}
             </td>
-
-            <td rowspan="4">
+            <td>
                 {{ $hygiene?->hygiene_comments }}
             </td>
         </tr>
@@ -116,7 +119,7 @@
             <td>
                 {{ checkYesNoNA($system?->lab_store_shelves) }}
             </td>
-
+            <td></td>
         </tr>
         <tr>
             <td>Are reagents stored on shelves or in cabinets?</td>
@@ -126,7 +129,7 @@
             <td>
                 {{ checkYesNoNA($system?->lab_store_reagents) }}
             </td>
-
+            <td></td>
         </tr>
         <tr>
             <td>Are stock cards kept next to the reagents on the shelves?</td>
@@ -136,7 +139,7 @@
             <td>
                 {{ checkYesNoNA($system?->lab_store_stock_cards) }}
             </td>
-
+            <td></td>
         </tr>
         <tr>
             <td>Are lab reagents stored systematically (alphabetic, usage form)?</td>
@@ -146,7 +149,7 @@
             <td>
                 {{ checkYesNoNA($system?->lab_store_systematic) }}
             </td>
-           
+            <td></td>
         </tr>
         <tr>
             <td>Are the shelves and cabinets labeled?</td>
@@ -156,7 +159,7 @@
             <td>
                 {{ checkYesNoNA($system?->lab_store_labeled) }}
             </td>
-            <td rowspan="5">
+            <td>
                 {{ $system?->storage_comments }}
             </td>
         </tr>
@@ -189,6 +192,7 @@
             <td>
                 {{ checkYesNoNA($condition?->lab_store_pests) }}
             </td>
+            <td></td>
         </tr>
         <tr>
             <td>Are supplies protected from direct sunlight?</td>
@@ -198,6 +202,7 @@
             <td>
                 {{ checkYesNoNA($condition?->lab_store_sunlight) }}
             </td>
+            <td></td>
         </tr>
         <tr>
             <td>Is the temperature of the storage room monitored?</td>
@@ -207,6 +212,7 @@
             <td>
                 {{ checkYesNoNA($condition?->lab_store_temperature) }}
             </td>
+            <td></td>
         </tr>
         <tr>
             <td>Is the storeroom lockable and access restricted to authorized personnel?</td>
@@ -216,7 +222,7 @@
             <td>
                 {{ checkYesNoNA($condition?->lab_store_lockable) }}
             </td>
-            <td rowspan="3">
+            <td>
                 {{ $condition?->condition_comments }}
             </td>
         </tr>

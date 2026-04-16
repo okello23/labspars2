@@ -28,7 +28,7 @@
                 <td>
                     {{ checkYesNoNA($ordering?->electronic_submission) }}
                 </td>
-                <td rowspan="4">
+                <td>
                     <p>{{ $ordering?->electronic_submission_comments }}</p>
                 </td>
             </tr>

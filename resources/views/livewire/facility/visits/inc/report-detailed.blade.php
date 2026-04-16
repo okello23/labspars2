@@ -117,7 +117,7 @@
                       </tr>
                   @empty
                       <tr>
-                          <td colspan="4" class="text-center">No Laboratory supplies ELSE stored in
+                          <td colspan="3" class="text-center">No Laboratory supplies ELSE stored in
                               the facility</td>
 
                       </tr>
@@ -157,7 +157,7 @@
                       </tr>
                   @empty
                       <tr>
-                          <td colspan="4" class="text-center">No stock cards kept in the facility
+                          <td colspan="3" class="text-center">No stock cards kept in the facility
                           </td>
 
                       </tr>
