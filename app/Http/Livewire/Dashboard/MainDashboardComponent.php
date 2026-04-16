@@ -8,6 +8,8 @@ use App\Models\Facility\FacilityVisit;
 use App\Models\Facility\Visits\FvStockManagement;
 use App\Models\Settings\Region;
 use Carbon\Carbon;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -17,6 +19,8 @@ class MainDashboardComponent extends Component
     use WithPagination;
     use LeagueDataTrait;
 
+    protected $paginationTheme = 'bootstrap';
+
     public $perPage          = 10;
     public $search           = '';
     public $orderBy          = 'id';
@@ -24,6 +28,8 @@ class MainDashboardComponent extends Component
     public $selectedRegion   = null;
     public $selectedDistrict = null;
     public $dateRange        = 'all';
+    public $filterYear;
+    public $filterQuarter;
     public $customStartDate  = null;
     public $customEndDate    = null;
 
@@ -41,6 +47,11 @@ class MainDashboardComponent extends Component
     public $facilityStats     = [];
     public $trend_data = [];
     public $district_performance = [];
+    public $dashboardTab = 'overview';
+    public $incompleteEntrySummary = [];
+    public $incompleteEntryChart = [];
+    protected $incompleteEntryRows;
+    public $quarterNotice;
 
     public $type;
 
@@ -75,9 +86,12 @@ public $scoreSets = [
     protected $queryString = [
         'search'           => ['except' => ''],
         'dateRange'        => ['except' => 'all'],
+        'filterYear'       => ['except' => null],
+        'filterQuarter'    => ['except' => null],
         'selectedRegion'   => ['except' => null],
         'selectedDistrict' => ['except' => null],
         'type'             => ['except' => null],
+        'dashboardTab'     => ['except' => 'overview'],
     ];
 
     private function randomColor($index)
@@ -1918,6 +1932,13 @@ public function getSpiderGraphData(): array
 
     public function mount()
     {
+        $this->dateRange = in_array($this->dateRange, ['all', 'quarter', 'custom'], true) ? $this->dateRange : 'all';
+
+        if ($this->dateRange === 'quarter') {
+            $this->normalizeQuarterFilters();
+        }
+
+        $this->updateQuarterNotice();
         $this->loadDashboardData();
     }
     public function refresh()
@@ -1953,14 +1974,10 @@ public function getSpiderGraphData(): array
 
         // Apply date filters
         switch ($this->dateRange) {
-            case 'today':
-                $data->whereDate('date_of_visit', Carbon::today());
-                break;
-            case 'week':
-                $data->whereBetween('date_of_visit', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
-                break;
-            case 'month':
-                $data->whereBetween('date_of_visit', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()]);
+            case 'quarter':
+                $this->normalizeQuarterFilters();
+                [$startDate, $endDate] = $this->resolveQuarterDates($this->filterQuarter, (int) $this->filterYear);
+                $data->whereBetween('date_of_visit', [$startDate, $endDate]);
                 break;
             case 'custom':
                 if ($this->customStartDate && $this->customEndDate) {
@@ -1972,9 +1989,104 @@ public function getSpiderGraphData(): array
         // Region and District filters
 
     }
+
+    private function getCurrentQuarterKey(): string
+    {
+        return 'q' . Carbon::now()->quarter;
+    }
+
+    private function getLatestAvailableVisitDate(): Carbon
+    {
+        $user = auth()->user();
+
+        $query = FacilityVisit::query();
+
+        if ($user && $user->category === 'Institution' && !$this->selectedRegion && !$this->selectedDistrict) {
+            $query->whereHas('facility', function ($q) use ($user) {
+                $q->where('facility_id', $user->facility_id);
+            });
+        }
+
+        if ($this->selectedRegion) {
+            $query->whereHas('facility.healthSubDistrict.district', function ($q) {
+                $q->where('region_id', $this->selectedRegion);
+            });
+        }
+
+        if ($this->selectedDistrict) {
+            $query->whereHas('facility.healthSubDistrict', function ($q) {
+                $q->where('district_id', $this->selectedDistrict);
+            });
+        }
+
+        $latestVisitDate = $query->max('date_of_visit');
+
+        return $latestVisitDate ? Carbon::parse($latestVisitDate) : Carbon::now();
+    }
+
+    private function normalizeQuarterFilters(): void
+    {
+        $fallbackDate = $this->getLatestAvailableVisitDate();
+
+        $this->filterYear = $this->filterYear
+            ? (int) $this->filterYear
+            : $fallbackDate->year;
+
+        $quarterKey = is_string($this->filterQuarter) ? strtolower(trim($this->filterQuarter)) : '';
+        $this->filterQuarter = in_array($quarterKey, ['q1', 'q2', 'q3', 'q4'], true)
+            ? $quarterKey
+            : 'q' . $fallbackDate->quarter;
+    }
+
+    private function resolveQuarterDates(string $quarterKey, int $year): array
+    {
+        $quarter = (int) str_replace('q', '', strtolower($quarterKey));
+        $startMonth = (($quarter - 1) * 3) + 1;
+
+        $startDate = Carbon::create($year, $startMonth, 1)->startOfDay();
+        $endDate = (clone $startDate)->addMonths(2)->endOfMonth()->endOfDay();
+
+        return [$startDate, $endDate];
+    }
+
+    private function updateQuarterNotice(): void
+    {
+        if ($this->dateRange !== 'quarter') {
+            $this->quarterNotice = null;
+
+            return;
+        }
+
+        $this->normalizeQuarterFilters();
+        $this->quarterNotice = 'Data loaded is for ' . strtoupper($this->filterQuarter) . ' ' . $this->filterYear . '. To view other periods, use the filters.';
+    }
+
+    private function buildFilteredLeagueData(): Collection
+    {
+        $visitIds = $this->query()->pluck('facility_visits.id');
+
+        if ($visitIds->isEmpty()) {
+            return collect();
+        }
+
+        $allScores = collect()
+            ->merge($this->stockMgtScores())
+            ->merge($this->fvTotalStorageScore())
+            ->merge($this->fvTotalOrderMgtScore())
+            ->merge($this->getCombinedEquipmentScores())
+            ->merge($this->fvLisTotalScorePerVisit());
+
+        $scoreRows = $this->transformScoresToRows($allScores)
+            ->filter(fn ($row) => $visitIds->contains((int) data_get($row, 'visit_id')))
+            ->values();
+
+        return $this->attachVisitMetaData($scoreRows);
+    }
     
     public function loadDashboardData()
     {
+        $filteredLeagueData = $this->buildFilteredLeagueData();
+
         // Basic Statistics
         $this->totalVisits     = $this->query()->count();
         $this->pendingVisits   = $this->query()->where('status', 'Pending')->count();
@@ -2021,30 +2133,210 @@ public function getSpiderGraphData(): array
         $this->facilityStats = [
             'total'   => Facility::count(),
             'visited' => $this->query()->distinct('facility_id')->count('facility_id'),
-            'visited_by_level' => $this->query()->distinct('facility_id')->groupBy('facilities.level'),
             'active'  => Facility::where('is_active', true)->count(),
         ];
         
         // Trend Data
-        $this->trend_data = $this->getBaselineCurrentTrendLast3Months()->toArray();
+        $this->trend_data = $this->getBaselineCurrentTrendLast3Months($filteredLeagueData)->values()->toArray();
 
-        $this->district_performance = $this->getDistrictPerformance();     
+        $this->district_performance = $this->getDistrictPerformance($filteredLeagueData);
+        $this->loadIncompleteEntryStats();
+
+        $this->dispatchBrowserEvent('dashboard-data-updated', [
+            'regionWiseStats' => $this->regionWiseStats->map(fn ($row) => [
+                'regionName' => $row->regionName,
+                'visits' => (int) $row->visits,
+            ])->values()->all(),
+            'trendData' => $this->trend_data,
+            'districtPerformance' => $this->district_performance,
+        ]);
+    }
+
+    private function loadIncompleteEntryStats(): void
+    {
+        $baseQuery = $this->query()
+            ->whereNotNull('created_by')
+            ->with(['facility.healthSubDistrict.district.region', 'createdBy']);
+
+        $incompleteVisits = (clone $baseQuery)
+            ->where('status', 'Pending')
+            ->orderByDesc('date_of_visit')
+            ->get();
+
+        $affectedUserIds = $incompleteVisits->pluck('created_by')->filter()->unique()->values();
+
+        if ($affectedUserIds->isEmpty()) {
+            $this->incompleteEntryRows = $this->paginateIncompleteEntries(collect());
+            $this->incompleteEntrySummary = [
+                'users' => 0,
+                'total_entries' => 0,
+                'completed_entries' => 0,
+                'incomplete_entries' => 0,
+            ];
+            $this->incompleteEntryChart = [
+                'labels' => [],
+                'complete' => [],
+                'incomplete' => [],
+            ];
+
+            return;
+        }
+
+        $userTotals = (clone $baseQuery)
+            ->whereIn('created_by', $affectedUserIds)
+            ->select(
+                'created_by',
+                DB::raw('COUNT(*) as total_entries'),
+                DB::raw("SUM(CASE WHEN status = 'Submitted' THEN 1 ELSE 0 END) as completed_entries"),
+                DB::raw("SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) as incomplete_entries")
+            )
+            ->groupBy('created_by')
+            ->get()
+            ->keyBy('created_by');
+
+        $rows = $incompleteVisits->map(function ($visit) use ($userTotals) {
+            $totals = $userTotals->get($visit->created_by);
+
+            return (object) [
+                'user_name' => $visit->createdBy?->fullName ?? $visit->createdBy?->name ?? 'Unknown User',
+                'email' => $visit->createdBy?->email,
+                'facility_name' => $visit->facility?->name ?? 'N/A',
+                'district_name' => $visit->facility?->healthSubDistrict?->district?->name ?? 'N/A',
+                'visit_number' => $visit->visit_number,
+                'visit_code' => $visit->visit_code ?? null,
+                'date_of_visit' => $this->formatVisitDate($visit->date_of_visit),
+                'status' => $visit->status,
+                'total_entries' => (int) ($totals->total_entries ?? 0),
+                'completed_entries' => (int) ($totals->completed_entries ?? 0),
+                'incomplete_entries' => (int) ($totals->incomplete_entries ?? 0),
+            ];
+        });
+
+        $summaryRows = $userTotals->sortByDesc('incomplete_entries')->values();
+
+        $this->incompleteEntrySummary = [
+            'users' => $summaryRows->count(),
+            'total_entries' => (int) $summaryRows->sum('total_entries'),
+            'completed_entries' => (int) $summaryRows->sum('completed_entries'),
+            'incomplete_entries' => (int) $summaryRows->sum('incomplete_entries'),
+        ];
+
+        $topUsers = $summaryRows->take(8)->map(function ($row) use ($incompleteVisits) {
+            $userName = optional($incompleteVisits->firstWhere('created_by', $row->created_by)?->createdBy)->fullName
+                ?? optional($incompleteVisits->firstWhere('created_by', $row->created_by)?->createdBy)->name
+                ?? 'Unknown User';
+
+            return [
+                'label' => $userName,
+                'complete' => (int) $row->completed_entries,
+                'incomplete' => (int) $row->incomplete_entries,
+            ];
+        });
+
+        $this->incompleteEntryChart = [
+            'labels' => $topUsers->pluck('label')->values()->all(),
+            'complete' => $topUsers->pluck('complete')->values()->all(),
+            'incomplete' => $topUsers->pluck('incomplete')->values()->all(),
+        ];
+
+        $this->incompleteEntryRows = $this->paginateIncompleteEntries($rows);
+    }
+
+    private function formatVisitDate($date): string
+    {
+        if (blank($date)) {
+            return 'N/A';
+        }
+
+        try {
+            return Carbon::parse($date)->format('d M Y');
+        } catch (\Throwable $exception) {
+            return (string) $date;
+        }
+    }
+
+    private function resetIncompleteEntryPagination(): void
+    {
+        // The follow-up table uses URL-based pagination instead of Livewire hydration.
+    }
+
+    private function paginateIncompleteEntries($items): LengthAwarePaginator
+    {
+        $page = (int) request()->query('incomplete_entries_page', 1);
+        $collection = collect($items)->values();
+
+        return new LengthAwarePaginator(
+            $collection->forPage($page, $this->perPage)->values(),
+            $collection->count(),
+            (int) $this->perPage,
+            $page,
+            [
+                'path' => route('home'),
+                'query' => request()->query(),
+                'pageName' => 'incomplete_entries_page',
+            ]
+        );
     }
 
     public function updatedDateRange()
     {
+        $this->resetIncompleteEntryPagination();
+        $this->updateQuarterNotice();
         $this->loadDashboardData();
     }
 
     public function updatedSelectedRegion()
     {
         $this->selectedDistrict = null;
+        $this->resetIncompleteEntryPagination();
         $this->loadDashboardData();
     }
 
     public function updatedSelectedDistrict()
     {
+        $this->resetIncompleteEntryPagination();
         $this->loadDashboardData();
+    }
+
+    public function updatedFilterYear()
+    {
+        $this->resetIncompleteEntryPagination();
+        $this->updateQuarterNotice();
+        $this->loadDashboardData();
+    }
+
+    public function updatedFilterQuarter()
+    {
+        $this->resetIncompleteEntryPagination();
+        $this->updateQuarterNotice();
+        $this->loadDashboardData();
+    }
+
+    public function updatedDashboardTab()
+    {
+        $this->resetIncompleteEntryPagination();
+    }
+
+    public function updatedPerPage()
+    {
+        $this->resetPage();
+        $this->loadDashboardData();
+    }
+
+    public function updatedCustomStartDate()
+    {
+        if ($this->dateRange === 'custom') {
+            $this->resetIncompleteEntryPagination();
+            $this->loadDashboardData();
+        }
+    }
+
+    public function updatedCustomEndDate()
+    {
+        if ($this->dateRange === 'custom') {
+            $this->resetIncompleteEntryPagination();
+            $this->loadDashboardData();
+        }
     }
     
     public function render()
@@ -2073,6 +2365,8 @@ public function getSpiderGraphData(): array
         return view('livewire.dashboard.main-dashboard-component', [
             'regions'   => $regions,
             'districts' => $districts,
+            'years' => range(Carbon::now()->year, Carbon::now()->year - 5),
+            'incompleteEntryRows' => $this->incompleteEntryRows ?? $this->paginateIncompleteEntries(collect()),
         ]);
     }
 }
