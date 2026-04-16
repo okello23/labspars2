@@ -73,7 +73,7 @@
             <td>1</td>
             <td>Does the laboratory keep copies of the Laboratory HMIS 105 Health Unit Outpatient Monthly Report Section
                 10 pages 26 & 27?</td>
-                <td>
+            <td>
                 {{ checkYesNoNA($limsData?->hmis_105_outpatient_report) }}
                 <!-- <select class="form-control" id="hmis_105_outpatient_report" wire:model='hmis_105_outpatient_report'>
                     <option value="">Select</option>
@@ -81,6 +81,7 @@
                     <option value="0">No</option>
                 </select> -->
             </td>
+            <td></td>
         </tr>
         <tr>
             <td>2</td>
@@ -94,7 +95,7 @@
                     <option value="0">No</option>
                 </select> -->
             </td>
-            <td rowspan="2">
+            <td>
                 {{ $limsData?->lis_availability_comments }}
                 <!-- <textarea class="form-control" wire:model="lis_availability_comments"> </textarea> -->
             </td>

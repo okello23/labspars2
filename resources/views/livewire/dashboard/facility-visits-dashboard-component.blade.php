@@ -1,6 +1,44 @@
 <div>
+    @php
+        $isPdfExport = $isPdfExport ?? false;
+        $lisTotal = ($lis_mgt['availability_and_use_of_data_tool'] ?? 0)
+            + ($lis_mgt['availability_of_hmis_reports'] ?? 0)
+            + ($lis_mgt['timeliness_of_hmis_reports'] ?? 0)
+            + ($lis_mgt['completeness_and_accuracy_of_hmis105_report'] ?? 0)
+            + ($lis_mgt['lab_data_use'] ?? 0)
+            + ($lis_mgt['report_filing'] ?? 0);
+        $stockSpiderScore = round((collect($stock_management)->avg() ?? 0) * 5, 2);
+        $storageSpiderScore = round((collect($storage_management)->avg() ?? 0), 2);
+        $orderingSpiderScore = round((collect($ordering_management)->avg() ?? 0), 2);
+        $equipmentSpiderScore = round((collect($equipment_management)->avg() * 5 ?? 0), 2);
+        $lisSpiderScore = round(($lisTotal / 6) * 5, 2);
+        $spiderValues = [
+            'Stock Management' => $stockSpiderScore,
+            'Storage' => $storageSpiderScore,
+            'Ordering' => $orderingSpiderScore,
+            'Equipment' => $equipmentSpiderScore,
+            'LIS' => $lisSpiderScore,
+        ];
+        $spiderChartSize = 460;
+        $spiderChartCenter = $spiderChartSize / 2;
+        $spiderChartRadius = 150;
+        $spiderSteps = 5;
+        $spiderAxisCount = count($spiderValues);
+        $spiderPoints = [];
+
+        foreach (array_values($spiderValues) as $index => $value) {
+            $angle = deg2rad(-90 + (($index * 360) / max($spiderAxisCount, 1)));
+            $distance = $spiderChartRadius * (max(min($value, 5), 0) / 5);
+            $spiderPoints[] = round($spiderChartCenter + cos($angle) * $distance, 2) . ',' . round($spiderChartCenter + sin($angle) * $distance, 2);
+        }
+    @endphp
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        @if ($isPdfExport)
+        @page {
+            margin: 18px 16px;
+        }
+        @endif
         body {
             font-family: 'Roboto', sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
@@ -78,6 +116,42 @@
             margin-bottom: 20px;
             color: #1a5276;
         }
+        .spider-chart-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            overflow: hidden;
+        }
+        .basic-info-table {
+            table-layout: fixed;
+        }
+        .basic-info-table th {
+            width: 18%;
+        }
+        .basic-info-table td {
+            width: 32%;
+        }
+        .spider-graph-card {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+        .spider-svg {
+            max-width: 100%;
+            height: auto;
+        }
+        .score-summary-table thead td,
+        .score-summary-table thead th {
+            font-weight: 600;
+        }
+        .action-links {
+            margin-top: 12px;
+        }
+        .action-links a {
+            display: inline-block;
+            margin: 0 6px;
+            text-decoration: none;
+        }
         .key-assessment {
             background: linear-gradient(to right, #1a5276, #2874a6);
             color: white;
@@ -94,6 +168,97 @@
             font-size: 14px;
             border-top: 1px solid #ecf0f1;
         }
+        @if ($isPdfExport)
+        body {
+            background: #ffffff;
+            padding: 0;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+        .container {
+            max-width: 100%;
+            box-shadow: none;
+            border-radius: 0;
+            overflow: visible;
+        }
+        header,
+        .section-title,
+        .category-header,
+        .total-row,
+        .spider-row,
+        .key-assessment {
+            background: #ffffff !important;
+            color: #2c3e50 !important;
+        }
+        .content-wrapper {
+            display: block;
+            padding: 8px;
+        }
+        table {
+            table-layout: fixed;
+            box-shadow: none;
+            margin-bottom: 18px;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+        thead {
+            display: table-header-group;
+        }
+        tbody {
+            display: table-row-group;
+        }
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+        th,
+        td {
+            padding: 5px 6px;
+            font-size: 10px;
+            line-height: 1.3;
+            word-wrap: break-word;
+            overflow-wrap: anywhere;
+            vertical-align: top;
+        }
+        h1, h2, h3, h4, h5 {
+            margin-bottom: 6px;
+            page-break-after: avoid;
+            break-after: avoid;
+        }
+        .header h4 {
+            font-size: 16px;
+        }
+        .card,
+        .card-body,
+        .card-body > div,
+        .score-summary-table,
+        .spider-graph-card {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+        p,
+        label,
+        small {
+            font-size: 10px;
+        }
+        .spider-chart-container {
+            padding-top: 10px;
+        }
+        .spider-svg,
+        .spider-image {
+            max-width: 620px;
+        }
+        .action-links {
+            margin-top: 8px;
+        }
+        .action-links a {
+            font-size: 11px;
+        }
+        .basic-info-table th,
+        .basic-info-table td {
+            font-size: 10px;
+        }
+        @endif
         @media (max-width: 768px) {
             .content-wrapper { flex-direction: column; }
             .indicators-section, .spider-section { width: 100%; }
@@ -152,7 +317,7 @@
                     </tr>
                     <tr class="spider-row">
                         <td colspan="3">
-                            <strong>Spider Graph Score (TOTAL1/6‐NA) x 5 = {{ round((collect($stock_management)->avg() ?? 0) * 5, 2) }}</strong>
+                            <strong>Spider Graph Score (TOTAL1/6‐NA) x 5 = {{ $stockSpiderScore }}</strong>
                         </td>
                     </tr>
 
@@ -178,7 +343,7 @@
                     </tr>
                     <tr class="spider-row">
                         <td colspan="3">
-                            <strong>Spider Graph Score (TOTAL2/5‐NA) x 5 = {{ round((collect($storage_management)->avg() ?? 0), 2) }}</strong>
+                            <strong>Spider Graph Score (TOTAL2/5‐NA) x 5 = {{ $storageSpiderScore }}</strong>
                         </td>
                     </tr>
 
@@ -201,7 +366,7 @@
                         <td>{{ round((collect($ordering_management)->avg() ?? 0) * 20, 2) . '%' }}</td>
                     </tr>
                     <tr class="spider-row">
-                        <td colspan="3"><strong>Spider Graph Score (TOTAL3/3‐NA) x 5 = {{ round((collect($ordering_management)->avg() ?? 0), 2) }} </strong></td>
+                        <td colspan="3"><strong>Spider Graph Score (TOTAL3/3‐NA) x 5 = {{ $orderingSpiderScore }} </strong></td>
                     </tr>
 
                     {{-- Laboratory Equipment --}}
@@ -224,7 +389,7 @@
                         <td>{{ round((collect($equipment_management)->avg() ?? 0)*5 * 20, 2) . '%' }}</td>
                     </tr>
                     <tr class="spider-row">
-                        <td colspan="3"><strong>Spider Graph Score (TOTAL4/4‐NA) x 5 = {{ round((collect($equipment_management)->avg()*5 ?? 0), 2) }}  </strong></td>
+                        <td colspan="3"><strong>Spider Graph Score (TOTAL4/4‐NA) x 5 = {{ $equipmentSpiderScore }}  </strong></td>
                     </tr>
 
                     {{-- Laboratory Information systems --}}
@@ -243,33 +408,24 @@
                         <td>{{ isset($lis_mgt[$key]) ? $lis_mgt[$key]*5 * 20 . '%' : '' }}</td>
                     </tr>
                     @endforeach
-                    @php
-                        $lis_total = 
-                            ($lis_mgt['availability_and_use_of_data_tool'] ?? 0) +
-                            ($lis_mgt['availability_of_hmis_reports'] ?? 0) +
-                            ($lis_mgt['timeliness_of_hmis_reports'] ?? 0) +
-                            ($lis_mgt['completeness_and_accuracy_of_hmis105_report'] ?? 0) +
-                            ($lis_mgt['lab_data_use'] ?? 0) +
-                            ($lis_mgt['report_filing'] ?? 0);
-                    @endphp
                     <tr class="total-row">
                         <td><strong>TOTAL (Add 20-25)</strong></td>
-                        <td>{{ $lis_total }}</td>
-                        <td>{{ round($lis_total/6 * 100, 2) . '%' }}</td>
+                        <td>{{ $lisTotal }}</td>
+                        <td>{{ round($lisTotal / 6 * 100, 2) . '%' }}</td>
                     </tr>
                     <tr class="spider-row">
                         <td colspan="3">
                             <strong>
-                                Spider Graph Score (TOTAL/6) x 5 = {{ round(safe_div($lis_total, 6) * 5, 2) }}
+                                Spider Graph Score (TOTAL/6) x 5 = {{ $lisSpiderScore }}
                             </strong>
                         </td>
                     </tr>
                 </tbody>
             </table>
 
-            <table border="1" cellspacing="0" cellpadding="6" style="border-collapse: collapse; width: 100%; text-align: center;">
+            <table class="score-summary-table" border="1" cellspacing="0" cellpadding="6" style="border-collapse: collapse; width: 100%; text-align: center;">
     <thead>
-         <tr class="category-header"><td colspan="4">Thematic Areas Score Summary</td></tr>
+         <tr class="category-header"><th colspan="4">Thematic Areas Score Summary</th></tr>
         <tr>
             <th>Assessment area</th>
             <th>Maximum score (minus-NA)</th>
@@ -282,42 +438,42 @@
             <td style="text-align: left;">Stock Management</td>
             <td>6</td>
             <td>{{ round(collect($stock_management)->sum()/6,2) }}</td>
-            <td>{{ round((collect($stock_management)->sum()/6)*5 ,2) }}</td>
+            <td>{{ $stockSpiderScore }}</td>
         </tr>
         <tr>
             <td style="text-align: left;">Storage Areas &amp; Lab Facilities Management</td>
             <td>5</td>
             <td>{{ round(safe_div(collect($storage_management)->sum(), 5)/5,2) }}</td>
-            <td>{{ round((collect($storage_management)->avg() ?? 0), 2) }} </td>
+            <td>{{ $storageSpiderScore }} </td>
         </tr>
         <tr>
             <td style="text-align: left;">Ordering</td>
             <td>3</td>
             <td>{{ safe_div(round(collect($ordering_management)->sum()/3), 5) }}</td>
-            <td>{{ round((collect($ordering_management)->avg() ?? 0), 2) }} </td>
+            <td>{{ $orderingSpiderScore }} </td>
             
         </tr>
         <tr>
             <td style="text-align: left;">Laboratory Equipment</td>
             <td>4</td>
             <td> {{ round(collect($equipment_management)->sum()/2,2) }} </td>
-            <td> {{ round((collect($equipment_management)->avg()*5 ?? 0), 2) }}  </td>
+            <td> {{ $equipmentSpiderScore }}  </td>
         </tr>
         <tr>
             <td style="text-align: left;">Laboratory Information systems</td>
             <td>6</td>
-            <td>{{ round($lis_total/6,3) }}</td>
-            <td>{{ round(safe_div($lis_total, 6) * 5, 2) }} </td>
+            <td>{{ round($lisTotal / 6, 3) }}</td>
+            <td>{{ $lisSpiderScore }} </td>
         </tr>
         <tr class="spider-row">
             <td colspan="3" style="text-align: left; font-weight: bold;">Total Spider Graph Score (Max score is 25)</td>
             @php
                 $spider_total = 
-                    round(safe_div($lis_total, 6) * 5, 2) +
-                    round((collect($equipment_management)->avg() * 5 ?? 0), 2) +
-                    round((collect($ordering_management)->avg() ?? 0), 2) +
-                    round((collect($storage_management)->avg() ?? 0), 2) +
-                    round((collect($stock_management)->avg() ?? 0) * 5, 2);
+                    $lisSpiderScore +
+                    $equipmentSpiderScore +
+                    $orderingSpiderScore +
+                    $storageSpiderScore +
+                    $stockSpiderScore;
             @endphp
             <td>{{ $spider_total }}</td>
         </tr>
@@ -325,17 +481,60 @@
 </table>
 
 
-            <div class="row" wire:ignore>
+            <div class="row">
                 <div class="col-lg-6 col-md-6">
-                    <div class="card">
+                    <div class="card spider-graph-card">
                         <div class="header"><h4>Spider Graph</h4></div>
                         <div class="body">
-                           <div class="spider-chart-container">
-    <canvas id="spiderChart" width="700" height="700"></canvas>
-    {{-- This hidden image is what DomPDF will actually capture --}}
-    <img id="spiderChartImage" style="display:none; max-width:100%; height:auto;" />
-</div>
+                            <div class="spider-chart-container">
+                                @if ($isPdfExport && !empty($spiderGraphImage))
+                                    <img class="spider-image" src="{{ $spiderGraphImage }}" alt="Facility visit spider graph" />
+                                @else
+                                <svg class="spider-svg" viewBox="0 0 {{ $spiderChartSize }} {{ $spiderChartSize }}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Facility visit spider graph">
+                                    @for ($step = 1; $step <= $spiderSteps; $step++)
+                                        @php
+                                            $ringPoints = [];
+                                            $ringRadius = ($spiderChartRadius / $spiderSteps) * $step;
+                                        @endphp
+                                        @foreach (array_values($spiderValues) as $index => $value)
+                                            @php
+                                                $ringAngle = deg2rad(-90 + (($index * 360) / max($spiderAxisCount, 1)));
+                                                $ringPoints[] = round($spiderChartCenter + cos($ringAngle) * $ringRadius, 2) . ',' . round($spiderChartCenter + sin($ringAngle) * $ringRadius, 2);
+                                            @endphp
+                                        @endforeach
+                                        <polygon points="{{ implode(' ', $ringPoints) }}" fill="none" stroke="#d8dee9" stroke-width="1"/>
+                                    @endfor
 
+                                    @foreach (array_keys($spiderValues) as $index => $label)
+                                        @php
+                                            $axisAngle = deg2rad(-90 + (($index * 360) / max($spiderAxisCount, 1)));
+                                            $axisX = round($spiderChartCenter + cos($axisAngle) * $spiderChartRadius, 2);
+                                            $axisY = round($spiderChartCenter + sin($axisAngle) * $spiderChartRadius, 2);
+                                            $labelX = round($spiderChartCenter + cos($axisAngle) * ($spiderChartRadius + 38), 2);
+                                            $labelY = round($spiderChartCenter + sin($axisAngle) * ($spiderChartRadius + 22), 2);
+                                        @endphp
+                                        <line x1="{{ $spiderChartCenter }}" y1="{{ $spiderChartCenter }}" x2="{{ $axisX }}" y2="{{ $axisY }}" stroke="#c2cad6" stroke-width="1"/>
+                                        <text x="{{ $labelX }}" y="{{ $labelY }}" font-size="13" font-weight="600" fill="#24435b" text-anchor="middle">{{ $label }}</text>
+                                    @endforeach
+
+                                    <polygon points="{{ implode(' ', $spiderPoints) }}" fill="#2874a6" fill-opacity="0.20" stroke="#2874a6" stroke-width="3"/>
+
+                                    @foreach (array_values($spiderValues) as $index => $value)
+                                        @php
+                                            $pointAngle = deg2rad(-90 + (($index * 360) / max($spiderAxisCount, 1)));
+                                            $pointRadius = $spiderChartRadius * (max(min($value, 5), 0) / 5);
+                                            $pointX = round($spiderChartCenter + cos($pointAngle) * $pointRadius, 2);
+                                            $pointY = round($spiderChartCenter + sin($pointAngle) * $pointRadius, 2);
+                                        @endphp
+                                        <circle cx="{{ $pointX }}" cy="{{ $pointY }}" r="5" fill="#1a5276" stroke="#ffffff" stroke-width="2"/>
+                                    @endforeach
+
+                                    @for ($tick = 1; $tick <= $spiderSteps; $tick++)
+                                        <text x="{{ $spiderChartCenter + 8 }}" y="{{ $spiderChartCenter - (($spiderChartRadius / $spiderSteps) * $tick) + 5 }}" font-size="11" fill="#5c6b7a">{{ $tick }}</text>
+                                    @endfor
+                                </svg>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -348,94 +547,14 @@
             <small>
                 Printed By: {{ Auth::user()->name ?? 'Unknown User' }} Printed on {{ now()->format('Y-m-d H:i:s') }}
             </small>
-            <a target="_blank" href="{{ route('facility-visit_print', $active_visit->visit_code) }}"
-                class="btn btn-sm btn-info fa fa-print">Print Form</a>
+            @if (! $isPdfExport)
+            <div class="action-links">
+                <a target="_blank" href="{{ route('facility-visit_print', $active_visit->visit_code) }}"
+                    class="btn btn-sm btn-info fa fa-print"> Print Form</a>
+                <a target="_blank" href="{{ route('facility-visit_print', ['code' => $active_visit->visit_code, 'download' => 1]) }}"
+                    class="btn btn-sm btn-success fa fa-download"> Download PDF</a>
+            </div>
+            @endif
         </footer>
     </div>
-
-    @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const spiderScores = [
-            {{ round((collect($stock_management)->avg() ?? 0) * 5, 2) }},
-            {{ round((collect($storage_management)->avg() ?? 0), 2) }},
-            {{ round((collect($ordering_management)->avg() ?? 0), 2) }},
-            {{ round((collect($equipment_management)->avg()*5 ?? 0), 2) }},
-            {{ round(safe_div($lis_total, 6) * 5, 2) }}
-        ];
-        const labels = [
-            'Stock management',
-            'Storage',
-            'Ordering',
-            'Equipment',
-            'LIS'
-        ];
-        const ctx = document.getElementById('spiderChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'radar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Score',
-                    data: spiderScores,
-                    backgroundColor: 'rgba(40, 116, 166, 0.2)',
-                    borderColor: '#2874a6',
-                    pointBackgroundColor: '#1a5276',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: '#2874a6'
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false },
-                    title: { display: false }
-                },
-                scales: {
-                    r: {
-                        angleLines: { display: true },
-                        suggestedMin: 0,
-                        suggestedMax: 5,
-                        pointLabels: { font: { size: 10 } },
-                        ticks: { stepSize: 1, color: '#2c3e50' }
-                    }
-                }
-            }
-        });
-    });
-    let ctx = document.getElementById('spiderChart').getContext('2d');
-let spiderChart = new Chart(ctx, {
-    type: 'radar',
-    data: chartData,
-    options: { 
-        responsive: true,
-        plugins: { legend: { display: true } }
-    }
-});
-
-// wait until chart is rendered → then convert into Base64 <img>
-spiderChart.on('render', () => {
-    let base64Image = spiderChart.toBase64Image();
-    let imgEl = document.getElementById('spiderChartImage');
-    imgEl.src = base64Image;
-    imgEl.style.display = 'block';
-    document.getElementById('spiderChart').style.display = 'none';
-});
-
-// fallback in case "render" doesn’t fire
-setTimeout(() => {
-    if (document.getElementById('spiderChart').style.display !== 'none') {
-        let base64Image = spiderChart.toBase64Image();
-        let imgEl = document.getElementById('spiderChartImage');
-        imgEl.src = base64Image;
-        imgEl.style.display = 'block';
-        document.getElementById('spiderChart').style.display = 'none';
-    }
-}, 1000);
-
-
-    </script>
-    @endpush
 </div>

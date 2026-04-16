@@ -94,6 +94,10 @@
                                                     class="action-ico btn btn-sm btn-info mx-1" >
                                                     <i class="fa fa-eye"></i>
                                                 </a>
+                                                <a href="{{ route('facility-visit_print', ['code' => $facilityvisit->visit_code, 'download' => 1]) }}"
+                                                    class="action-ico btn btn-sm btn-warning mx-1" target="_blank">
+                                                    <i class="fa fa-download"></i>
+                                                </a>
                                                 <a href="{{ URL::signedRoute('facility-visit_details', $facilityvisit->visit_code) }}"
                                                     class="action-ico btn btn-sm btn-success mx-1" >
                                                     <i class="fa fa-edit"></i>
