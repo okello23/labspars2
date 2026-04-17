@@ -1831,7 +1831,7 @@ private function getFacilityNamesByVisit(): array
     // Retrieve visit data with facility names and created_at for ordering
     $visits = DB::table('facility_visits as visits')
         ->join('facilities', 'visits.facility_id', '=', 'facilities.id')
-        ->select('visits.id as visit_id', 'facilities.name as facility_name','facilities.level', 'visits.date_of_visit')
+        ->select('visits.id as visit_id', 'facilities.name as facility_name','facilities.level as facility_level', 'visits.date_of_visit')
         ->orderBy('facilities.name')
         ->orderBy('visits.created_at') // or use id if that's the visit sequence
         ->get();
@@ -1840,7 +1840,7 @@ private function getFacilityNamesByVisit(): array
     $labels = [];
 
     foreach ($visits as $visit) {
-        $facilityName = $visit->facility_name;
+        $facilityName = $visit->facility_name . ' '. $visit->facility_level;
         $visitId = $visit->visit_id;
 
         // Track visit count
@@ -2109,6 +2109,7 @@ public function getSpiderGraphData(): array
                         return [
                             'facility_id' => $latestVisit->facility_id,
                             'facility_name' => data_get($latestVisit, 'facility.name', 'Unknown Facility'),
+                            'facility_level' => data_get($latestVisit, 'facility.level', 'Unknown Level'),
                             'visit_id' => $latestVisit->visit_id,
                             'visit_code' => $latestVisit->visit_code,
                             'date_of_visit' => $latestVisit->date_of_visit,
