@@ -58,10 +58,10 @@
     <div class="row clearfix">
         <div class="col-12">
             <div class="section_title">
-                <div class="mr-3">
+                <!-- <div class="mr-3">
                     <h3>Overview</h3>
                     <small>LSS Visit Analytics & Visualization. Use these filters to filter and alter visualizations</small>
-                </div>
+                </div> -->
 
                 @if($quarterNotice)
                     <div class="alert alert-info border-1 alert-dismissible fade show" role="alert">
@@ -131,13 +131,6 @@
                             <input type="date" wire:model="customEndDate" class="form-control">
                         </div>
                     @endif
-                </div>
-                <div class="btn-group mb-3">
-
-                    <button type="button" wire:click="refresh()" class="btn btn-default"><i class="fa fa-refresh"></i>
-                        <span class="hidden-md">Load</span></button>
-                    <button type="button" class="btn btn-default"><i class="fa fa-file-pdf-o"></i> <span
-                            class="hidden-md">Export</span></button>
                 </div>
             </div>
         </div>
@@ -801,7 +794,7 @@
                                 layer.bindPopup(
                                     `<div class="district-popup">
                                         <div class="district-popup__title">${district}</div>
-                                        <div class="district-popup__score">Current LSS Score: ${score}%</div>
+                                        <div class="district-popup__score">Current District LSS Score: <b>${score}%<b> <br> <small><i>(Average score of ${districtEntry.facilities.length} facilities)/25)*100</i></small> </div>
                                         ${buildFacilityPopup(districtEntry.facilities)}
                                     </div>`
                                 );
