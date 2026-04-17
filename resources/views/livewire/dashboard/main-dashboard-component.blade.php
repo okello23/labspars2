@@ -220,7 +220,7 @@
 
                 <select id="facilityFilter" multiple class="form-control" style="margin-bottom: 1rem; width: 100%;"></select>
                 <button id="deselectAllBtn" class="btn btn-sm btn-danger mt-2">Deselect All</button>
-                <canvas id="spiderChart" width="850" height="850"></canvas>
+                <canvas id="spiderChart" width="750" height="750"></canvas>
             </fieldset>
         </div>
                 
@@ -558,7 +558,15 @@
                         [100, 200, 100],
                         [240, 80, 128],
                         [0, 200, 255],
-                        [180, 80, 200]
+                        [180, 80, 200],
+                        [255, 99, 132],
+                        [54, 162, 235],
+                        [255, 206, 86],
+                        [75, 192, 192],
+                        [153, 102, 255],
+                        [255, 159, 64],
+                        [100, 200, 100],
+                        [240, 80, 128]
                     ];
                     const [r, g, b] = colors[index % colors.length];
                     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
@@ -575,7 +583,7 @@
                     removeItemButton: true,
                     searchEnabled: true,
                     placeholder: true,
-                    placeholderValue: 'Select facilities to plot the ...',
+                    placeholderValue: 'Select facilities to plot the spider graph',
                     shouldSort: false
                 });
 
@@ -764,7 +772,7 @@
                             const items = facilities.map((facility) => `
                                 <li>
                                     <a href="#" class="district-popup__link" onclick="window.openFacilityScoreModal(${JSON.stringify(facility.visit_code)}); return false;">
-                                        ${facility.facility_name}
+                                        ${facility.facility_name} (${facility.facility_level})
                                     </a>
                                     <div>Spider score: ${facility.spider_score} / 25</div>
                                 </li>
