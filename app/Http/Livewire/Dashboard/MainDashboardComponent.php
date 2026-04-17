@@ -2082,10 +2082,57 @@ public function getSpiderGraphData(): array
 
         return $this->attachVisitMetaData($scoreRows);
     }
+
+    private function buildDistrictMapData(Collection $filteredLeagueData, Collection $spiderGraphData): array
+    {
+        return $filteredLeagueData
+            ->filter(fn ($visit) => !empty($visit->district))
+            ->groupBy('district')
+            ->map(function (Collection $districtVisits) use ($spiderGraphData) {
+                $facilities = $districtVisits
+                    ->filter(fn ($visit) => !empty($visit->facility_id))
+                    ->groupBy('facility_id')
+                    ->map(function (Collection $facilityVisits) use ($spiderGraphData) {
+                        $latestVisit = $facilityVisits
+                            ->sortByDesc(fn ($visit) => data_get($visit, 'date_of_visit') ?? data_get($visit, 'created_at'))
+                            ->first();
+
+                        $spiderData = $spiderGraphData->get($latestVisit->visit_id, []);
+                        $thematicScores = [
+                            'Stock Management' => round((float) data_get($spiderData, 'data.Stock Management', 0), 2),
+                            'Storage' => round((float) data_get($spiderData, 'data.Storage', 0), 2),
+                            'Ordering' => round((float) data_get($spiderData, 'data.Ordering', 0), 2),
+                            'Equipment Management' => round((float) data_get($spiderData, 'data.Equipment Management', 0), 2),
+                            'Lab Information System' => round((float) data_get($spiderData, 'data.Lab Information System', 0), 2),
+                        ];
+
+                        return [
+                            'facility_id' => $latestVisit->facility_id,
+                            'facility_name' => data_get($latestVisit, 'facility.name', 'Unknown Facility'),
+                            'visit_id' => $latestVisit->visit_id,
+                            'visit_code' => $latestVisit->visit_code,
+                            'date_of_visit' => $latestVisit->date_of_visit,
+                            'spider_score' => round(array_sum($thematicScores), 2),
+                            'thematic_scores' => $thematicScores,
+                        ];
+                    })
+                    ->sortBy('facility_name')
+                    ->values()
+                    ->all();
+
+                return [
+                    'score' => round($districtVisits->avg('total_thematic') / 25 * 100, 2),
+                    'facilities' => $facilities,
+                ];
+            })
+            ->sortKeys()
+            ->toArray();
+    }
     
     public function loadDashboardData()
     {
         $filteredLeagueData = $this->buildFilteredLeagueData();
+        $spiderGraphData = collect($this->getSpiderGraphData())->keyBy('visit_id');
 
         // Basic Statistics
         $this->totalVisits     = $this->query()->count();
@@ -2139,7 +2186,7 @@ public function getSpiderGraphData(): array
         // Trend Data
         $this->trend_data = $this->getBaselineCurrentTrendLast3Months($filteredLeagueData)->values()->toArray();
 
-        $this->district_performance = $this->getDistrictPerformance($filteredLeagueData);
+        $this->district_performance = $this->buildDistrictMapData($filteredLeagueData, $spiderGraphData);
         $this->loadIncompleteEntryStats();
 
         $this->dispatchBrowserEvent('dashboard-data-updated', [

@@ -23,6 +23,36 @@
             height: 100%;
             overflow: hidden;
         }
+
+        .district-popup {
+            min-width: 240px;
+        }
+
+        .district-popup__title {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .district-popup__score {
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .district-popup__list {
+            margin: 0;
+            padding-left: 18px;
+            max-height: 160px;
+            overflow-y: auto;
+        }
+
+        .district-popup__list li {
+            margin-bottom: 6px;
+        }
+
+        .district-popup__link {
+            font-weight: 600;
+            cursor: pointer;
+        }
     </style>
 
     <div class="row clearfix">
@@ -364,6 +394,37 @@
         </div>
     </div>
     @endif
+
+    <div wire:ignore.self class="modal fade" id="facilityScoreModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="facilityScoreModalTitle">Facility Score Breakdown</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="facilityScoreModalMeta" class="mb-3 text-muted small"></div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Thematic Area</th>
+                                    <th>Spider Score</th>
+                                </tr>
+                            </thead>
+                            <tbody id="facilityScoreModalBody">
+                                <tr>
+                                    <td colspan="2" class="text-center">No facility selected.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"/>
@@ -660,6 +721,17 @@
                     return;
                 }
 
+                window.dashboardDistrictPerformanceData = performance || {};
+                window.dashboardFacilityScoreLookup = {};
+
+                Object.values(window.dashboardDistrictPerformanceData).forEach((districtEntry) => {
+                    (districtEntry.facilities || []).forEach((facility) => {
+                        if (facility.visit_code) {
+                            window.dashboardFacilityScoreLookup[facility.visit_code] = facility;
+                        }
+                    });
+                });
+
                 if (!window.dashboardDistrictMap) {
                     window.dashboardDistrictMap = L.map('districtMap', {
                         scrollWheelZoom: false,
@@ -684,10 +756,27 @@
                                 : '#f2f2f2';
                         }
 
+                        function buildFacilityPopup(facilities) {
+                            if (!Array.isArray(facilities) || facilities.length === 0) {
+                                return '<div class="district-popup__score">No facilities visited in this district.</div>';
+                            }
+
+                            const items = facilities.map((facility) => `
+                                <li>
+                                    <a href="#" class="district-popup__link" onclick="window.openFacilityScoreModal(${JSON.stringify(facility.visit_code)}); return false;">
+                                        ${facility.facility_name}
+                                    </a>
+                                    <div>Spider score: ${facility.spider_score} / 25</div>
+                                </li>
+                            `).join('');
+
+                            return `<ol class="district-popup__list">${items}</ol>`;
+                        }
+
                         window.dashboardDistrictLayer = L.geoJSON(data, {
                             style: function (feature) {
                                 const district = feature.properties.shapeName;
-                                const score = performance[district] ?? 0;
+                                const score = performance[district]?.score ?? 0;
 
                                 return {
                                     fillColor: getColor(score),
@@ -698,11 +787,15 @@
                             },
                             onEachFeature: function (feature, layer) {
                                 const district = feature.properties.shapeName;
-                                const score = performance[district] ?? 0;
+                                const districtEntry = performance[district] || { score: 0, facilities: [] };
+                                const score = districtEntry.score ?? 0;
 
                                 layer.bindPopup(
-                                    "<strong>" + district + "</strong><br>" +
-                                    "Current LSS Score: " + score + "%"
+                                    `<div class="district-popup">
+                                        <div class="district-popup__title">${district}</div>
+                                        <div class="district-popup__score">Current LSS Score: ${score}%</div>
+                                        ${buildFacilityPopup(districtEntry.facilities)}
+                                    </div>`
                                 );
                             }
                         }).addTo(window.dashboardDistrictMap);
@@ -710,6 +803,30 @@
             }
 
             document.addEventListener('livewire:load', function () {
+                window.openFacilityScoreModal = function (visitCode) {
+                    const facility = (window.dashboardFacilityScoreLookup || {})[visitCode];
+                    const modalTitle = document.getElementById('facilityScoreModalTitle');
+                    const modalMeta = document.getElementById('facilityScoreModalMeta');
+                    const modalBody = document.getElementById('facilityScoreModalBody');
+
+                    if (!facility || !modalTitle || !modalMeta || !modalBody) {
+                        return;
+                    }
+
+                    modalTitle.textContent = facility.facility_name + ' Score Breakdown';
+                    modalMeta.textContent = 'Spider score: ' + facility.spider_score + ' / 25'
+                        + (facility.date_of_visit ? ' | Visit date: ' + facility.date_of_visit : '');
+
+                    modalBody.innerHTML = Object.entries(facility.thematic_scores || {}).map(([label, score]) => `
+                        <tr>
+                            <td>${label}</td>
+                            <td>${score}</td>
+                        </tr>
+                    `).join('');
+
+                    $('#facilityScoreModal').modal('show');
+                };
+
                 renderRegionalDistributionChart(@json($regionWiseStats->map(fn ($row) => ['regionName' => $row->regionName, 'visits' => (int) $row->visits])->values()->all()));
                 renderTrendChart(@json($trend_data));
                 renderDistrictMap(@json($district_performance));
