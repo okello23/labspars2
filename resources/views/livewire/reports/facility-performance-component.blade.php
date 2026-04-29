@@ -22,6 +22,17 @@
                         <x-table-utilities>
                             <div class="md-3">
                                 <div class="mb-1 col-md-12">
+                                    <label for="date_filter_type" class="form-label">Date Filter</label>
+                                    <select id="date_filter_type" class="form-control" wire:model="date_filter_type">
+                                        <option value="all">All Time</option>
+                                        <option value="quarterly">Quarterly</option>
+                                        <option value="date_range">Date Range</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="md-3">
+                                <div class="mb-1 col-md-12">
                                     <label for="filter_region_id" class="form-label">Region</label>
                                     <select class="form-control" wire:model="filter_region_id">
                                         <option value="">All</option>
@@ -45,20 +56,50 @@
                                 </div>
                             </div>
 
-                            <div class="md-3">
-                                <div class="mb-1 col-md-12">
-                                    <label for="from_date" class="form-label">From Date</label>
-                                    <input id="from_date" type="date" class="form-control" wire:model.lazy="from_date">
+                            @if($date_filter_type === 'quarterly')
+                                <div class="md-3">
+                                    <div class="mb-1 col-md-12">
+                                        <label for="filter_year" class="form-label">Year</label>
+                                        <select id="filter_year" class="form-control" wire:model="filter_year">
+                                            @foreach($filter_years as $year)
+                                                <option value="{{ $year }}">{{ $year }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="md-3">
-                                <div class="mb-1 col-md-12">
-                                    <label for="to_date" class="form-label">To Date</label>
-                                    <input id="to_date" type="date" class="form-control" wire:model.lazy="to_date">
+                                <div class="md-3">
+                                    <div class="mb-1 col-md-12">
+                                        <label for="filter_quarter" class="form-label">Quarter</label>
+                                        <select id="filter_quarter" class="form-control" wire:model="filter_quarter">
+                                            @foreach($quarters as $quarterValue => $quarterLabel)
+                                                <option value="{{ $quarterValue }}">{{ $quarterLabel }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
+                            @elseif($date_filter_type === 'date_range')
+                                <div class="md-3">
+                                    <div class="mb-1 col-md-12">
+                                        <label for="from_date" class="form-label">From Date</label>
+                                        <input id="from_date" type="date" class="form-control" wire:model.lazy="from_date">
+                                    </div>
+                                </div>
+
+                                <div class="md-3">
+                                    <div class="mb-1 col-md-12">
+                                        <label for="to_date" class="form-label">To Date</label>
+                                        <input id="to_date" type="date" class="form-control" wire:model.lazy="to_date">
+                                    </div>
+                                </div>
+                            @endif
                         </x-table-utilities>
+
+                        @if($date_filter_summary)
+                            <div class="alert alert-info py-2 px-3 mb-3">
+                                {{ $date_filter_summary }}
+                            </div>
+                        @endif
 
                         {{-- TABLE --}}
                         <table class="table table-striped table-sm table-bordered mb-0 w-100 sortable">

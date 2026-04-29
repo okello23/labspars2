@@ -17,6 +17,9 @@ use App\Http\Livewire\Dashboard\MainDashboardComponent;
 
 trait LeagueDataTrait
 {
+    public $date_filter_type = 'all';
+    public $filter_year;
+    public $filter_quarter;
     public $from_date;
     public $to_date;
     public $perPage = 10;
@@ -50,6 +53,9 @@ trait LeagueDataTrait
     public function initializeLeagueDataTrait()
     {
         $this->DistrictIds = [];
+        $this->date_filter_type = $this->date_filter_type ?: 'all';
+        $this->filter_year = $this->filter_year ?: $this->getLatestAvailableVisitDate()->year;
+        $this->filter_quarter = $this->filter_quarter ?: ('q' . $this->getLatestAvailableVisitDate()->quarter);
     }
 
     /** ---------------------------------------------------------
@@ -87,6 +93,42 @@ trait LeagueDataTrait
     }
 
     public function updatingToDate()
+    {
+        $this->resetPage('facility_performance_table');
+    }
+
+    public function updatingDateFilterType()
+    {
+        $this->resetPage('facility_performance_table');
+    }
+
+    public function updatedDateFilterType($value)
+    {
+        if ($value === 'quarterly') {
+            $this->normalizeQuarterFilters();
+            $this->from_date = null;
+            $this->to_date = null;
+            return;
+        }
+
+        if ($value === 'date_range') {
+            $this->filter_year = null;
+            $this->filter_quarter = null;
+            return;
+        }
+
+        $this->from_date = null;
+        $this->to_date = null;
+        $this->filter_year = null;
+        $this->filter_quarter = null;
+    }
+
+    public function updatingFilterYear()
+    {
+        $this->resetPage('facility_performance_table');
+    }
+
+    public function updatingFilterQuarter()
     {
         $this->resetPage('facility_performance_table');
     }
@@ -129,9 +171,11 @@ trait LeagueDataTrait
      * ---------------------------------------------------------*/
     protected function buildFilters()
     {
+        [$filterFrom, $filterTo] = $this->resolveDateFilters();
+
         return [
-            'filter_from'        => $this->from_date,
-            'filter_to'          => $this->to_date,
+            'filter_from'        => $filterFrom,
+            'filter_to'          => $filterTo,
             'filter_district_id' => $this->filter_district_id,
             'filter_region_id'   => $this->filter_region_id,
         ];
@@ -145,6 +189,9 @@ trait LeagueDataTrait
 
         $cache_key = 'league_scores_' . md5(json_encode([
             Auth::id(),
+            $this->date_filter_type,
+            $this->filter_year,
+            $this->filter_quarter,
             $this->from_date,
             $this->to_date,
             $this->filter_region_id,
@@ -465,6 +512,100 @@ trait LeagueDataTrait
     {
         return data_get($visit, 'date_of_visit') ?? data_get($visit, 'created_at');
     }
+
+    protected function getAvailableFilterYears(): Collection
+    {
+        $latestDate = $this->getLatestAvailableVisitDate();
+        $earliestDate = FacilityVisit::query()->min('date_of_visit');
+        $startYear = $latestDate->year;
+        $endYear = $earliestDate ? Carbon::parse($earliestDate)->year : $startYear;
+
+        if ($endYear > $startYear) {
+            $endYear = $startYear;
+        }
+
+        return collect(range($startYear, $endYear));
+    }
+
+    protected function getQuarterOptions(): array
+    {
+        return [
+            'q1' => 'Q1',
+            'q2' => 'Q2',
+            'q3' => 'Q3',
+            'q4' => 'Q4',
+        ];
+    }
+
+    protected function getDateFilterSummary(): ?string
+    {
+        if ($this->date_filter_type === 'quarterly') {
+            $this->normalizeQuarterFilters();
+
+            return 'Showing data for ' . strtoupper($this->filter_quarter) . ' ' . $this->filter_year . '.';
+        }
+
+        if (
+            $this->date_filter_type === 'date_range'
+            && !empty($this->from_date)
+            && !empty($this->to_date)
+        ) {
+            return 'Showing data from ' . $this->from_date . ' to ' . $this->to_date . '.';
+        }
+
+        return null;
+    }
+
+    private function getLatestAvailableVisitDate(): Carbon
+    {
+        $latestVisitDate = FacilityVisit::query()->max('date_of_visit');
+
+        return $latestVisitDate ? Carbon::parse($latestVisitDate) : Carbon::now();
+    }
+
+    private function normalizeQuarterFilters(): void
+    {
+        $fallbackDate = $this->getLatestAvailableVisitDate();
+        $availableYears = $this->getAvailableFilterYears()->all();
+
+        $year = $this->filter_year ? (int) $this->filter_year : $fallbackDate->year;
+        $this->filter_year = in_array($year, $availableYears, true) ? $year : $fallbackDate->year;
+
+        $quarterKey = is_string($this->filter_quarter) ? strtolower(trim($this->filter_quarter)) : '';
+        $this->filter_quarter = in_array($quarterKey, ['q1', 'q2', 'q3', 'q4'], true)
+            ? $quarterKey
+            : 'q' . $fallbackDate->quarter;
+    }
+
+    private function resolveQuarterDates(string $quarterKey, int $year): array
+    {
+        $quarter = (int) str_replace('q', '', strtolower($quarterKey));
+        $startMonth = (($quarter - 1) * 3) + 1;
+
+        $startDate = Carbon::create($year, $startMonth, 1)->startOfDay();
+        $endDate = (clone $startDate)->addMonths(2)->endOfMonth()->endOfDay();
+
+        return [$startDate->toDateString(), $endDate->toDateString()];
+    }
+
+    private function resolveDateFilters(): array
+    {
+        if ($this->date_filter_type === 'quarterly') {
+            $this->normalizeQuarterFilters();
+
+            return $this->resolveQuarterDates($this->filter_quarter, (int) $this->filter_year);
+        }
+
+        if (
+            $this->date_filter_type === 'date_range'
+            && !empty($this->from_date)
+            && !empty($this->to_date)
+        ) {
+            return [$this->from_date, $this->to_date];
+        }
+
+        return [null, null];
+    }
     
     /**
      * ---------------------------------------------------------
@@ -489,6 +630,9 @@ trait LeagueDataTrait
         $cacheKey = 'district_performance_' . md5(json_encode([
             $this->from_date,
             $this->to_date,
+            $this->date_filter_type,
+            $this->filter_year,
+            $this->filter_quarter,
             $this->filter_region_id,
             $this->filter_district_id,
             $this->search,

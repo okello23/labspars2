@@ -36,6 +36,9 @@ class FacilityPerformanceComponent extends Component
             'facility_performance' => $this->paginateCollection(
                 $this->rankFacilities($this->lss_data)
             ),
+            'date_filter_summary'  => $this->getDateFilterSummary(),
+            'filter_years'         => $this->getAvailableFilterYears(),
+            'quarters'             => $this->getQuarterOptions(),
             'regions'              => Region::all(),
             'health_sub_districts' => [],
         ];
