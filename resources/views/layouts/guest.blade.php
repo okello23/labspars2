@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    @include('partials.google-analytics')
     <title>Lab Spars | @yield('title')</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">

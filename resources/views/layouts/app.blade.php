@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    @include('partials.google-analytics')
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Lab SPARS') }}|@yield('title')</title>
     <meta charset="utf-8">

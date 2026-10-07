@@ -2,6 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr">
 
 <head>
+    @include('partials.google-analytics')
 
     <!-- Theme Style CSS -->
     {{-- <link rel="stylesheet" href="{{ asset('assets/css/dark-theme.css') }}" />
